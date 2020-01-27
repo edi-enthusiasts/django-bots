@@ -52,8 +52,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bots Open Source Edi Translator'
-copyright = u'2017, hjebbers'
-author = u'hjebbers'
+copyright = u'2020 Lane Shaw, (2017, hjebbers)'
+author = u'Lane Shaw (orign: hjebbers)'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -227,7 +227,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'bots.tex', u'documentation for bots', u'hjebbers', 'manual'),
+  (master_doc, 'bots.tex', u'documentation for bots', u'Lane Shaw (origin: hjebbers)', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

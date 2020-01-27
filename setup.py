@@ -41,19 +41,12 @@ for dirpath, dirnames, filenames in os.walk('bots'):
     elif filenames:
         data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames if not f.endswith('.pyc') and not f.endswith('.py')]])
 
-
-
-
-
-
-
-
 setup(
-    name = 'bots',
+    name = 'edi-bots-server',
     version = '3.2.0',
-    author = 'hjebbers',
-    author_email = 'hjebbers@gmail.com',
-    url = 'http://bots.sourceforge.net/',
+    author = 'Lane Shaw',
+    author_email = 'lshaw.tech@gmail.com',
+    url = 'https://github.com/edi-enthusiasts/edi-bots-server',
     description = 'Bots open source edi translator',
     long_description = 'Bots is complete software for edi (Electronic Data Interchange): translate and communicate. All major edi data formats are supported: edifact, x12, tradacoms, xml',
     platforms = 'OS Independent (Written in an interpreted language)',
