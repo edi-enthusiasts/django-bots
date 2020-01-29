@@ -1,4 +1,4 @@
-## {{{ http://code.activestate.com/recipes/578178/ (r20)
+# {{{ http://code.activestate.com/recipes/578178/ (r20)
 '''Add syntax highlighting to Python source code'''
 __author__ = 'Raymond Hettinger'
 
@@ -11,20 +11,22 @@ __author__ = 'Raymond Hettinger'
 # The whole string is one token so the line numbers on those lines get the string
 # highlight colour. No simple way to fix this, but it's not really an issue.
 import sys
-if sys.version_info[0] > 2:
-    import builtins
-else:
-    import __builtin__ as builtins
 import keyword
 import tokenize
 import cgi
 import functools
+if sys.version_info[0] > 2:
+    import builtins  # @UnusedImport
+else:
+    import __builtin__ as builtins  # @UnresolvedImport @Reimport
 
-#### Analyze Python Source #################################
+# Analyze Python Source #
+
 
 def is_builtin(s):
     'Return True if s is the name of a builtin'
     return hasattr(builtins, s)
+
 
 def combine_range(lines, start, end):
     'Join content from a range of lines between start and end'
@@ -34,21 +36,22 @@ def combine_range(lines, start, end):
     rows = [lines[srow-1][scol:]] + lines[srow: erow-1] + [lines[erow-1][:ecol]]
     return ''.join(rows), end
 
+
 def analyze_python(source):
     '''Generate and classify chunks of Python for syntax highlighting.
        Yields tuples in the form: (category, categorized_text).
     '''
     lines = source.splitlines(True)
     lines.append('')
-    for i in range(0,len(lines)-1):
-        lines[i] = '%04d  %s' %(i+1,lines[i]) # add line numbers
+    for i in range(0, len(lines)-1):
+        lines[i] = '%04d  %s' % (i+1, lines[i])  # add line numbers
     readline = functools.partial(next, iter(lines), '')
     kind = tok_str = ''
     tok_type = tokenize.COMMENT
     written = (1, 0)
     for tok in tokenize.generate_tokens(readline):
         prev_tok_type, prev_tok_str = tok_type, tok_str
-        tok_type, tok_str, (srow, scol), (erow, ecol), logical_lineno = tok
+        tok_type, tok_str, (srow, scol), (erow, ecol), logical_lineno = tok  # @UnusedVariable
         kind = ''
         if ecol < 5:
             kind = 'linenum'
@@ -78,7 +81,8 @@ def analyze_python(source):
     line_upto_token, written = combine_range(lines, written, (erow, ecol))
     yield '', line_upto_token
 
-#### HTML Output ###########################################
+
+# HTML Output #
 
 def html_highlight(classified_text):
     'Convert classified text to an HTML fragment'
@@ -90,4 +94,3 @@ def html_highlight(classified_text):
         if kind:
             result.append('</span>')
     return ''.join(result)
-

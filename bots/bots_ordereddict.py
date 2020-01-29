@@ -20,9 +20,10 @@
 #     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #     OTHER DEALINGS IN THE SOFTWARE.
 
-from UserDict import DictMixin
+from collections import UserDict
 
-class OrderedDict(dict, DictMixin):
+
+class OrderedDict(dict, UserDict):
 
     def __init__(self, *args, **kwds):
         if len(args) > 1:
@@ -48,9 +49,9 @@ class OrderedDict(dict, DictMixin):
 
     def __delitem__(self, key):
         dict.__delitem__(self, key)
-        key, prev, next = self.__map.pop(key)
-        prev[2] = next
-        next[1] = prev
+        key, prev, nxt = self.__map.pop(key)
+        prev[2] = nxt
+        nxt[1] = prev
 
     def __iter__(self):
         end = self.__end
@@ -89,14 +90,14 @@ class OrderedDict(dict, DictMixin):
     def keys(self):
         return list(self)
 
-    setdefault = DictMixin.setdefault
-    update = DictMixin.update
-    pop = DictMixin.pop
-    values = DictMixin.values
-    items = DictMixin.items
-    iterkeys = DictMixin.iterkeys
-    itervalues = DictMixin.itervalues
-    iteritems = DictMixin.iteritems
+    setdefault = UserDict.setdefault
+    update = UserDict.update
+    pop = UserDict.pop
+    values = UserDict.values
+    items = UserDict.items
+    keys = UserDict.keys
+    values = UserDict.values
+    items = UserDict.items
 
     def __repr__(self):
         if not self:
@@ -117,7 +118,7 @@ class OrderedDict(dict, DictMixin):
         if isinstance(other, OrderedDict):
             if len(self) != len(other):
                 return False
-            for p, q in  zip(self.items(), other.items()):
+            for p, q in zip(self.items(), other.items()):
                 if p != q:
                     return False
             return True
