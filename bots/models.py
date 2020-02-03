@@ -591,7 +591,7 @@ class routes(models.Model):
     routescript.allow_tags = True
     routescript.short_description = 'Script'
 
-    def indefaultrun(obj):
+    def indefaultrun(obj):  # @NoSelf
         return not obj.notindefaultrun
 
     indefaultrun.boolean = True
