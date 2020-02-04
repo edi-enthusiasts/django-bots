@@ -317,23 +317,23 @@ def start():
     botsglobal.logger = botsinit.initenginelogging(process_name)
     atexit.register(logging.shutdown)
     for key, value in botslib.botsinfo():  # log info about environement, versions, etc
-        botsglobal.logger.info(u'%(key)s: "%(value)s".', {'key': key, 'value': value})
+        botsglobal.logger.info('%(key)s: "%(value)s".', {'key': key, 'value': value})
 
     # **************connect to database**********************************
     try:
         botsinit.connect()
     except Exception as msg:
-        botsglobal.logger.exception(_(u'Could not connect to database. Database settings are in bots/config/settings.py. Error: "%(msg)s".'), {'msg': msg})
+        botsglobal.logger.exception(_('Could not connect to database. Database settings are in bots/config/settings.py. Error: "%(msg)s".'), {'msg': msg})
         sys.exit(3)
     else:
-        botsglobal.logger.info(_(u'Connected to database.'))
+        botsglobal.logger.info(_('Connected to database.'))
         atexit.register(botsglobal.db.close)
 
     # **************handle database lock****************************************
     # set a lock on the database; if not possible, the database is locked: an earlier instance of bots-engine was terminated unexpectedly.
     if not botslib.set_database_lock():
         warn = _(
-            u'!Bots database is locked!\n'
+            '!Bots database is locked!\n'
             'Bots-engine has ended in an unexpected way during the last run.\n'
             'Most likely causes: sudden power-down, system crash, problems with disk I/O, bots-engine terminated by user, etc.'
         )

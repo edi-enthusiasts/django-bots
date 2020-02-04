@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 import os
-import xmlrpclib
+import xmlrpc.client
 import socket
 
 # bots-modules
@@ -9,9 +9,9 @@ from . import botsinit
 from . import botsglobal
 
 JOBQUEUEMESSAGE2TXT = {
-    0: u'OK, job is added to queue',
-    1: u'Error, job not to jobqueue. Can not contact jobqueue-server',
-    4: u'Duplicate job, not added.',
+    0: 'OK, job is added to queue',
+    1: 'Error, job not to jobqueue. Can not contact jobqueue-server',
+    4: 'Duplicate job, not added.',
 }
 
 
@@ -24,7 +24,7 @@ def send_job_to_jobqueue(task_args, priority=5):
         4 = job is a duplicate of job already in the queue
     '''
     try:
-        remote_server = xmlrpclib.ServerProxy(u'http://localhost:' + str(botsglobal.ini.getint('jobqueue', 'port', 28082)))
+        remote_server = xmlrpc.client.ServerProxy('http://localhost:' + str(botsglobal.ini.getint('jobqueue', 'port', 28082)))
         return remote_server.addjob(task_args, priority)
     except socket.error as msg:
         print('socket.error', msg)
@@ -47,8 +47,8 @@ def start():
         -p<priority>    priority of job, 1-9 (default: 5, highest priority is 1).
     Example of usage:
         %(name)s bots-engine.py
-        %(name)s python2.7 /usr/local/bin/bots-engine.py
-        %(name)s -p1 python2.7 /usr/local/bin/bots-engine.py -cconfig2 myroute
+        %(name)s python /usr/local/bin/bots-engine.py
+        %(name)s -p1 python /usr/local/bin/bots-engine.py -cconfig2 myroute
 
     ''' % {'name': os.path.basename(sys.argv[0]), 'version': botsglobal.version}
     configdir = 'config'  # default value

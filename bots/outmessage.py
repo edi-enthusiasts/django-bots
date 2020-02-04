@@ -1,5 +1,4 @@
 import time
-import sys
 import pickle
 import decimal
 from django.utils.translation import ugettext as _
@@ -48,7 +47,7 @@ def outmessage_init(**ta_info):
     try:
         classtocall = globals()[ta_info['editype']]
     except KeyError:
-        raise botslib.OutMessageError(_(u'Unknown editype for outgoing message: %(editype)s'), ta_info)
+        raise botslib.OutMessageError(_('Unknown editype for outgoing message: %(editype)s'), ta_info)
     return classtocall(ta_info)
 
 
@@ -106,7 +105,7 @@ class Outmessage(message.Message):
             self.ta_info['nrmessages'] = self.nrmessagewritten
             self._closewrite()
         elif not self.root.children:
-            raise botslib.OutMessageError(_(u'No outgoing message'))  # then there is nothing to write...
+            raise botslib.OutMessageError(_('No outgoing message'))  # then there is nothing to write...
         else:
             self.multiplewrite = True
             self._initwrite()
@@ -121,11 +120,11 @@ class Outmessage(message.Message):
             self._closewrite()
 
     def _initwrite(self):
-        botsglobal.logger.debug(u'Start writing to file "%(filename)s".', self.ta_info)
+        botsglobal.logger.debug('Start writing to file "%(filename)s".', self.ta_info)
         self._outstream = botslib.opendata(self.ta_info['filename'], 'wb', charset=self.ta_info['charset'], errors=self.ta_info['checkcharsetout'])
 
     def _closewrite(self):
-        botsglobal.logger.debug(u'End writing to file "%(filename)s".', self.ta_info)
+        botsglobal.logger.debug('End writing to file "%(filename)s".', self.ta_info)
         self._outstream.close()
 
     def _write(self, node_instance):
@@ -143,7 +142,7 @@ class Outmessage(message.Message):
             except UnicodeError as msg:
                 content = botslib.get_relevant_text_for_UnicodeError(msg)
                 raise botslib.OutMessageError(
-                    _(u'[F50]: Characters not in character-set "%(char)s": %(content)s'),
+                    _('[F50]: Characters not in character-set "%(char)s": %(content)s'),
                     {'char': self.ta_info['charset'], 'content': content}
                 )
         else:
@@ -152,7 +151,7 @@ class Outmessage(message.Message):
             except UnicodeError as msg:
                 content = botslib.get_relevant_text_for_UnicodeError(msg)
                 raise botslib.OutMessageError(
-                    _(u'[F50]: Characters not in character-set "%(char)s": %(content)s'),
+                    _('[F50]: Characters not in character-set "%(char)s": %(content)s'),
                     {'char': self.ta_info['charset'], 'content': content}
                 )
 
@@ -323,7 +322,7 @@ class Outmessage(message.Message):
                     value = value.ljust(field_definition[MINLENGTH])  # add spaces (left, because A-field is right aligned)
             if len(value) > field_definition[LENGTH]:
                 self.add2errorlist(
-                    _(u'[F20]: Record "%(record)s" field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
+                    _('[F20]: Record "%(record)s" field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
                     {
                         'record': self.mpathformat(structure_record[MPATH]),
                         'field': field_definition[ID],
@@ -333,7 +332,7 @@ class Outmessage(message.Message):
                 )
             if len(value) < field_definition[MINLENGTH]:
                 self.add2errorlist(
-                    _(u'[F21]: Record "%(record)s" field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
+                    _('[F21]: Record "%(record)s" field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
                     {
                         'record': self.mpathformat(structure_record[MPATH]),
                         'field': field_definition[ID],
@@ -349,10 +348,10 @@ class Outmessage(message.Message):
                     elif lenght == 8:
                         time.strptime(value, '%Y%m%d')
                     else:
-                        raise ValueError(u'To be catched')
+                        raise ValueError('To be catched')
                 except ValueError:
                     self.add2errorlist(
-                        _(u'[F22]: Record "%(record)s" date field "%(field)s" not a valid date: "%(content)s".\n') %
+                        _('[F22]: Record "%(record)s" date field "%(field)s" not a valid date: "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -361,7 +360,7 @@ class Outmessage(message.Message):
                     )
                 if lenght > field_definition[LENGTH]:
                     self.add2errorlist(
-                        _(u'[F31]: Record "%(record)s" date field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
+                        _('[F31]: Record "%(record)s" date field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -371,7 +370,7 @@ class Outmessage(message.Message):
                     )
                 if lenght < field_definition[MINLENGTH]:
                     self.add2errorlist(
-                        _(u'[F32]: Record "%(record)s" date field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
+                        _('[F32]: Record "%(record)s" date field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -386,10 +385,10 @@ class Outmessage(message.Message):
                     elif lenght == 6:
                         time.strptime(value, '%H%M%S')
                     else:
-                        raise ValueError(u'To be catched')
+                        raise ValueError('To be catched')
                 except ValueError:
                     self.add2errorlist(
-                        _(u'[F23]: Record "%(record)s" time field "%(field)s" not a valid time: "%(content)s".\n') %
+                        _('[F23]: Record "%(record)s" time field "%(field)s" not a valid time: "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -398,7 +397,7 @@ class Outmessage(message.Message):
                     )
                 if lenght > field_definition[LENGTH]:
                     self.add2errorlist(
-                        _(u'[F33]: Record "%(record)s" time field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
+                        _('[F33]: Record "%(record)s" time field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -408,7 +407,7 @@ class Outmessage(message.Message):
                     )
                 if lenght < field_definition[MINLENGTH]:
                     self.add2errorlist(
-                        _(u'[F34]: Record "%(record)s" time field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
+                        _('[F34]: Record "%(record)s" time field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -426,7 +425,7 @@ class Outmessage(message.Message):
             digits, decimalsign, decimals = absvalue.partition('.')
             if not digits and not decimals:  # and decimalsign:
                 self.add2errorlist(
-                    _(u'[F24]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                    _('[F24]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
                     {
                         'field': field_definition[ID],
                         'content': value,
@@ -447,7 +446,7 @@ class Outmessage(message.Message):
                     value = str(decimal.Decimal(minussign + digits + decimalsign + decimals).quantize(decimal.Decimal(10) ** -len(decimals)))
                 except Exception:
                     self.add2errorlist(
-                        _(u'[F25]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                        _('[F25]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
                         {
                             'field': field_definition[ID],
                             'content': value,
@@ -471,7 +470,7 @@ class Outmessage(message.Message):
                     value = str(decimal.Decimal(minussign + digits + decimalsign + decimals).quantize(decimal.Decimal(10) ** -field_definition[DECIMALS]))
                 except Exception:
                     self.add2errorlist(
-                        _(u'[F26]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                        _('[F26]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
                         {
                             'field': field_definition[ID],
                             'content': value,
@@ -494,7 +493,7 @@ class Outmessage(message.Message):
                     value = str(dec_value.quantize(NODECIMAL))
                 except Exception:
                     self.add2errorlist(
-                        _(u'[F27]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                        _('[F27]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
                         {
                             'field': field_definition[ID],
                             'content': value,
@@ -505,7 +504,7 @@ class Outmessage(message.Message):
 
             if len(value)-lengthcorrection > field_definition[LENGTH]:
                 self.add2errorlist(
-                    _(u'[F28]: Record "%(record)s" field "%(field)s" too big: "%(content)s".\n') %
+                    _('[F28]: Record "%(record)s" field "%(field)s" too big: "%(content)s".\n') %
                     {
                         'record': self.mpathformat(structure_record[MPATH]),
                         'field': field_definition[ID],
@@ -559,7 +558,7 @@ class Outmessage(message.Message):
                 del lex_record[0]
             fieldcount = 0
             mode_quote = False
-            value = u''  # to collect the formatted record-string.
+            value = ''  # to collect the formatted record-string.
             for field in lex_record:  # loop all fields in lex_record
                 if not field[SFIELD]:  # is a field:
                     if fieldcount == 0:  # do nothing because first field in lex_record is not preceded by a separator
@@ -593,7 +592,7 @@ class Outmessage(message.Message):
                                 char = self.ta_info['replacechar']
                             else:
                                 raise botslib.OutMessageError(
-                                    _(u'[F51]: Character "%(char)s" is used as separator in this x12 file, so it can not be used in content. Field: "%(content)s".'),
+                                    _('[F51]: Character "%(char)s" is used as separator in this x12 file, so it can not be used in content. Field: "%(content)s".'),
                                     {'char': char, 'content': field[VALUE]}
                                 )
                         else:
@@ -707,7 +706,7 @@ class tradacoms(var):
         '''
         self.nrmessagewritten = 0
         if not self.root.children:
-            raise botslib.OutMessageError(_(u'No outgoing message'))  # then there is nothing to write...
+            raise botslib.OutMessageError(_('No outgoing message'))  # then there is nothing to write...
         messagetype = self.ta_info['messagetype']
         for tradacomsmessage in self.root.getloop({'BOTSID': 'STX'}, {'BOTSID': 'MHD'}):
             self.ta_info['messagetype'] = tradacomsmessage.get({'BOTSID': 'MHD', 'TYPE.01': None}) +\
@@ -757,12 +756,12 @@ class xml(Outmessage):
         self._closewrite()
 
     def _xmlcorewrite(self, xmltree, root):
-        if sys.version_info[1] >= 7 and self.ta_info['namespace_prefixes']:  # Register any namespace prefixes specified in syntax
+        if self.ta_info['namespace_prefixes']:  # Register any namespace prefixes specified in syntax
             for eachns in self.ta_info['namespace_prefixes']:
                 ET.register_namespace(eachns[0], eachns[1])
         # xml prolog: always use.*********************************
-        # standalone, DOCTYPE, processing instructions: only possible in python >= 2.7 or if encoding is utf-8/ascii
-        if sys.version_info[1] >= 7 or self.ta_info['charset'] in ['us-ascii', 'utf-8'] or ET.VERSION >= '1.3.0':
+        # standalone, DOCTYPE, processing instructions: only possible if encoding is utf-8/ascii
+        if self.ta_info['charset'] in ['us-ascii', 'utf-8'] or ET.VERSION >= '1.3.0':
             if self.ta_info['indented']:
                 indentstring = '\n'
             else:
@@ -784,8 +783,8 @@ class xml(Outmessage):
         # indent the xml elements
         if self.ta_info['indented']:
             botslib.indent_xml(root)
-        # write tree to file; this is differnt for different python/elementtree versions
-        if sys.version_info[1] < 7 and ET.VERSION < '1.3.0':
+        # write tree to file; this is different for different elementtree versions
+        if ET.VERSION < '1.3.0':
             xmltree.write(self._outstream, encoding=self.ta_info['charset'])
         else:
             xmltree.write(self._outstream, encoding=self.ta_info['charset'], xml_declaration=False)
@@ -835,7 +834,7 @@ class xml(Outmessage):
         return xmlrecord
 
     def _initwrite(self):
-        botsglobal.logger.debug(u'Start writing to file "%(filename)s".', self.ta_info)
+        botsglobal.logger.debug('Start writing to file "%(filename)s".', self.ta_info)
         self._outstream = botslib.opendata(self.ta_info['filename'], "wb")
 
 
@@ -845,7 +844,7 @@ class xmlnocheck(xml):
             output is sorted alfabetically, attributes alfabetically. Empty xml-entities comes as last.
         '''
         if 'BOTSID' not in noderecord:
-            raise botslib.OutMessageError(_(u'[X52]: No field "BOTSID" in xml-output in: "%(record)s"'), {'record': noderecord})
+            raise botslib.OutMessageError(_('[X52]: No field "BOTSID" in xml-output in: "%(record)s"'), {'record': noderecord})
         # generate the xml-record-entity
         recordtag = noderecord['BOTSID']
         del noderecord['BOTSID']  # remove 'record' tag
@@ -878,12 +877,12 @@ class xmlnocheck(xml):
         # problem: empty xml-fields-entities with attribute are not written
         if noderecord:
             fielddict = {}
-            for key, value in noderecord.iteritems():
+            for key, value in noderecord.items():
                 field, nep, attribute = key.partition(attributemarker)  # @UnusedVariable
                 if field not in fielddict:
                     fielddict[field] = {}
                 fielddict[field][attribute] = value
-            for key, attributedict in fielddict.iteritems():
+            for key, attributedict in fielddict.items():
                 ET.SubElement(xmlrecord, key, attributedict).text = None  # add xml element to xml record
         return xmlrecord
 
@@ -893,14 +892,14 @@ class json(Outmessage):
     def _initwrite(self):
         super(json, self)._initwrite()
         if self.multiplewrite:
-            self._outstream.write(u'[')
+            self._outstream.write('[')
 
     def _write(self, node_instance):
         ''' convert node tree to appropriate python object.
             python objects are written to json by simplejson.
         '''
         if self.nrmessagewritten:
-            self._outstream.write(u',')
+            self._outstream.write(',')
         jsonobject = {node_instance.record['BOTSID']: self._node2json(node_instance)}
         if self.ta_info['indented']:
             indent = 2
@@ -910,7 +909,7 @@ class json(Outmessage):
 
     def _closewrite(self):
         if self.multiplewrite:
-            self._outstream.write(u']')
+            self._outstream.write(']')
         super(json, self)._closewrite()
 
     def _node2json(self, node_instance):
@@ -940,7 +939,7 @@ class json(Outmessage):
                     sortedchildren[botsid].append(self._node2json(childnode))
                 else:
                     sortedchildren[botsid] = [self._node2json(childnode)]
-            for key, value in sortedchildren.iteritems():
+            for key, value in sortedchildren.items():
                 if len(value) == 1:
                     newdict[key] = value[0]
                 else:
@@ -971,20 +970,20 @@ class templatehtml(Outmessage):
         try:
             self.template = botslib.botsbaseimport('genshi.template')
         except ImportError:
-            raise ImportError(_(u'Dependency failure: editype "templatehtml" requires python library "genshi".'))
+            raise ImportError(_('Dependency failure: editype "templatehtml" requires python library "genshi".'))
         super(templatehtml, self).__init__(ta_info)
         self.data = templatehtml.TemplateData()  # self.data can be used by mappingscript as container for content
 
     def _write(self, node_instance):
         templatefile = botslib.abspath(self.__class__.__name__, self.ta_info['template'])
         try:
-            botsglobal.logger.debug(u'Start writing to file "%(filename)s".', self.ta_info)
+            botsglobal.logger.debug('Start writing to file "%(filename)s".', self.ta_info)
             loader = self.template.TemplateLoader(auto_reload=False)
             tmpl = loader.load(templatefile)
         except Exception:
             txt = botslib.txtexc()
             raise botslib.OutMessageError(
-                _(u'While templating "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
+                _('While templating "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
                 {
                     'editype': self.ta_info['editype'],
                     'messagetype': self.ta_info['messagetype'],
@@ -1003,14 +1002,14 @@ class templatehtml(Outmessage):
         except Exception:
             txt = botslib.txtexc()
             raise botslib.OutMessageError(
-                _(u'While templating "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
+                _('While templating "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
                 {
                     'editype': self.ta_info['editype'],
                     'messagetype': self.ta_info['messagetype'],
                     'txt': txt
                 }
             )
-        botsglobal.logger.debug(_(u'End writing to file "%(filename)s".'), self.ta_info)
+        botsglobal.logger.debug(_('End writing to file "%(filename)s".'), self.ta_info)
 
     def writeall(self):
         if not self.root.record:
@@ -1028,12 +1027,12 @@ class db(Outmessage):
 
     def writeall(self):
         if self.root is None:
-            raise botslib.OutMessageError(_(u'No outgoing message'))  # then there is nothing to write...
-        botsglobal.logger.debug(u'Start writing to file "%(filename)s".', self.ta_info)
+            raise botslib.OutMessageError(_('No outgoing message'))  # then there is nothing to write...
+        botsglobal.logger.debug('Start writing to file "%(filename)s".', self.ta_info)
         self._outstream = botslib.opendata(self.ta_info['filename'], 'wb')
         pickle.dump(self.root, self._outstream)
         self._outstream.close()
-        botsglobal.logger.debug(u'End writing to file "%(filename)s".', self.ta_info)
+        botsglobal.logger.debug('End writing to file "%(filename)s".', self.ta_info)
         self.ta_info['envelope'] = 'db'
         self.ta_info['merge'] = False
 
@@ -1047,11 +1046,11 @@ class raw(Outmessage):
 
     def writeall(self):
         if self.root is None:
-            raise botslib.OutMessageError(_(u'No outgoing message'))  # then there is nothing to write...
-        botsglobal.logger.debug(u'Start writing to file "%(filename)s".', self.ta_info)
+            raise botslib.OutMessageError(_('No outgoing message'))  # then there is nothing to write...
+        botsglobal.logger.debug('Start writing to file "%(filename)s".', self.ta_info)
         self._outstream = botslib.opendata(self.ta_info['filename'], 'wb')
         self._outstream.write(self.root)
         self._outstream.close()
-        botsglobal.logger.debug(u'End writing to file "%(filename)s".', self.ta_info)
+        botsglobal.logger.debug('End writing to file "%(filename)s".', self.ta_info)
         self.ta_info['envelope'] = 'raw'
         self.ta_info['merge'] = False

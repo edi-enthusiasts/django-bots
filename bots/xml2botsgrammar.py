@@ -130,7 +130,7 @@ def map_writefields(node_out, node_in, mpath):
     for key in node_in.record.keys():
         if key in ['BOTSID', 'BOTSIDnr']:  # skip these
             continue
-        mpath_with_all_fields[-1][key] = u'dummy'  # add key to the mpath
+        mpath_with_all_fields[-1][key] = 'dummy'  # add key to the mpath
     node_out.put(*mpath_with_all_fields)  # write all fields.
 
 

@@ -58,14 +58,14 @@ class _Transaction(object):
             return
         ta_info['selfid'] = self.idta
         changeq(
-            u'''UPDATE ta SET '''+setstring+''' WHERE idta=%(selfid)s''',
+            '''UPDATE ta SET '''+setstring+''' WHERE idta=%(selfid)s''',
             ta_info
         )
 
     def delete(self):
         '''Deletes current transaction '''
         changeq(
-            u'''DELETE FROM ta WHERE idta=%(idta)s''',
+            '''DELETE FROM ta WHERE idta=%(idta)s''',
             {'idta': self.idta}
         )
 
@@ -74,13 +74,13 @@ class _Transaction(object):
 
     def deleteonlychildren_core(self, idta):
         for row in query(
-            u'''SELECT idta FROM ta
+            '''SELECT idta FROM ta
                 WHERE parent=%(idta)s''',
             {'idta': idta}
         ):
             self.deleteonlychildren_core(row['idta'])
             changeq(
-                u'''DELETE FROM ta WHERE idta=%(idta)s''',
+                '''DELETE FROM ta WHERE idta=%(idta)s''',
                 {'idta': row['idta']}
             )
 
@@ -88,7 +88,7 @@ class _Transaction(object):
         '''access of attributes of transaction as ta.fromid, ta.filename etc'''
         varsstring = ','.join(ta_vars)
         for row in query(
-            u'''SELECT '''+varsstring+''' FROM ta
+            '''SELECT '''+varsstring+''' FROM ta
                 WHERE idta = %(idta)s''',
             {'idta': self.idta}
         ):
@@ -104,7 +104,7 @@ class _Transaction(object):
         '''
         script = _Transaction.processlist[-1]
         newidta = insertta(
-            u'''INSERT INTO ta (
+            '''INSERT INTO ta (
                     script, status, parent, frompartner, topartner, fromchannel, tochannel,
                     editype, messagetype, alt, merge, testindicator, reference, frommail,
                     tomail, charset, contenttype, filename, idroute, nrmessages, botskey,
@@ -132,12 +132,12 @@ class OldTransaction(_Transaction):
 class NewTransaction(_Transaction):
     ''' Generate new transaction. '''
     def __init__(self, **ta_info):
-        updatedict = dict((key, value) for key, value in ta_info.iteritems() if key in self.filterlist)  # filter ta_info
+        updatedict = dict((key, value) for key, value in ta_info.items() if key in self.filterlist)  # filter ta_info
         updatedict['script'] = self.processlist[-1]
         namesstring = ','.join([key for key in updatedict])
         varsstring = ','.join(['%('+key+')s' for key in updatedict])
         self.idta = insertta(
-            u'''INSERT INTO ta (''' + namesstring + ''')
+            '''INSERT INTO ta (''' + namesstring + ''')
                 VALUES (''' + varsstring + ''')''',
             updatedict
         )
@@ -166,7 +166,7 @@ def addinfocore(change, where, wherestring):
     '''
     wherestring = ' WHERE idta > %(rootidta)s AND ' + wherestring
     counter = 0  # count the number of dbta changed
-    for row in query(u'''SELECT idta FROM ta '''+wherestring, where):
+    for row in query('''SELECT idta FROM ta '''+wherestring, where):
         counter += 1
         ta_from = OldTransaction(row['idta'])
         ta_from.copyta(**change)  # make new ta from ta_from, using parameters from change
@@ -197,12 +197,12 @@ def updateinfocore(change, where, wherestring=''):
     '''
     wherestring = ' WHERE idta > %(rootidta)s AND ' + wherestring
     # change-dict: discard empty values. Change keys: this is needed because same keys can be in where-dict
-    change2 = [(key, value) for key, value in change.iteritems() if value]
+    change2 = [(key, value) for key, value in change.items() if value]
     if not change2:
         return
     changestring = ','.join([key+'=%(change_'+key+')s' for key, value in change2])
     where.update([('change_'+key, value) for key, value in change2])
-    return changeq(u'''UPDATE ta SET ''' + changestring + wherestring, where)
+    return changeq('''UPDATE ta SET ''' + changestring + wherestring, where)
 
 
 def updateinfo(change, where):
@@ -291,16 +291,16 @@ def unique(domein, updatewith=None):
     else:
         cursor = botsglobal.db.cursor()
         try:
-            cursor.execute(u'''SELECT nummer FROM uniek WHERE domein=%(domein)s''', {'domein': domein})
+            cursor.execute('''SELECT nummer FROM uniek WHERE domein=%(domein)s''', {'domein': domein})
             nummer = cursor.fetchone()['nummer']
             if updatewith is None:
                 nummer += 1
                 updatewith = nummer
                 if updatewith > sys.maxsize-2:
                     updatewith = 0
-            cursor.execute(u'''UPDATE uniek SET nummer=%(nummer)s WHERE domein=%(domein)s''', {'domein': domein, 'nummer': updatewith})
+            cursor.execute('''UPDATE uniek SET nummer=%(nummer)s WHERE domein=%(domein)s''', {'domein': domein, 'nummer': updatewith})
         except TypeError:  # if domein does not exist, cursor.fetchone returns None, so TypeError
-            cursor.execute(u'''INSERT INTO uniek (domein,nummer) VALUES (%(domein)s,1)''', {'domein': domein})
+            cursor.execute('''INSERT INTO uniek (domein,nummer) VALUES (%(domein)s,1)''', {'domein': domein})
             nummer = 1
         botsglobal.db.commit()
         cursor.close()
@@ -319,7 +319,7 @@ def checkunique(domein, receivednumber):
         if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
             return False  # TODO: set the unique_runcounter
         else:
-            changeq(u'''UPDATE uniek SET nummer=%(nummer)s WHERE domein=%(domein)s''', {'domein': domein, 'nummer': newnumber-1})
+            changeq('''UPDATE uniek SET nummer=%(nummer)s WHERE domein=%(domein)s''', {'domein': domein, 'nummer': newnumber-1})
             return False
 
 
@@ -336,7 +336,7 @@ def sendbotserrorreport(subject, reporttext):
         try:
             mail_managers(subject, reporttext)
         except Exception as msg:
-            botsglobal.logger.warning(u'Error in sending error report: %(msg)s', {'msg': msg})
+            botsglobal.logger.warning('Error in sending error report: %(msg)s', {'msg': msg})
 
 
 def sendbotsemail(partner, subject, reporttext):
@@ -351,7 +351,7 @@ def sendbotsemail(partner, subject, reporttext):
             try:
                 send_mail(subject, reporttext, botsglobal.settings.SERVER_EMAIL, recipient_list)
             except Exception as msg:
-                botsglobal.logger.warning(u'Error sending email: %(msg)s', {'msg': msg})
+                botsglobal.logger.warning('Error sending email: %(msg)s', {'msg': msg})
 
 
 def log_session(func):
@@ -363,13 +363,13 @@ def log_session(func):
         try:
             ta_process = NewProcess(func.__name__)
         except Exception:
-            botsglobal.logger.exception(u'System error - no new process made')
+            botsglobal.logger.exception('System error - no new process made')
             raise
         try:
             terug = func(*args, **argv)
         except Exception:
             txt = txtexc()
-            botsglobal.logger.debug(u'Error in process: %(txt)s', {'txt': txt})
+            botsglobal.logger.debug('Error in process: %(txt)s', {'txt': txt})
             ta_process.update(statust=ERROR, errortext=txt)
         else:
             ta_process.update(statust=DONE)
@@ -382,20 +382,19 @@ def txtexc(mention_exception_type=True):
         Errortext should be valid unicode.
     '''
     if botsglobal.ini and botsglobal.ini.getboolean('settings', 'debug', False):
-        return safe_unicode(traceback.format_exc(limit=None))
+        return safe_str(traceback.format_exc(limit=None))
     else:
-        terug = safe_unicode(traceback.format_exc(limit=0))
-        terug = terug.replace(u'Traceback (most recent call last):\n', u'')
+        terug = safe_str(traceback.format_exc(limit=0))
+        terug = terug.replace('Traceback (most recent call last):\n', '')
         if not mention_exception_type:
             terug = terug.partition(': ')[2]
         return terug
 
 
-def safe_unicode(value):
-    ''' For errors: return best possible unicode...should never lead to errors.
-    '''
+def safe_str(value):
+    ''' For errors: return best possible unicode...should never lead to errors.'''
     try:
-        if isinstance(value, str):  # is already unicode, just return
+        if isinstance(value, str):  # is already string, just return
             return value
         elif isinstance(value, bytes):  # string/bytecode, encoding unknown.
             for charset in ['utf_8', 'latin_1']:
@@ -410,7 +409,7 @@ def safe_unicode(value):
         try:
             return str(repr(value))
         except Exception:
-            return u'Error while displaying error'
+            return 'Error while displaying error'
 
 
 class ErrorProcess(NewTransaction):
@@ -444,19 +443,19 @@ def botsimport(*args):
     modulepath = '.'.join((botsglobal.usersysimportpath,) + args)  # assemble import string
     modulefile = join(botsglobal.ini.get('directories', 'usersysabs'), *args)  # assemble abs filename for errortexts; note that 'join' is function in this script-file.
     if modulepath in botsglobal.not_import:  # check if previous import failed (no need to try again).This eliminates eg lots of partner specific imports.
-        botsglobal.logger.debug(_(u'No import of module "%(modulefile)s".'), {'modulefile': modulefile})
-        raise BotsImportError(_(u'No import of module "%(modulefile)s".'), {'modulefile': modulefile})
+        botsglobal.logger.debug(_('No import of module "%(modulefile)s".'), {'modulefile': modulefile})
+        raise BotsImportError(_('No import of module "%(modulefile)s".'), {'modulefile': modulefile})
     try:
         module = botsbaseimport(modulepath)
     except ImportError as msg:
         botsglobal.not_import.add(modulepath)
-        botsglobal.logger.debug(_(u'No import of module "%(modulefile)s": %(txt)s.'), {'modulefile': modulefile, 'txt': msg})
-        raise BotsImportError(_(u'No import of module "%(modulefile)s": %(txt)s'), {'modulefile': modulefile, 'txt': msg})
+        botsglobal.logger.debug(_('No import of module "%(modulefile)s": %(txt)s.'), {'modulefile': modulefile, 'txt': msg})
+        raise BotsImportError(_('No import of module "%(modulefile)s": %(txt)s'), {'modulefile': modulefile, 'txt': msg})
     except Exception as msg:
-        botsglobal.logger.debug(_(u'Error in import of module "%(modulefile)s": %(txt)s.'), {'modulefile': modulefile, 'txt': msg})
-        raise ScriptImportError(_(u'Error in import of module "%(modulefile)s":\n%(txt)s'), {'modulefile': modulefile, 'txt': msg})
+        botsglobal.logger.debug(_('Error in import of module "%(modulefile)s": %(txt)s.'), {'modulefile': modulefile, 'txt': msg})
+        raise ScriptImportError(_('Error in import of module "%(modulefile)s":\n%(txt)s'), {'modulefile': modulefile, 'txt': msg})
     else:
-        botsglobal.logger.debug(u'Imported "%(modulefile)s".', {'modulefile': modulefile})
+        botsglobal.logger.debug('Imported "%(modulefile)s".', {'modulefile': modulefile})
         return module, modulefile
 
 
@@ -532,14 +531,14 @@ def runscript(module, modulefile, functioninscript, **argv):
     ''' Execute userscript. Functioninscript is supposed to be there; if not AttributeError is raised.
         Often is checked in advance if Functioninscript does exist.
     '''
-    botsglobal.logger.debug(u'Run userscript "%(functioninscript)s" in "%(modulefile)s".',
+    botsglobal.logger.debug('Run userscript "%(functioninscript)s" in "%(modulefile)s".',
                             {'functioninscript': functioninscript, 'modulefile': modulefile})
     functiontorun = getattr(module, functioninscript)
     try:
         return functiontorun(**argv)
     except Exception:
         txt = txtexc()
-        raise ScriptError(_(u'Userscript "%(modulefile)s": "%(txt)s".'), {'modulefile': modulefile, 'txt': txt})
+        raise ScriptError(_('Userscript "%(modulefile)s": "%(txt)s".'), {'modulefile': modulefile, 'txt': txt})
 
 
 def tryrunscript(module, modulefile, functioninscript, **argv):
@@ -550,7 +549,7 @@ def tryrunscript(module, modulefile, functioninscript, **argv):
 
 
 def runscriptyield(module, modulefile, functioninscript, **argv):
-    botsglobal.logger.debug(u'Run userscript "%(functioninscript)s" in "%(modulefile)s".',
+    botsglobal.logger.debug('Run userscript "%(functioninscript)s" in "%(modulefile)s".',
                             {'functioninscript': functioninscript, 'modulefile': modulefile})
     functiontorun = getattr(module, functioninscript)
     try:
@@ -558,7 +557,7 @@ def runscriptyield(module, modulefile, functioninscript, **argv):
             yield result
     except Exception:
         txt = txtexc()
-        raise ScriptError(_(u'Script file "%(modulefile)s": "%(txt)s".'), {'modulefile': modulefile, 'txt': txt})
+        raise ScriptError(_('Script file "%(modulefile)s": "%(txt)s".'), {'modulefile': modulefile, 'txt': txt})
 
 
 # **********************************************************/**
@@ -572,7 +571,7 @@ def prepare_confirmrules():
         - as confirmrules are used for incoming and outgoing (x12, edifact, email) this will almost always lead to better performance.
     '''
     for confirmdict in query(
-        u'''SELECT confirmtype, ruletype, idroute,
+        '''SELECT confirmtype, ruletype, idroute,
                 idchannel_id as idchannel,
                 frompartner_id as frompartner,
                 topartner_id as topartner,
@@ -588,7 +587,7 @@ def prepare_confirmrules():
 def set_asked_confirmrules(routedict, rootidta):
     ''' set 'ask confirmation/acknowledgements for x12 and edifact
     '''
-    if not globalcheckconfirmrules(u'ask-x12-997') and not globalcheckconfirmrules(u'ask-edifact-CONTRL'):
+    if not globalcheckconfirmrules('ask-x12-997') and not globalcheckconfirmrules('ask-edifact-CONTRL'):
         return
     for row in query(
         '''SELECT parent, editype, messagetype, frompartner, topartner
@@ -602,11 +601,11 @@ def set_asked_confirmrules(routedict, rootidta):
         if row['editype'] == 'x12':
             if row['messagetype'][:3] in ['997', '999']:
                 continue
-            confirmtype = u'ask-x12-997'
+            confirmtype = 'ask-x12-997'
         else:
             if row['messagetype'][:6] in ['CONTRL', 'APERAK']:
                 continue
-            confirmtype = u'ask-edifact-CONTRL'
+            confirmtype = 'ask-edifact-CONTRL'
         if not checkconfirmrules(
             confirmtype,
             idroute=routedict['idroute'],
@@ -671,7 +670,7 @@ def checkconfirmrules(confirmtype, **kwargs):
 # **********************************************************/**
 def set_database_lock():
     try:
-        changeq(u'''INSERT INTO mutex (mutexk) VALUES (1)''')
+        changeq('''INSERT INTO mutex (mutexk) VALUES (1)''')
     except Exception:
         return False
     return True
@@ -713,7 +712,7 @@ def trace_origin(ta, where=None):
             donelijst.append(idta)
             taparent = OldTransaction(idta=idta)
             taparent.synall()
-            for key, value in where.iteritems():
+            for key, value in where.items():
                 if getattr(taparent, key) != value:
                     break
             else:  # all where-criteria are true;
@@ -766,7 +765,7 @@ def lookup_translation(frommessagetype, fromeditype, alt, frompartner, topartner
     ''' lookup the translation: frommessagetype,fromeditype,alt,frompartner,topartner -> mappingscript, tomessagetype, toeditype
     '''
     for row2 in query(
-        u'''SELECT tscript, tomessagetype, toeditype FROM translate
+        '''SELECT tscript, tomessagetype, toeditype FROM translate
             WHERE frommessagetype = %(frommessagetype)s
             AND fromeditype = %(fromeditype)s
             AND active = %(booll)s
@@ -796,22 +795,22 @@ def lookup_translation(frommessagetype, fromeditype, alt, frompartner, topartner
 
 def botsinfo():
     return [
-        (_(u'served at port'), botsglobal.ini.getint('webserver', 'port', 8080)),
-        (_(u'platform'), platform.platform()),
-        (_(u'machine'), platform.machine()),
-        (_(u'python version'), platform.python_version()),
-        (_(u'django version'), django.VERSION),
-        (_(u'bots version'), botsglobal.version),
-        (_(u'bots installation path'), botsglobal.ini.get('directories', 'botspath')),
-        (_(u'config path'), botsglobal.ini.get('directories', 'config')),
-        (_(u'botssys path'), botsglobal.ini.get('directories', 'botssys')),
-        (_(u'usersys path'), botsglobal.ini.get('directories', 'usersysabs')),
-        (u'DATABASE_ENGINE', botsglobal.settings.DATABASES['default']['ENGINE']),
-        (u'DATABASE_NAME', botsglobal.settings.DATABASES['default']['NAME']),
-        (u'DATABASE_USER', botsglobal.settings.DATABASES['default']['USER']),
-        (u'DATABASE_HOST', botsglobal.settings.DATABASES['default']['HOST']),
-        (u'DATABASE_PORT', botsglobal.settings.DATABASES['default']['PORT']),
-        (u'DATABASE_OPTIONS', botsglobal.settings.DATABASES['default']['OPTIONS']),
+        (_('served at port'), botsglobal.ini.getint('webserver', 'port', 8080)),
+        (_('platform'), platform.platform()),
+        (_('machine'), platform.machine()),
+        (_('python version'), platform.python_version()),
+        (_('django version'), django.VERSION),
+        (_('bots version'), botsglobal.version),
+        (_('bots installation path'), botsglobal.ini.get('directories', 'botspath')),
+        (_('config path'), botsglobal.ini.get('directories', 'config')),
+        (_('botssys path'), botsglobal.ini.get('directories', 'botssys')),
+        (_('usersys path'), botsglobal.ini.get('directories', 'usersysabs')),
+        ('DATABASE_ENGINE', botsglobal.settings.DATABASES['default']['ENGINE']),
+        ('DATABASE_NAME', botsglobal.settings.DATABASES['default']['NAME']),
+        ('DATABASE_USER', botsglobal.settings.DATABASES['default']['USER']),
+        ('DATABASE_HOST', botsglobal.settings.DATABASES['default']['HOST']),
+        ('DATABASE_PORT', botsglobal.settings.DATABASES['default']['PORT']),
+        ('DATABASE_OPTIONS', botsglobal.settings.DATABASES['default']['OPTIONS']),
     ]
 
 
@@ -827,8 +826,8 @@ def settimeout(milliseconds):
 
 
 def updateunlessset(updatedict, fromdict):
-    updatedict.update((key, value) for key, value in fromdict.iteritems() if key not in updatedict)  # TODO: when is this valid? Note: prevents setting charset from gramamr
-    # updatedict.update((key,value) for key, value in fromdict.iteritems() if key not in updatedict or not updatedict[key])  # TODO: when is this valid? Note: prevents setting charset from gramamr
+    updatedict.update((key, value) for key, value in fromdict.items() if key not in updatedict)  # TODO: when is this valid? Note: prevents setting charset from gramamr
+    # updatedict.update((key,value) for key, value in fromdict.items() if key not in updatedict or not updatedict[key])  # TODO: when is this valid? Note: prevents setting charset from gramamr
 
 
 def rreplace(org, old, new='', count=1):
@@ -873,7 +872,7 @@ class Uri(object):
         Usage: uri = Uri(scheme='http',hostname='test.com',port='80', path='test')
     '''
     def __init__(self, **kw):
-        self._uri = dict(scheme=u'', username=u'', password=u'', hostname=u'', port=u'', path=u'', filename=u'', query={}, fragment=u'')
+        self._uri = dict(scheme='', username='', password='', hostname='', port='', path='', filename='', query={}, fragment='')
         self.update(**kw)
 
     def update(self, **kw):
@@ -884,12 +883,12 @@ class Uri(object):
         return self.__str__()
 
     def __str__(self):
-        scheme   = self._uri['scheme'] + u':' if self._uri['scheme'] else u''
-        password = u':' + self._uri['password'] if self._uri['password'] else u''
-        userinfo = self._uri['username'] + password + u'@' if self._uri['username'] else u''
-        port     = u':' + str(self._uri['port']) if self._uri['port'] else u''
-        fullhost = self._uri['hostname'] + port if self._uri['hostname'] else u''
-        authority = u'//' + userinfo + fullhost if fullhost else u''
+        scheme   = self._uri['scheme'] + ':' if self._uri['scheme'] else ''
+        password = ':' + self._uri['password'] if self._uri['password'] else ''
+        userinfo = self._uri['username'] + password + '@' if self._uri['username'] else ''
+        port     = ':' + str(self._uri['port']) if self._uri['port'] else ''
+        fullhost = self._uri['hostname'] + port if self._uri['hostname'] else ''
+        authority = '//' + userinfo + fullhost if fullhost else ''
         if self._uri['path'] or self._uri['filename']:
             terug = os.path.join(authority, self._uri['path'], self._uri['filename'])
         else:
@@ -902,14 +901,14 @@ class Uri(object):
 # **********************************************************/**
 class BotsError(Exception):
     ''' formats the error messages. Under all circumstances: give (reasonable) output, no errors.
-        input (msg,*args,**kwargs) can be anything: strings (any charset), unicode, objects. Note that these are errors, so input can be 'not valid'!
+        input (msg,*args,**kwargs) can be anything: strings (any charset), objects. Note that these are errors, so input can be 'not valid'!
         to avoid the risk of 'errors during errors' catch-all solutions are used.
         2 ways to raise Exceptions:
         - BotsError('tekst %(var1)s %(var2)s',{'var1':'value1','var2':'value2'})  ###this one is preferred!!
         - BotsError('tekst %(var1)s %(var2)s',var1='value1',var2='value2')
     '''
     def __init__(self, msg, *args, **kwargs):
-        self.msg = safe_unicode(msg)
+        self.msg = safe_str(msg)
         if args:  # expect args[0] to be a dict
             if isinstance(args[0], dict):
                 xxx = args[0]
@@ -918,20 +917,14 @@ class BotsError(Exception):
         else:
             xxx = kwargs
         self.xxx = collections.defaultdict(str)  # catch-all if var in string is not there
-        for key, value in xxx.iteritems():
-            self.xxx[safe_unicode(key)] = safe_unicode(value)
+        for key, value in xxx.items():
+            self.xxx[safe_str(key)] = safe_str(value)
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             return self.msg % self.xxx  # this is already unicode
         except Exception:
             return self.msg  # errors in self.msg; non supported format codes. Don't think this happen...
-
-    def __str__(self):
-        try:
-            return (self.msg % self.xxx).encode('utf-8', 'ignore')
-        except Exception:
-            return self.msg.encode('utf-8', 'ignore')  # errors in self.msg; non supported format codes. Don't think this happen...
 
 
 class CodeConversionError(BotsError):

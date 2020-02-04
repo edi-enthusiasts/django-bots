@@ -1,7 +1,4 @@
-from __future__ import print_function
-from __future__ import unicode_literals
 import unittest
-import sys
 import subprocess
 import logging
 import datetime
@@ -10,9 +7,6 @@ import bots.botsinit as botsinit
 import bots.botsglobal as botsglobal
 import bots.communication as communication
 from bots.botsconfig import DONE
-
-if sys.version_info[0] > 2:
-    basestring = unicode = str
 
 '''
 plugin unitfilenameout.zip
@@ -35,7 +29,7 @@ class TestMain(unittest.TestCase):
         )
         count = 0
         for row in botslib.query(
-            u'''SELECT idta FROM ta
+            '''SELECT idta FROM ta
                 WHERE status=%(status)s
                 AND statust=%(statust)s
                 ORDER BY idta DESC''',

@@ -102,8 +102,8 @@ class SelectDocument(Select):
     status = TypedChoiceField(
         [
             (0, "---------"),
-            (320, _(u'Document-in')),
-            (330, _(u'Document-out'))
+            (320, _('Document-in')),
+            (330, _('Document-out'))
         ],
         required=False,
         initial=0,

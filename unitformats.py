@@ -1,7 +1,4 @@
-from __future__ import print_function
-from __future__ import unicode_literals
 import unittest
-import sys
 import bots
 import bots.node as node
 import bots.botsinit as botsinit
@@ -9,9 +6,6 @@ import bots.inmessage as inmessage
 import bots.outmessage as outmessage
 import bots.botsglobal as botsglobal
 from bots.botsconfig import MPATH
-
-if sys.version_info[0] > 2:
-    basestring = unicode = str
 
 ''' plugin unitformats
     set bots.ini: max_number_errors = 1

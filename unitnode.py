@@ -1,7 +1,4 @@
-from __future__ import print_function
-from __future__ import unicode_literals
 import os
-import sys
 import unittest
 import shutil
 import bots.inmessage as inmessage
@@ -10,8 +7,6 @@ import bots.botslib as botslib
 import bots.node as node
 import bots.botsinit as botsinit
 import bots.botsglobal as botsglobal
-if sys.version_info[0] > 2:
-    basestring = unicode = str
 
 '''plugin unitnode.zip
 not an acceptance tst
@@ -125,13 +120,13 @@ class Testnode(unittest.TestCase):
             start = '0'
             for u in t.getloop({'BOTSID': 'UNH'}, {'BOTSID': 'LIN'}):
                 nextstart = u.get({'BOTSID': 'LIN', 'C212.7140': None})
-                self.failUnless(start < nextstart)
+                self.assertTrue(start < nextstart)
                 start = nextstart
             t.sort({'BOTSID': 'UNH'}, {'BOTSID': 'LIN', '1082': None})
             start = '0'
             for u in t.getloop({'BOTSID': 'UNH'}, {'BOTSID': 'LIN'}):
                 nextstart = u.get({'BOTSID': 'LIN', '1082': None})
-                self.failUnless(start < nextstart)
+                self.assertTrue(start < nextstart)
                 start = nextstart
 
         self.assertRaises(botslib.MappingRootError, out.get, ())
@@ -220,7 +215,7 @@ class Testnode(unittest.TestCase):
         inn.root.processqueries({}, 2)
         inn.root.fetchqueries()
         # print collectqueries
-        comparequeries = {u'UNH': {'reference': u'UNHREF', 'messagetype': u'ORDERSD96AUNEAN008', 'reference2': u'UNBREF', 'topartner': u'PARTNER2', 'alt': u'50EAB', 'alt2': u'50E9', 'frompartner': u'PARTNER1'}, u'UNB': {'topartner': u'PARTNER2', 'reference2': u'UNBREF', 'reference': u'UNBREF', 'frompartner': u'PARTNER1'}, u'UNZ': {'reference': u'UNBREF', 'reference2': u'UNBREF', 'topartner': u'PARTNER2', 'frompartner': u'PARTNER1'}}
+        comparequeries = {'UNH': {'reference': 'UNHREF', 'messagetype': 'ORDERSD96AUNEAN008', 'reference2': 'UNBREF', 'topartner': 'PARTNER2', 'alt': '50EAB', 'alt2': '50E9', 'frompartner': 'PARTNER1'}, 'UNB': {'topartner': 'PARTNER2', 'reference2': 'UNBREF', 'reference': 'UNBREF', 'frompartner': 'PARTNER1'}, 'UNZ': {'reference': 'UNBREF', 'reference2': 'UNBREF', 'topartner': 'PARTNER2', 'frompartner': 'PARTNER1'}}
         self.assertEqual(comparequeries, collectqueries)
         # inn.root.displayqueries()
 

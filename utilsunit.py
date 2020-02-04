@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import unicode_literals
 import copy
 import sys
 import os
@@ -11,8 +9,6 @@ import bots.botslib as botslib
 import bots.botsglobal as botsglobal
 import bots.inmessage as inmessage
 import bots.outmessage as outmessage
-if sys.version_info[0] > 2:
-    basestring = unicode = str
 
 
 def comparenode(node1, node2org):
@@ -101,7 +97,7 @@ def dummylogger():
 
 
 def getreportlastrun():
-    for row in botslib.query(u'''SELECT *
+    for row in botslib.query('''SELECT *
                             FROM    report
                             ORDER BY idta DESC
                             '''):
@@ -110,7 +106,7 @@ def getreportlastrun():
 
 
 def geterrorlastrun():
-    for row in botslib.query(u'''SELECT *
+    for row in botslib.query('''SELECT *
                             FROM    filereport
                             ORDER BY idta DESC
                             '''):
@@ -120,7 +116,7 @@ def geterrorlastrun():
 
 def getlastta(status):
     for row in botslib.query(
-        u'''SELECT * FROM ta
+        '''SELECT * FROM ta
             WHERE status=%(status)s
             ORDER BY idta DESC''',
         {'status': status}

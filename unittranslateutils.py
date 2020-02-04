@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-from __future__ import unicode_literals  # python2: gives problems; this module contains unicode strings; in function ccode ascii strings are needed (for field).
-import sys
 import unittest
 import time
 
@@ -12,16 +9,13 @@ import bots.botsinit as botsinit
 import bots.transform as transform
 import bots.validate_email as validate_email
 
-if sys.version_info[0] > 2:
-    basestring = unicode = str
-
 '''plugin unittranslateutils.zip
 in bots.ini:  runacceptancetest = False
 '''
 
 
 class MyObject(object):
-    c = u'c_éëèêíïìîóöòõôúüùûáäàãâñýÿÖÓÒÕ'
+    c = 'c_éëèêíïìîóöòõôúüùûáäàãâñýÿÖÓÒÕ'
 
     def __init__(self, a, b):
         self.a = a
@@ -76,12 +70,12 @@ class TestTranslate(unittest.TestCase):
         transform.persist_update(domein, botskey, value)  # test-tet is not there. gives no error...
 
     def testpersist_unicode(self):
-        domein = u'test'
-        botskey = u'ëö1235:\ufb52\ufb66\ufedb'
-        botskey3 = u'ëö135:\ufb52\ufb66\ufedb'
-        value = u'xxxxxxxxxxxxxxxxx'
-        value2 = u'IEFJUKAHE*FMhr\u0302\u0267t4hr f.wch shjeriw'
-        value3 = u'1/2/d'*3024
+        domein = 'test'
+        botskey = 'ëö1235:\ufb52\ufb66\ufedb'
+        botskey3 = 'ëö135:\ufb52\ufb66\ufedb'
+        value = 'xxxxxxxxxxxxxxxxx'
+        value2 = 'IEFJUKAHE*FMhr\u0302\u0267t4hr f.wch shjeriw'
+        value3 = '1/2/d'*3024
 
         transform.persist_delete(domein, botskey)
         transform.persist_delete(domein, botskey3)
@@ -101,12 +95,12 @@ class TestTranslate(unittest.TestCase):
         transform.persist_update(domein, botskey, value)  # is not there. gives no error...
 
     def testpersist_moreunicode(self):
-        domein = u'test'
-        botskey = u'éëèêíïìîóöòõôúüùûáäàãâ\ufb52\ufb66\ufedb'
-        botskey3 = u'ëéèõöóòñýÿÖÓÒÕ'
-        value = u'éëèêíïìîóöòõôúüùûáäàãâ\ufb52\ufb66\ufedbñýÿÖÓÒÕ'
-        value2 = u'ëéèõöóò'
-        value3 = u'1/2/dñýÿÖÓÒÕ'*3024
+        domein = 'test'
+        botskey = 'éëèêíïìîóöòõôúüùûáäàãâ\ufb52\ufb66\ufedb'
+        botskey3 = 'ëéèõöóòñýÿÖÓÒÕ'
+        value = 'éëèêíïìîóöòõôúüùûáäàãâ\ufb52\ufb66\ufedbñýÿÖÓÒÕ'
+        value2 = 'ëéèõöóò'
+        value3 = '1/2/dñýÿÖÓÒÕ'*3024
 
         transform.persist_delete(domein, botskey)
         transform.persist_delete(domein, botskey3)
@@ -127,8 +121,8 @@ class TestTranslate(unittest.TestCase):
 
     def testpersist_object(self):
         ''' use objects for pickling '''
-        domein = u'test'
-        botskey = u'éëèêíïìîóöòõôúüùûáäàãâ\ufb52\ufb66\ufedb'
+        domein = 'test'
+        botskey = 'éëèêíïìîóöòõôúüùûáäàãâ\ufb52\ufb66\ufedb'
         myobject = MyObject('a_éëèêíïìîóöòõôúüùûáäàãâñýÿÖÓÒÕ', 'b_éëèêíïìîóöòõôúüùûáäàãâñýÿÖÓÒÕ')
         myobject.d = '1_éëèêíïìîóöòõôúüùûáäàãâñýÿÖÓÒÕ'
         myobject.e = 12345
@@ -160,25 +154,25 @@ class TestTranslate(unittest.TestCase):
         print(ts1, ts2)
 
     def testgetcodeset(self):
-        self.assertEqual([u'TESTOUT'], transform.getcodeset('artikel', 'TESTIN'), 'test getcodeset')
+        self.assertEqual(['TESTOUT'], transform.getcodeset('artikel', 'TESTIN'), 'test getcodeset')
         # print(transform.getcodeset('list', 'list'))
-        self.assertEqual([u'1', u'2', u'4', u'5'], transform.getcodeset('list', 'list'), 'test getcodeset')
+        self.assertEqual(['1', '2', '4', '5'], transform.getcodeset('list', 'list'), 'test getcodeset')
 
     def testdatemask(self):
-        self.assertEqual(u'20121231', transform.datemask('12/31/2012', 'MM/DD/YYYY', 'YYYYMMDD'), 'test datemask')
-        self.assertEqual(u'201231', transform.datemask('12/31/2012', 'MM/DD/YYYY', 'YYMMDD'), 'test datemask')
+        self.assertEqual('20121231', transform.datemask('12/31/2012', 'MM/DD/YYYY', 'YYYYMMDD'), 'test datemask')
+        self.assertEqual('201231', transform.datemask('12/31/2012', 'MM/DD/YYYY', 'YYMMDD'), 'test datemask')
 
     def testuseoneof(self):
-        self.assertEqual(u'test', transform.useoneof(None, 'test'), 'test useoneof')
-        self.assertEqual(u'test', transform.useoneof('test', 'test1', 'test2'), 'test useoneof')
+        self.assertEqual('test', transform.useoneof(None, 'test'), 'test useoneof')
+        self.assertEqual('test', transform.useoneof('test', 'test1', 'test2'), 'test useoneof')
         self.assertEqual(None, transform.useoneof(), 'test useoneof')
         self.assertEqual(None, transform.useoneof(()), 'test useoneof')
         self.assertEqual(None, transform.useoneof(''), 'test useoneof')
         self.assertEqual(None, transform.useoneof(None, None, None, None), 'test useoneof')
 
     def testuseoneofalt(self):
-        self.assertEqual(u'test', None or 'test', 'test useoneof')
-        self.assertEqual(u'test', 'test' or 'test1' or 'test2', 'test useoneof')
+        self.assertEqual('test', None or 'test', 'test useoneof')
+        self.assertEqual('test', 'test' or 'test1' or 'test2', 'test useoneof')
         self.assertEqual(None, None, 'test useoneof')
         self.assertEqual(None, None or None or None or None, 'test useoneof')
         self.assertEqual('t', None or '' or None or 't', 'test useoneof')
@@ -186,30 +180,30 @@ class TestTranslate(unittest.TestCase):
     def testdateformat(self):
         self.assertEqual(None, transform.dateformat(''), 'test dateformat')
         self.assertEqual(None, transform.dateformat(None), 'test dateformat')
-        self.assertEqual(u'102', transform.dateformat('12345678'), 'test dateformat')
+        self.assertEqual('102', transform.dateformat('12345678'), 'test dateformat')
         # self.assertEqual(None, transform.dateformat('123456789'), 'test dateformat')
         self.assertRaises(botslib.BotsError, transform.dateformat, '123456789')
         # self.assertEqual(None, transform.dateformat('1234567'), 'test dateformat')
         self.assertRaises(botslib.BotsError, transform.dateformat, '1234567')
-        self.assertEqual(u'203', transform.dateformat('123456789012'), 'test dateformat')
-        self.assertEqual(u'718', transform.dateformat('1234567890123456'), 'test dateformat')
+        self.assertEqual('203', transform.dateformat('123456789012'), 'test dateformat')
+        self.assertEqual('718', transform.dateformat('1234567890123456'), 'test dateformat')
 
     def testtruncate(self):
         self.assertEqual(None, transform.truncate(5, None), 'test truncate')
-        self.assertEqual(u'artik', transform.truncate(5, 'artikel'), 'test truncate')
-        self.assertEqual(u'artikel', transform.truncate(10, 'artikel'), 'test truncate')
-        self.assertEqual(u'a', transform.truncate(1, 'artikel'), 'test truncate')
-        self.assertEqual(u'', transform.truncate(0, 'artikel'), 'test truncate')
+        self.assertEqual('artik', transform.truncate(5, 'artikel'), 'test truncate')
+        self.assertEqual('artikel', transform.truncate(10, 'artikel'), 'test truncate')
+        self.assertEqual('a', transform.truncate(1, 'artikel'), 'test truncate')
+        self.assertEqual('', transform.truncate(0, 'artikel'), 'test truncate')
 
     def testconcat(self):
         self.assertEqual(None, transform.concat(None, None), 'test concatenate')
-        self.assertEqual(u'artikel', transform.concat('artikel', None), 'test concatenate')
-        self.assertEqual(u'artikel', transform.concat(None, 'artikel'), 'test concatenate')
-        self.assertEqual(u'artikel', transform.concat('', 'artikel'), 'test concatenate')
-        self.assertEqual(u'artikel1artikel2', transform.concat('artikel1', 'artikel2'), 'test concatenate')
-        self.assertEqual(u'artikel1 artikel2', transform.concat('artikel1', 'artikel2', sep=' '), 'test concatenate')
-        self.assertEqual(u'artikel1\nartikel2', transform.concat('artikel1', 'artikel2', sep='\n'), 'test concatenate')
-        self.assertEqual(u'artikel1<br>artikel2<br>artikel3', transform.concat('artikel1', 'artikel2', 'artikel3', sep='<br>'), 'test concatenate')
+        self.assertEqual('artikel', transform.concat('artikel', None), 'test concatenate')
+        self.assertEqual('artikel', transform.concat(None, 'artikel'), 'test concatenate')
+        self.assertEqual('artikel', transform.concat('', 'artikel'), 'test concatenate')
+        self.assertEqual('artikel1artikel2', transform.concat('artikel1', 'artikel2'), 'test concatenate')
+        self.assertEqual('artikel1 artikel2', transform.concat('artikel1', 'artikel2', sep=' '), 'test concatenate')
+        self.assertEqual('artikel1\nartikel2', transform.concat('artikel1', 'artikel2', sep='\n'), 'test concatenate')
+        self.assertEqual('artikel1<br>artikel2<br>artikel3', transform.concat('artikel1', 'artikel2', 'artikel3', sep='<br>'), 'test concatenate')
 
     def testunique(self):
         newdomain = 'test' + transform.unique('test')
@@ -290,8 +284,8 @@ class TestTranslate(unittest.TestCase):
         self.assertEqual(True, validate_email.validate_email_address('''#!$%&'*+-/=?^_`{}|~@example.org'''), '')
         self.assertEqual(True, validate_email.validate_email_address('''"()<>[]:,;@\\\"!#$%&'*+-/=?^_`{}| ~.a"@example.org'''), '')
         self.assertEqual(True, validate_email.validate_email_address('" "@example.org'), '')
-        # self.assertEqual(True, validate_email.validate_email_address('üñîçøðé@example.com'), '')  # does work in 3.4, not in 2.7
-        # self.assertEqual(True, validate_email.validate_email_address('test@üñîçøðé.com'), '')  # does work in 3.4, not in 2.7
+        self.assertEqual(True, validate_email.validate_email_address('üñîçøðé@example.com'), '')  # does work in 3.4, not in 2.7
+        self.assertEqual(True, validate_email.validate_email_address('test@üñîçøðé.com'), '')  # does work in 3.4, not in 2.7
         self.assertEqual(True, validate_email.validate_email_address('"test@test"@gmail.com'), '')
 
         self.assertEqual(False, validate_email.validate_email_address('test.gmail.com'), '')

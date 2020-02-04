@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
-from __future__ import print_function
-from __future__ import unicode_literals
 import filecmp
 import os
-import sys
 import logging
 import subprocess
 import glob
@@ -15,9 +12,6 @@ import bots.botsglobal as botsglobal
 import bots.transform as transform
 from bots.botsconfig import EXTERNOUT, PARSED, SPLITUP, TRANSLATED
 
-if sys.version_info[0] > 2:
-    basestring = unicode = str
-
 '''
 plugin 'unit_multi_1'
 enable routes
@@ -27,7 +21,7 @@ not an acceptance test.
 
 def test_plugin():
     for row in botslib.query(
-        u'''SELECT COUNT(*) as count FROM partner
+        '''SELECT COUNT(*) as count FROM partner
             WHERE isgroup = %(isgroup)s''',
         {'isgroup': False}
     ):
@@ -38,7 +32,7 @@ def test_plugin():
         raise Exception('no partner count?')
 
     for row in botslib.query(
-        u'''SELECT COUNT(*) as count FROM partner
+        '''SELECT COUNT(*) as count FROM partner
             WHERE isgroup = %(isgroup)s''',
         {'isgroup': True}
     ):
@@ -49,7 +43,7 @@ def test_plugin():
         raise Exception('no partner count?')
 
     for row in botslib.query(
-        u'''SELECT COUNT(*) as count FROM partnergroup
+        '''SELECT COUNT(*) as count FROM partnergroup
             WHERE from_partner_id=%(from_partner_id)s''',
         {'from_partner_id': 'plugintest1'}
     ):
@@ -60,7 +54,7 @@ def test_plugin():
         raise Exception('no partner count?')
 
     for row in botslib.query(
-        u'''SELECT to_partner_id FROM partnergroup
+        '''SELECT to_partner_id FROM partnergroup
             WHERE from_partner_id=%(from_partner_id)s''',
         {'from_partner_id': 'plugintest2'}
     ):
@@ -68,7 +62,7 @@ def test_plugin():
             raise Exception('error partner count')
 
     for row in botslib.query(
-        u'''SELECT COUNT(*) as count FROM partnergroup
+        '''SELECT COUNT(*) as count FROM partnergroup
             WHERE to_partner_id=%(to_partner_id)s  ''',
         {'to_partner_id': 'plugingroup2'}
     ):
@@ -82,33 +76,33 @@ def test_plugin():
 def test_ccode_with_unicode():
     domein = 'test'
     tests = [
-        (u'key1', u'leftcode'),
-        (u'key2', u'~!@#$%^&*()_+}{:";][=-/.,<>?`'),
-        (u'key3', u'?érýúíó?ás??lzcn?'),
-        (u'key4', u'?ë?ÿüïöä´¨???è?ùì'),
-        (u'key5', u'òà???UIÕÃ?Ñ`~'),
-        (u'key6', u"a\xac\u1234\u20ac\U00008000"),
-        (u'key7', u"abc_\u03a0\u03a3\u03a9.txt"),
-        (u'key8', u"?ÉRÝÚÍÓ?ÁS??LZCN??"),
-        (u'key9', u"Ë?¨YÜ¨IÏÏÖÄ???È?ÙÌÒ`À`Z?"),
+        ('key1', 'leftcode'),
+        ('key2', '~!@#$%^&*()_+}{:";][=-/.,<>?`'),
+        ('key3', '?érýúíó?ás??lzcn?'),
+        ('key4', '?ë?ÿüïöä´¨???è?ùì'),
+        ('key5', 'òà???UIÕÃ?Ñ`~'),
+        ('key6', "a\xac\u1234\u20ac\U00008000"),
+        ('key7', "abc_\u03a0\u03a3\u03a9.txt"),
+        ('key8', "?ÉRÝÚÍÓ?ÁS??LZCN??"),
+        ('key9', "Ë?¨YÜ¨IÏÏÖÄ???È?ÙÌÒ`À`Z?"),
     ]
 
     try:  # clean before test
-        botslib.changeq(u'''DELETE FROM ccode''')
-        botslib.changeq(u'''DELETE FROM ccodetrigger''')
+        botslib.changeq('''DELETE FROM ccode''')
+        botslib.changeq('''DELETE FROM ccodetrigger''')
     except Exception:
         print('Error while deleting: ', botslib.txtexc())
         raise
 
     try:
         botslib.changeq(
-            u'''INSERT INTO ccodetrigger (ccodeid)
+            '''INSERT INTO ccodetrigger (ccodeid)
                 VALUES (%(ccodeid)s)''',
             {'ccodeid': domein}
         )
         for key, value in tests:
             botslib.changeq(
-                u'''INSERT INTO ccode (ccodeid_id,leftcode,rightcode,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8)
+                '''INSERT INTO ccode (ccodeid_id,leftcode,rightcode,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8)
                     VALUES (%(ccodeid)s,%(leftcode)s,%(rightcode)s,'1','1','1','1','1','1','1','1')''',
                 {'ccodeid': domein, 'leftcode': key, 'rightcode': value}
             )
@@ -119,7 +113,7 @@ def test_ccode_with_unicode():
         for key, value in tests:
             print('key', key)
             for row in botslib.query(
-                u'''SELECT rightcode FROM ccode
+                '''SELECT rightcode FROM ccode
                     WHERE ccodeid_id = %(ccodeid)s
                     AND leftcode = %(leftcode)s''',
                 {'ccodeid': domein, 'leftcode': key}
@@ -187,7 +181,7 @@ def grammartest(l, expect_error=True):
 
 
 if __name__ == '__main__':
-    pythoninterpreter = 'python2.7'
+    pythoninterpreter = 'python'
     botsinit.generalinit('config')
     utilsunit.dummylogger()
     utilsunit.cleanoutputdir()

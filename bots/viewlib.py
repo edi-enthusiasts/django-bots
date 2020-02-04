@@ -90,7 +90,7 @@ def django_trace_origin(idta, where):
         '''
         for parent in get_parent(ta_object):
             donelijst.append(parent.idta)
-            for key, value in where.iteritems():
+            for key, value in where.items():
                 if getattr(parent, key) != value:
                     break
             else:  # all where-criteria are true; check if we already have this ta_object
@@ -129,7 +129,7 @@ def trace_document(pquery):
             except IndexError:
                 return  # no result, return
         if child.confirmasked:
-            taorg.confirmtext += u'%(confirmtype)s\n' % {
+            taorg.confirmtext += '%(confirmtype)s\n' % {
                 'confirmasked': child.confirmasked,
                 'confirmed': child.confirmed,
                 'confirmtype': child.confirmtype
@@ -150,7 +150,7 @@ def trace_document(pquery):
             except IndexError:
                 return  # no result, return
         if parent.confirmasked:
-            taorg.confirmtext += u'%(confirmtype)s\n' % {
+            taorg.confirmtext += '%(confirmtype)s\n' % {
                 'confirmasked': parent.confirmasked,
                 'confirmed': parent.confirmed,
                 'confirmtype': parent.confirmtype
@@ -162,7 +162,7 @@ def trace_document(pquery):
         trace_back(parent)
     # main for trace_document*****************
     for taorg in pquery.object_list:
-        taorg.confirmtext = u''
+        taorg.confirmtext = ''
         if taorg.status == SPLITUP:
             trace_back(taorg)
         else:

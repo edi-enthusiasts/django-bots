@@ -10,22 +10,17 @@ __author__ = 'Raymond Hettinger'
 # It doesn't work quite right for triple quoted strings across multiple lines.
 # The whole string is one token so the line numbers on those lines get the string
 # highlight colour. No simple way to fix this, but it's not really an issue.
-import sys
 import keyword
 import tokenize
 import cgi
 import functools
-if sys.version_info[0] > 2:
-    import builtins  # @UnusedImport
-else:
-    import __builtin__ as builtins  # @UnresolvedImport @Reimport
 
 # Analyze Python Source #
 
 
 def is_builtin(s):
     'Return True if s is the name of a builtin'
-    return hasattr(builtins, s)
+    return hasattr(__builtins__, s)
 
 
 def combine_range(lines, start, end):

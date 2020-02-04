@@ -14,6 +14,7 @@ import email.header
 import email.encoders
 import smtplib
 import ftplib
+import pickle
 import socket
 import ssl
 from django.utils.translation import ugettext as _
@@ -33,10 +34,6 @@ if os.name == 'nt':
 elif os.name == 'posix':
     import fcntl  # @UnresolvedImport
 try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
-try:
     import json as simplejson
 except ImportError:
     import simplejson
@@ -52,7 +49,7 @@ def run(idchannel, command, idroute, rootidta=None):
         {'idchannel': idchannel}
     ):
         channeldict = dict(row)  # convert to real dictionary ()
-        botsglobal.logger.debug(u'Start communication channel "%(idchannel)s" type %(type)s %(inorout)s.', channeldict)
+        botsglobal.logger.debug('Start communication channel "%(idchannel)s" type %(type)s %(inorout)s.', channeldict)
         # for acceptance testing bots has an option to turn of external communication in channels
         if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
             # override values in channels for acceptance testing.
@@ -66,7 +63,7 @@ def run(idchannel, command, idroute, rootidta=None):
                     channeldict['type'] = 'mimefile'
                 else:  # channeldict['type'] in ['ftp','ftps','ftpis','sftp','xmlrpc','ftp','ftp','communicationscript','db']
                     channeldict['type'] = 'file'
-            botsglobal.logger.debug(u'Channel "%(idchannel)s" adapted for acceptance test: type "%(type)s", testpath "%(testpath)s".', channeldict)
+            botsglobal.logger.debug('Channel "%(idchannel)s" adapted for acceptance test: type "%(type)s", testpath "%(testpath)s".', channeldict)
 
         # update communication/run process with idchannel
         ta_run = botslib.OldTransaction(botslib._Transaction.processlist[-1])
@@ -89,10 +86,10 @@ def run(idchannel, command, idroute, rootidta=None):
 
         comclass = classtocall(channeldict, idroute, userscript, scriptname, command, rootidta)  # call the class for this type of channel
         comclass.run()
-        botsglobal.logger.debug(u'Finished communication channel "%(idchannel)s" type %(type)s %(inorout)s.', channeldict)
+        botsglobal.logger.debug('Finished communication channel "%(idchannel)s" type %(type)s %(inorout)s.', channeldict)
         break  # there can only be one channel; this break takes care that if found, the 'else'-clause is skipped
     else:
-        raise botslib.CommunicationError(_(u'Channel "%(idchannel)s" is unknown.'), {'idchannel': idchannel})
+        raise botslib.CommunicationError(_('Channel "%(idchannel)s" is unknown.'), {'idchannel': idchannel})
 
 
 class _comsession(object):
@@ -126,7 +123,7 @@ class _comsession(object):
                     # max_nr_retry : get this from channel. should be integer, but only textfields where left. so might be ''/None->use 0
                     max_nr_retry = int(self.channeldict['rsrv1']) if self.channeldict['rsrv1'] else 0
                     if max_nr_retry:
-                        domain = u'bots_communication_failure_' + self.channeldict['idchannel']
+                        domain = 'bots_communication_failure_' + self.channeldict['idchannel']
                         nr_retry = botslib.unique(domain)  # update nr_retry in database
                         if nr_retry >= max_nr_retry:
                             botslib.unique(domain, updatewith=0)  # reset nr_retry to zero
@@ -138,7 +135,7 @@ class _comsession(object):
                     # max_nr_retry : get this from channel. should be integer, but only textfields where left. so might be ''/None->use 0
                     max_nr_retry = int(self.channeldict['rsrv1']) if self.channeldict['rsrv1'] else 0
                     if max_nr_retry:
-                        domain = u'bots_communication_failure_' + self.channeldict['idchannel']
+                        domain = 'bots_communication_failure_' + self.channeldict['idchannel']
                         botslib.unique(domain, updatewith=0)  # set nr_retry to zero
                 self.incommunicate()
                 self.disconnect()
@@ -273,7 +270,7 @@ class _comsession(object):
                 ta_from = botslib.OldTransaction(row['idta'])
                 ta_to = ta_from.copyta(status=FILEOUT)
                 ta_to.synall()  # needed for user exits: get all parameters of ta_to from database;
-                confirmtype = u''
+                confirmtype = ''
                 confirmasked = False
                 charset = row['charset']
 
@@ -313,12 +310,12 @@ class _comsession(object):
                         topartner=row['topartner']
                     ):
                         message.add_header("Disposition-Notification-To", frommail)
-                        confirmtype = u'ask-email-MDN'
+                        confirmtype = 'ask-email-MDN'
                         confirmasked = True
 
                     # set subject
                     if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
-                        subject = u'12345678'
+                        subject = '12345678'
                     else:
                         subject = str(row['idta'])
                     content = botslib.readdata(row['filename'])  # get attachment from data file
@@ -441,14 +438,14 @@ class _comsession(object):
         def mdnreceive():
             tmp = msg.get_param('reporttype')
             if tmp is None or email.utils.collapse_rfc2231_value(tmp) != 'disposition-notification':  # invalid MDN
-                raise botslib.CommunicationInError(_(u'Received email-MDN with errors.'))
+                raise botslib.CommunicationInError(_('Received email-MDN with errors.'))
             for part in msg.get_payload():
                 if part.get_content_type() == 'message/disposition-notification':
                     originalmessageid = part['original-message-id']
                     if originalmessageid is not None:
                         break
             else:  # invalid MDN: 'message/disposition-notification' not in email
-                raise botslib.CommunicationInError(_(u'Received email-MDN with errors.'))
+                raise botslib.CommunicationInError(_('Received email-MDN with errors.'))
             botslib.changeq(
                 '''UPDATE ta
                    SET confirmed=%(confirmed)s, confirmidta=%(confirmidta)s
@@ -576,7 +573,7 @@ class _comsession(object):
                     frompartner = self.mailaddress2idpartner(frommail)
                     if frompartner is None:
                         raise botslib.CommunicationInError(
-                            _(u'"From" emailaddress(es) %(email)s not authorised/unknown for channel "%(idchannel)s".'),
+                            _('"From" emailaddress(es) %(email)s not authorised/unknown for channel "%(idchannel)s".'),
                             {'email': frommail, 'idchannel': self.channeldict['idchannel']}
                         )
                 # topartner, cc (incl autorization)
@@ -593,7 +590,7 @@ class _comsession(object):
                             break
                     else:  # if no valid topartner: generate error
                         raise botslib.CommunicationInError(
-                            _(u'"To" emailaddress(es) %(email)s not authorised/unknown for channel "%(idchannel)s".'),
+                            _('"To" emailaddress(es) %(email)s not authorised/unknown for channel "%(idchannel)s".'),
                             {'email': list_to_address, 'idchannel': self.channeldict['idchannel']}
                         )
 
@@ -619,7 +616,7 @@ class _comsession(object):
                             confirmasked = True
                     nrmimesaved = savemime(msg)
                     if not nrmimesaved:
-                        raise botslib.CommunicationInError(_(u'No valid attachment in received email'))
+                        raise botslib.CommunicationInError(_('No valid attachment in received email'))
             except Exception:
                 txt = botslib.txtexc()
                 ta_from.update(statust=ERROR, errortext=txt)
@@ -636,24 +633,23 @@ class _comsession(object):
 
     @staticmethod
     def checkheaderforcharset(org_header):
-        ''' correct handling of charset for email headers that are saved in database.
-        '''
+        ''' correct handling of charset for email headers that are saved in database.'''
         header, encoding = email.header.decode_header(org_header)[0]  # for subjects with non-ascii content special notation exists in MIME-standard
         try:
             if encoding is not None:
-                return header.decode(encoding)  # decode (to unicode)
+                return header.decode(encoding)  # decode (to string from bytes)
             # test if valid; use case: spam... need to test because database-storage will give errors otherwise.
             header.encode('utf8')
             return header
         except Exception:
-            raise botslib.CommunicationInError(_(u'Email header invalid - probably issues with characterset.'))
+            raise botslib.CommunicationInError(_('Email header invalid - probably issues with characterset.'))
 
     def mailaddress2idpartner(self, mailaddress):
         ''' lookup email address to see if know in configuration. '''
         mailaddress_lower = mailaddress.lower()
         # first check in chanpar email-addresses for this channel
         for row in botslib.query(
-            u'''SELECT chanpar.idpartner_id as idpartner
+            '''SELECT chanpar.idpartner_id as idpartner
                 FROM chanpar,channel,partner
                 WHERE chanpar.idchannel_id=channel.idchannel
                 AND chanpar.idpartner_id=partner.idpartner
@@ -670,7 +666,7 @@ class _comsession(object):
 
         # if not found, check in partner-tabel (is less specific). Also test if in CC field.
         for row in botslib.query(
-            u'''SELECT idpartner FROM partner
+            '''SELECT idpartner FROM partner
                 WHERE active=%(active)s
                 AND (LOWER(mail) = %(mail)s OR LOWER(cc) LIKE %(maillike)s)''',
             {
@@ -684,7 +680,7 @@ class _comsession(object):
 
     def idpartner2mailaddress(self, idpartner):
         for row in botslib.query(
-            u'''SELECT chanpar.mail as mail, chanpar.cc as cc
+            '''SELECT chanpar.mail as mail, chanpar.cc as cc
                 FROM chanpar, channel, partner
                 WHERE chanpar.idchannel_id = channel.idchannel
                 AND chanpar.idpartner_id = partner.idpartner
@@ -701,7 +697,7 @@ class _comsession(object):
                 return row['mail'], row['cc']
 
         for row in botslib.query(
-            u'''SELECT mail, cc FROM partner
+            '''SELECT mail, cc FROM partner
                 WHERE active = %(active)s
                 AND idpartner = %(idpartner)s''',
             {'active': True, 'idpartner': idpartner}
@@ -710,7 +706,7 @@ class _comsession(object):
                 return row['mail'], row['cc']
 
         raise botslib.CommunicationOutError(
-            _(u'No mail-address for partner "%(partner)s" (channel "%(idchannel)s").'),
+            _('No mail-address for partner "%(partner)s" (channel "%(idchannel)s").'),
             {'partner': idpartner, 'idchannel': self.channeldict['idchannel']}
         )
 
@@ -770,7 +766,7 @@ class _comsession(object):
                 if format_spec == 'name':
                     return name
                 raise botslib.CommunicationOutError(
-                    _(u'Error in format of "{filename}": unknown format: "%(format)s".'),
+                    _('Error in format of "{filename}": unknown format: "%(format)s".'),
                     {'format': format_spec}
                 )
         unique = str(botslib.unique(self.channeldict['idchannel']))  # create unique part for attachment-filename
@@ -794,7 +790,7 @@ class _comsession(object):
             except Exception:
                 txt = botslib.txtexc()
                 raise botslib.CommunicationOutError(
-                    _(u'Error in formatting outgoing filename "%(filename)s". Error: "%(error)s".'),
+                    _('Error in formatting outgoing filename "%(filename)s". Error: "%(error)s".'),
                     {'filename': tofilename, 'error': txt}
                 )
         if self.userscript and hasattr(self.userscript, 'filename'):
@@ -845,7 +841,7 @@ class file(_comsession):
                     elif os.name == 'posix':
                         fcntl.lockf(fromfile.fileno(), fcntl.LOCK_SH | fcntl.LOCK_NB)
                     else:
-                        raise botslib.LockedFileError(_(u'Can not do a systemlock on this platform'))
+                        raise botslib.LockedFileError(_('Can not do a systemlock on this platform'))
                 # open tofile
                 tofilename = str(ta_to.idta)
                 tofile = botslib.opendata(tofilename, 'wb')
@@ -891,7 +887,7 @@ class file(_comsession):
             mode = 'ab'
         # select the db-ta's for this channel
         for row in botslib.query(
-            u'''SELECT idta, filename, numberofresends FROM ta
+            '''SELECT idta, filename, numberofresends FROM ta
                 WHERE idta > %(rootidta)s
                 AND status = %(status)s
                 AND statust = %(statust)s
@@ -917,7 +913,7 @@ class file(_comsession):
                     elif os.name == 'posix':
                         fcntl.lockf(tofile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
                     else:
-                        raise botslib.LockedFileError(_(u'Can not do a systemlock on this platform'))
+                        raise botslib.LockedFileError(_('Can not do a systemlock on this platform'))
                 # open fromfile
                 fromfile = botslib.opendata(row['filename'], 'rb')
                 # copy
@@ -1013,10 +1009,10 @@ class pop3(_comsession):
     def disconnect(self):
         try:
             if not self.session:
-                raise Exception(_(u'Pop3 connection not OK'))
+                raise Exception(_('Pop3 connection not OK'))
             resp = self.session.quit()  # pop3 server will now actually delete the mails
             if resp[:1] != '+':
-                raise Exception(_(u'QUIT command to POP3 server failed'))
+                raise Exception(_('QUIT command to POP3 server failed'))
         except Exception:  # connection is gone. Delete everything that is received to avoid double receiving.
             botslib.ErrorProcess(functionname='pop3-incommunicate', errortext='Could not fetch emails via POP3; probably communication problems', channeldict=self.channeldict)
             for idta in self.listoftamarkedfordelete:
@@ -1165,10 +1161,10 @@ class smtp(_comsession):
                 # error in python 2.6.4....user and password can not be unicode
                 self.session.login(str(self.channeldict['username']), str(self.channeldict['secret']))
             except smtplib.SMTPAuthenticationError:
-                raise botslib.CommunicationOutError(_(u'SMTP server did not accept user/password combination.'))
+                raise botslib.CommunicationOutError(_('SMTP server did not accept user/password combination.'))
             except Exception:
                 txt = botslib.txtexc()
-                raise botslib.CommunicationOutError(_(u'SMTP login failed. Error:\n%(txt)s'), {'txt': txt})
+                raise botslib.CommunicationOutError(_('SMTP login failed. Error:\n%(txt)s'), {'txt': txt})
 
     @botslib.log_session
     def outcommunicate(self):
@@ -1177,7 +1173,7 @@ class smtp(_comsession):
         '''
         # send messages
         for row in botslib.query(
-            u'''SELECT idta, filename, frommail, tomail, cc, numberofresends
+            '''SELECT idta, filename, frommail, tomail, cc, numberofresends
                 FROM ta
                 WHERE idta > %(rootidta)s
                 AND status = %(status)s
@@ -1302,7 +1298,7 @@ class ftp(_comsession):
         try:  # some ftp servers give errors when directory is empty; catch these errors here
             files = self.session.nlst()
         except (ftplib.error_perm, ftplib.error_temp) as msg:
-            if str(msg)[:3] not in [u'550', u'450']:
+            if str(msg)[:3] not in ['550', '450']:
                 raise
 
         lijst = fnmatch.filter(files, self.channeldict['filename'])
@@ -1325,14 +1321,14 @@ class ftp(_comsession):
                     else:
                         self.session.retrlines("RETR " + fromfilename, lambda s, w=tofile.write: w(s+"\n"))
                 except ftplib.error_perm as msg:
-                    if str(msg)[:3] in [u'550']:  # we are trying to download a directory...
-                        raise botslib.BotsError(u'To be catched')
+                    if str(msg)[:3] in ['550']:  # we are trying to download a directory...
+                        raise botslib.BotsError('To be catched')
                     else:
                         raise
                 tofile.close()
                 filesize = os.path.getsize(botslib.abspathdata(tofilename))
                 if not filesize:
-                    raise botslib.BotsError(u'To be catched; directory (or empty file)')
+                    raise botslib.BotsError('To be catched; directory (or empty file)')
             except botslib.BotsError:  # directory or empty file; handle exception but generate no error.
                 if remove_ta:
                     try:
@@ -1426,7 +1422,7 @@ class ftps(ftp):
     '''
     def connect(self):
         if not hasattr(ftplib, 'FTP_TLS'):
-            raise botslib.CommunicationError(_(u'ftps is not supported by your python version, use >=2.7'))
+            raise botslib.CommunicationError(_('ftps is not supported by your python version, use >=2.7'))
         if self.userscript and hasattr(self.userscript, 'keyfile'):
             keyfile, certfile = botslib.runscript(
                 self.userscript,
@@ -1507,7 +1503,7 @@ class ftpis(ftp):
     '''
     def connect(self):
         if not hasattr(ftplib, 'FTP_TLS'):
-            raise botslib.CommunicationError(_(u'ftpis is not supported by your python version, use >=2.7'))
+            raise botslib.CommunicationError(_('ftpis is not supported by your python version, use >=2.7'))
         if self.userscript and hasattr(self.userscript, 'keyfile'):
             keyfile, certfile = botslib.runscript(
                 self.userscript,
@@ -1548,11 +1544,11 @@ class sftp(_comsession):
         try:
             import paramiko
         except Exception:
-            raise ImportError(_(u'Dependency failure: communicationtype "sftp" requires python library "paramiko".'))
+            raise ImportError(_('Dependency failure: communicationtype "sftp" requires python library "paramiko".'))
         try:
             from Crypto import Cipher
         except Exception:
-            raise ImportError(_(u'Dependency failure: communicationtype "sftp" requires python library "pycrypto".'))
+            raise ImportError(_('Dependency failure: communicationtype "sftp" requires python library "pycrypto".'))
         # setup logging if required
         ftpdebug = botsglobal.ini.getint('settings', 'ftpdebug', 0)
         if ftpdebug > 0:
@@ -1720,10 +1716,10 @@ class xmlrpc(_comsession):
         From channel is used: username, secret, host, port, path. Path is the function to be used/called.
     '''
     def connect(self):
-        import xmlrpclib
+        import xmlrpc.client
         uri = "http://%(username)s%(secret)s@%(host)s:%(port)s" % self.channeldict
         self.filename = "http://%(username)s@%(host)s:%(port)s" % self.channeldict  # used as 'filename' in reports etc
-        session = xmlrpclib.ServerProxy(uri)
+        session = xmlrpc.client.ServerProxy(uri)
         self.xmlrpc_call = getattr(session, self.channeldict['path'])  # self.xmlrpc_call is called in communication
 
     @botslib.log_session
@@ -1815,28 +1811,28 @@ class db(_comsession):
     def connect(self):
         if self.userscript is None:
             raise botslib.BotsImportError(
-                _(u'Channel "%(idchannel)s" is type "db", but no communicationscript exists.'),
+                _('Channel "%(idchannel)s" is type "db", but no communicationscript exists.'),
                 {'idchannel': self.channeldict['idchannel']}
             )
         # check functions bots assumes to be present in userscript:
         if not hasattr(self.userscript, 'connect'):
             raise botslib.ScriptImportError(
-                _(u'No function "connect" in imported communicationscript "%(communicationscript)s".'),
+                _('No function "connect" in imported communicationscript "%(communicationscript)s".'),
                 {'communicationscript': self.scriptname}
             )
         if self.channeldict['inorout'] == 'in' and not hasattr(self.userscript, 'incommunicate'):
             raise botslib.ScriptImportError(
-                _(u'No function "incommunicate" in imported communicationscript "%(communicationscript)s".'),
+                _('No function "incommunicate" in imported communicationscript "%(communicationscript)s".'),
                 {'communicationscript': self.scriptname}
             )
         if self.channeldict['inorout'] == 'out' and not hasattr(self.userscript, 'outcommunicate'):
             raise botslib.ScriptImportError(
-                _(u'No function "outcommunicate" in imported communicationscript "%(communicationscript)s".'),
+                _('No function "outcommunicate" in imported communicationscript "%(communicationscript)s".'),
                 {'communicationscript': self.scriptname}
             )
         if not hasattr(self.userscript, 'disconnect'):
             raise botslib.ScriptImportError(
-                _(u'No function "disconnect" in imported communicationscript "%(communicationscript)s".'),
+                _('No function "disconnect" in imported communicationscript "%(communicationscript)s".'),
                 {'communicationscript': self.scriptname}
             )
 
@@ -1972,7 +1968,7 @@ class communicationscript(_comsession):
     def connect(self):
         if self.userscript is None or not botslib.tryrunscript(self.userscript, self.scriptname, 'connect', channeldict=self.channeldict):
             raise botslib.BotsImportError(
-                _(u'Channel "%(idchannel)s" is type "communicationscript", but no communicationscript exists.'),
+                _('Channel "%(idchannel)s" is type "communicationscript", but no communicationscript exists.'),
                 {'idchannel': self.channeldict}
             )
 
@@ -2075,7 +2071,7 @@ class communicationscript(_comsession):
             mode = 'ab'
         # select the db-ta's for this channel
         for row in botslib.query(
-            u'''SELECT idta, filename, numberofresends FROM ta
+            '''SELECT idta, filename, numberofresends FROM ta
                 WHERE idta > %(rootidta)s
                 AND status = %(status)s
                 AND statust = %(statust)s
@@ -2136,7 +2132,7 @@ class trash(_comsession):
         ''' does output of files to 'nothing' (trash it).'''
         # select the db-ta's for this channel
         for row in botslib.query(
-            u'''SELECT idta, filename, numberofresends FROM ta
+            '''SELECT idta, filename, numberofresends FROM ta
                 WHERE idta > %(rootidta)s
                 AND status = %(status)s
                 AND statust = %(statust)s
@@ -2170,7 +2166,7 @@ class http(_comsession):
         try:
             self.requests = botslib.botsbaseimport('requests')
         except ImportError:
-            raise ImportError(_(u'Dependency failure: communicationtype "http(s)" requires python library "requests".'))
+            raise ImportError(_('Dependency failure: communicationtype "http(s)" requires python library "requests".'))
         if self.channeldict['username'] and self.channeldict['secret']:
             self.auth = (self.channeldict['username'], self.channeldict['secret'])
         else:
@@ -2195,7 +2191,7 @@ class http(_comsession):
                 )
                 if outResponse.status_code != self.requests.codes.ok:  # communication not OK: exception
                     raise botslib.CommunicationError(
-                        _(u'%(scheme)s receive error, response code: "%(status_code)s".'),
+                        _('%(scheme)s receive error, response code: "%(status_code)s".'),
                         {'scheme': self.scheme, 'status_code': outResponse.status_code}
                     )
                 if not outResponse.content:  # communication OK, but nothing received: break
@@ -2270,7 +2266,7 @@ class http(_comsession):
                 )
                 if outResponse.status_code != self.requests.codes.ok:
                     raise botslib.CommunicationError(
-                        _(u'%(scheme)s send error, response code: "%(status_code)s".'),
+                        _('%(scheme)s send error, response code: "%(status_code)s".'),
                         {'scheme': self.scheme, 'status_code': outResponse.status_code}
                     )
             except Exception:

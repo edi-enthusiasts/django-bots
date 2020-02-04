@@ -67,17 +67,17 @@ def start():
     )
     botsglobal.logger.log(
         25,
-        _(u'Bots %(process_name)s started.'),
+        _('Bots %(process_name)s started.'),
         {'process_name': process_name}
     )
     botsglobal.logger.log(
         25,
-        _(u'Bots %(process_name)s configdir: "%(configdir)s".'),
+        _('Bots %(process_name)s configdir: "%(configdir)s".'),
         {'process_name': process_name, 'configdir': botsglobal.ini.get('directories', 'config')}
     )
     botsglobal.logger.log(
         25,
-        _(u'Bots %(process_name)s serving at port: "%(port)s".'),
+        _('Bots %(process_name)s serving at port: "%(port)s".'),
         {'process_name': process_name, 'port': botsglobal.ini.getint('webserver', 'port', 8080)}
     )
     # handle ssl: cherrypy < 3.2 always uses pyOpenssl. cherrypy >= 3.2 uses python buildin ssl (python >= 2.6 has buildin support for ssl).
@@ -93,13 +93,13 @@ def start():
             botswebserver.ssl_private_key = ssl_private_key
         botsglobal.logger.log(
             25,
-            _(u'Bots %(process_name)s uses ssl (https).'),
+            _('Bots %(process_name)s uses ssl (https).'),
             {'process_name': process_name}
         )
     else:
         botsglobal.logger.log(
             25,
-            _(u'Bots %(process_name)s uses plain http (no ssl).'),
+            _('Bots %(process_name)s uses plain http (no ssl).'),
             {'process_name': process_name}
         )
 

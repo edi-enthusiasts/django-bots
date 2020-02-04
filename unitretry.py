@@ -1,6 +1,3 @@
-from __future__ import print_function
-from __future__ import unicode_literals
-import sys
 import subprocess
 import logging
 import utilsunit
@@ -8,9 +5,6 @@ import bots.botslib as botslib
 import bots.botsinit as botsinit
 import bots.botsglobal as botsglobal
 from bots.botsconfig import EXTERNOUT
-
-if sys.version_info[0] > 2:
-    basestring = unicode = str
 
 # plugin unitretry.zip
 # activate routes
@@ -25,7 +19,7 @@ if sys.version_info[0] > 2:
 
 def change_communication_type(idchannel, to_type):
     botslib.changeq(
-        u'''UPDATE channel SET type = %(to_type)s
+        '''UPDATE channel SET type = %(to_type)s
             WHERE idchannel = %(idchannel)s''',
         {
             'to_type': to_type,
@@ -42,13 +36,13 @@ def scriptwrite(path, content):
 
 def indicate_rereceive():
     count = 0
-    for row in botslib.query(u'''SELECT idta
+    for row in botslib.query('''SELECT idta
                             FROM    filereport
                             ORDER BY idta DESC
                             '''):
         count += 1
         botslib.changeq(
-            u'''UPDATE filereport
+            '''UPDATE filereport
                 SET retransmit = 1
                 WHERE idta=%(idta)s''',
             {'idta': row[str('idta')]}
@@ -60,14 +54,14 @@ def indicate_rereceive():
 def indicate_send():
     count = 0
     for row in botslib.query(
-        u'''SELECT idta FROM ta
+        '''SELECT idta FROM ta
             WHERE status=%(status)s
             ORDER BY idta DESC''',
         {'status': EXTERNOUT}
     ):
         count += 1
         botslib.changeq(
-            u'''UPDATE ta
+            '''UPDATE ta
                 SET retransmit = %(retransmit)s
                 WHERE idta=%(idta)s''',
             {
@@ -80,7 +74,7 @@ def indicate_send():
 
 
 if __name__ == '__main__':
-    pythoninterpreter = 'python2.7'
+    pythoninterpreter = 'python'
     botsinit.generalinit('config')
     utilsunit.dummylogger()
     botsinit.connect()

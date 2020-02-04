@@ -25,7 +25,7 @@ class BotsAdmin(admin.ModelAdmin):
         for obj in queryset:
             obj.active = not obj.active
             obj.save()
-    activate.short_description = _(u'activate/de-activate')
+    activate.short_description = _('activate/de-activate')
 
 
 # *****************************************************************************************************
@@ -93,23 +93,23 @@ class ChannelAdmin(BotsAdmin):
                 ),
                 'classes': ('wide extrapretty',)
             }),
-        (_(u'Email specific'),
+        (_('Email specific'),
             {
                 'fields': ('starttls', 'apop', 'askmdn', 'sendmdn'),
                 'classes': ('collapse wide extrapretty',)
             }),
-        (_(u'FTP specific'),
+        (_('FTP specific'),
             {
                 'fields': ('ftpactive', 'ftpbinary', 'ftpaccount'),
                 'classes': ('collapse wide extrapretty',)
             }),
-        (_(u'Safe writing & file locking'),
+        (_('Safe writing & file locking'),
             {
                 'fields': ('mdnchannel', 'syslock', 'lockname'),
                 'description': 'For more info see <a target="_blank" href="http://code.google.com/p/bots/wiki/ChannelFileLock">wiki</a><br>',
                 'classes': ('collapse wide extrapretty',)
             }),
-        (_(u'Other'),
+        (_('Other'),
             {
                 'fields': ('testpath', 'keyfile', 'certfile', 'rsrv2', 'rsrv1', 'parameters'),
                 'classes': ('collapse wide extrapretty',)
@@ -130,19 +130,19 @@ class MyConfirmruleAdminForm(forms.ModelForm):
         super(MyConfirmruleAdminForm, self).clean()
         if self.cleaned_data['ruletype'] == 'route':
             if not self.cleaned_data['idroute']:
-                raise django_forms_util.ValidationError(_(u'For ruletype "route" it is required to indicate a route.'))
+                raise django_forms_util.ValidationError(_('For ruletype "route" it is required to indicate a route.'))
         elif self.cleaned_data['ruletype'] == 'channel':
             if not self.cleaned_data['idchannel']:
-                raise django_forms_util.ValidationError(_(u'For ruletype "channel" it is required to indicate a channel.'))
+                raise django_forms_util.ValidationError(_('For ruletype "channel" it is required to indicate a channel.'))
         elif self.cleaned_data['ruletype'] == 'frompartner':
             if not self.cleaned_data['frompartner']:
-                raise django_forms_util.ValidationError(_(u'For ruletype "frompartner" it is required to indicate a frompartner.'))
+                raise django_forms_util.ValidationError(_('For ruletype "frompartner" it is required to indicate a frompartner.'))
         elif self.cleaned_data['ruletype'] == 'topartner':
             if not self.cleaned_data['topartner']:
-                raise django_forms_util.ValidationError(_(u'For ruletype "topartner" it is required to indicate a topartner.'))
+                raise django_forms_util.ValidationError(_('For ruletype "topartner" it is required to indicate a topartner.'))
         elif self.cleaned_data['ruletype'] == 'messagetype':
             if not self.cleaned_data['messagetype']:
-                raise django_forms_util.ValidationError(_(u'For ruletype "messagetype" it is required to indicate a messagetype.'))
+                raise django_forms_util.ValidationError(_('For ruletype "messagetype" it is required to indicate a messagetype.'))
         return self.cleaned_data
 
 
@@ -199,7 +199,7 @@ class PartnerAdmin(BotsAdmin):
                 ),
                 'classes': ('wide extrapretty',)
             }),
-        (_(u'Address'),
+        (_('Address'),
             {
                 'fields': (
                     'name1', 'name2', 'name3',
@@ -210,12 +210,12 @@ class PartnerAdmin(BotsAdmin):
                 ),
                 'classes': ('collapse wide extrapretty',)
             }),
-        (_(u'Is in groups'),
+        (_('Is in groups'),
             {
                 'fields': ('group',),
                 'classes': ('collapse wide extrapretty',)
             }),
-        (_(u'User defined'),
+        (_('User defined'),
             {
                 'fields': ('attr1', 'attr2', 'attr3', 'attr4', 'attr5'),
                 'classes': ('collapse wide extrapretty',)
@@ -268,7 +268,7 @@ class MyRouteAdminForm(forms.ModelForm):
     def clean(self):
         super(MyRouteAdminForm, self).clean()
         if self.cleaned_data['fromchannel'] and self.cleaned_data['translateind'] != 2 and (not self.cleaned_data['fromeditype'] or not self.cleaned_data['frommessagetype']):
-            raise django_forms_util.ValidationError(_(u'When using an inchannel and not pass-through, both "fromeditype" and "frommessagetype" are required.'))
+            raise django_forms_util.ValidationError(_('When using an inchannel and not pass-through, both "fromeditype" and "frommessagetype" are required.'))
         return self.cleaned_data
 
 
@@ -304,7 +304,7 @@ class RoutesAdmin(BotsAdmin):
                 ),
                 'classes': ('wide extrapretty',)
             }),
-        (_(u'Filtering for outchannel'),
+        (_('Filtering for outchannel'),
             {
                 'fields': (
                     'toeditype',
@@ -315,7 +315,7 @@ class RoutesAdmin(BotsAdmin):
                 ),
                 'classes': ('collapse wide extrapretty',)
             }),
-        (_(u'Advanced'),
+        (_('Advanced'),
             {
                 'fields': ('alt', 'frompartner', 'topartner', 'defer', 'zip_incoming', 'zip_outgoing'),
                 'classes': ('collapse wide extrapretty',)
@@ -341,7 +341,7 @@ class MyTranslateAdminForm(forms.ModelForm):
             topartner=self.cleaned_data['topartner']
         )
         if blub and (self.instance.pk is None or self.instance.pk != blub[0].id):
-            raise django_forms_util.ValidationError(_(u'Combination of fromeditype,frommessagetype,alt,frompartner,topartner already exists.'))
+            raise django_forms_util.ValidationError(_('Combination of fromeditype,frommessagetype,alt,frompartner,topartner already exists.'))
         return self.cleaned_data
 
 
@@ -359,7 +359,7 @@ class TranslateAdmin(BotsAdmin):
                 'fields': ('active', ('fromeditype', 'frommessagetype'), 'tscript', ('toeditype', 'tomessagetype'), 'desc'),
                 'classes': ('wide extrapretty',)
             }),
-        (_(u'Multiple translations per editype/messagetype'),
+        (_('Multiple translations per editype/messagetype'),
             {
                 'fields': ('alt', 'frompartner', 'topartner'),
                 'classes': ('collapse wide extrapretty',)
