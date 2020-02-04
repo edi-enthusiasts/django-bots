@@ -2,7 +2,7 @@
 
 import os
 import shutil
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots-modules
 from . import botslib
@@ -152,7 +152,7 @@ def envelope(ta_info, ta_list):
             try:
                 classtocall = globals()[ta_info['editype']]
             except KeyError:
-                raise botslib.OutMessageError(_('Not found envelope "%(envelope)s" for editype "%(editype)s".'), ta_info)
+                raise botslib.OutMessageError(_t('Not found envelope "%(envelope)s" for editype "%(editype)s".'), ta_info)
     env = classtocall(ta_info, ta_list, userscript, scriptname)
     env.run()
 
@@ -222,7 +222,7 @@ class edifact(Envelope):
     def run(self):
         if not self.ta_info['topartner'] or not self.ta_info['frompartner']:
             raise botslib.OutMessageError(
-                _('In enveloping "frompartner" or "topartner" unknown: "%(ta_info)s".'),
+                _t('In enveloping "frompartner" or "topartner" unknown: "%(ta_info)s".'),
                 {'ta_info': self.ta_info}
             )
 
@@ -309,7 +309,7 @@ class tradacoms(Envelope):
     def run(self):
         if not self.ta_info['topartner'] or not self.ta_info['frompartner']:
             raise botslib.OutMessageError(
-                _('In enveloping "frompartner" or "topartner" unknown: "%(ta_info)s".'),
+                _t('In enveloping "frompartner" or "topartner" unknown: "%(ta_info)s".'),
                 {'ta_info': self.ta_info}
             )
         self._openoutenvelope()
@@ -375,7 +375,7 @@ class templatehtml(Envelope):
         botslib.tryrunscript(self.userscript, self.scriptname, 'ta_infocontent', ta_info=self.ta_info)
         if not self.ta_info['envelope-template']:
             raise botslib.OutMessageError(
-                _('While enveloping in "%(editype)s.%(messagetype)s": syntax option "envelope-template" not filled; is required.'),
+                _t('While enveloping in "%(editype)s.%(messagetype)s": syntax option "envelope-template" not filled; is required.'),
                 self.ta_info
             )
         templatefile = botslib.abspath(self.__class__.__name__, self.ta_info['envelope-template'])
@@ -387,7 +387,7 @@ class templatehtml(Envelope):
         except Exception:
             txt = botslib.txtexc()
             raise botslib.OutMessageError(
-                _('While enveloping in "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
+                _t('While enveloping in "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
                 {
                     'editype': self.ta_info['editype'],
                     'messagetype': self.ta_info['messagetype'],
@@ -400,7 +400,7 @@ class templatehtml(Envelope):
         except Exception:
             txt = botslib.txtexc()
             raise botslib.OutMessageError(
-                _('While enveloping in "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
+                _t('While enveloping in "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
                 {
                     'editype': self.ta_info['editype'],
                     'messagetype': self.ta_info['messagetype'],
@@ -414,7 +414,7 @@ class x12(Envelope):
     def run(self):
         if not self.ta_info['topartner'] or not self.ta_info['frompartner']:
             raise botslib.OutMessageError(
-                _('In enveloping "frompartner" or "topartner" unknown: "%(ta_info)s".'),
+                _t('In enveloping "frompartner" or "topartner" unknown: "%(ta_info)s".'),
                 {'ta_info': self.ta_info}
             )
         self._openoutenvelope()

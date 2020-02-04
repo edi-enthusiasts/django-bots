@@ -11,7 +11,7 @@ from django import http, shortcuts
 from django.contrib import messages
 from django.db.models import query_utils
 from django.template import context, loader
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots-modules
 from . import forms
@@ -37,7 +37,7 @@ def server_error(request, template_name='500.html'):  # @UnusedVariable
         str().decode(): bytes->unicode
     '''
     exc_info = traceback.format_exc(None).decode('utf-8', 'ignore')
-    botsglobal.logger.info(_('Ran into server error: "%(error)s"'), {'error': exc_info})
+    botsglobal.logger.info(_t('Ran into server error: "%(error)s"'), {'error': exc_info})
     temp = loader.get_template(template_name)  # You need to create a 500.html template.
     return http.HttpResponseServerError(temp.render(context.Context({'exc_info': exc_info})))
 
@@ -151,7 +151,7 @@ def incoming(request, *kw, **kwargs):  # @UnusedVariable
                     # delete as much as possible in ta table
                     viewlib.delete_from_ta(ta_object)
                 else:
-                    notification = _('No rights for this operation.')
+                    notification = _t('No rights for this operation.')
                     botsglobal.logger.info(notification)
                     messages.add_message(request, messages.INFO, notification)
             elif 'retransmit' in request.POST:      # from ViewIncoming form using star rereceive
@@ -364,9 +364,9 @@ def confirm(request, *kw, **kwargs):  # @UnusedVariable
                 ta_object.confirmed = True
                 ta_object.confirmidta = '-1'   # to indicate a manual confirmation
                 ta_object.save()
-                messages.add_message(request, messages.INFO, _('Manual confirmed.'))
+                messages.add_message(request, messages.INFO, _t('Manual confirmed.'))
             else:
-                messages.add_message(request, messages.INFO, _('Manual confirm not possible.'))
+                messages.add_message(request, messages.INFO, _t('Manual confirm not possible.'))
             # then just refresh the current view
             formin = forms.ViewConfirm(request.POST)
             if not formin.is_valid():
@@ -438,7 +438,7 @@ def filer(request, *kw, **kwargs):  # @UnusedVariable
                         ta_object.content = viewlib.indent_edifact(ta_object.content)
                 else:
                     ta_object.has_file = False
-                    ta_object.content = _('No file available for display.')
+                    ta_object.content = _t('No file available for display.')
                 # determine has previous:
                 if ta_object.parent or ta_object.status == MERGED:
                     ta_object.has_previous = True
@@ -451,7 +451,7 @@ def filer(request, *kw, **kwargs):  # @UnusedVariable
                     ta_object.has_next = True
             return shortcuts.render(request, 'bots/filer.html', {'idtas': talijst})
         except Exception:
-            return shortcuts.render(request, 'bots/filer.html', {'error_content': _('No such file.')})
+            return shortcuts.render(request, 'bots/filer.html', {'error_content': _t('No such file.')})
 
 
 def srcfiler(request, *kw, **kwargs):  # @UnusedVariable
@@ -466,9 +466,9 @@ def srcfiler(request, *kw, **kwargs):  # @UnusedVariable
                 html_source = py2html.html_highlight(classified_text)
                 return shortcuts.render(request, 'bots/srcfiler.html', {'src': src, 'html_source': html_source})
             else:
-                return shortcuts.render(request, 'bots/srcfiler.html', {'error_content': _('File %s not allowed.' % src)})
+                return shortcuts.render(request, 'bots/srcfiler.html', {'error_content': _t('File %s not allowed.' % src)})
         except Exception:
-            return shortcuts.render(request, 'bots/srcfiler.html', {'error_content': _('No such file.')})
+            return shortcuts.render(request, 'bots/srcfiler.html', {'error_content': _t('No such file.')})
 
 
 def plugin(request, *kw, **kwargs):
@@ -484,19 +484,19 @@ def plugin(request, *kw, **kwargs):
                 # read the plugin
                 try:
                     if pluglib.read_plugin(request.FILES['file'].temporary_file_path()):
-                        messages.add_message(request, messages.INFO, _('Overwritten existing files.'))
+                        messages.add_message(request, messages.INFO, _t('Overwritten existing files.'))
                 except Exception as msg:
                     notification = -('Error reading plugin: "%s".') % str(msg)
                     botsglobal.logger.error(notification)
                     messages.add_message(request, messages.INFO, notification)
                 else:
-                    notification = _('Plugin "%s" is read successful.') % request.FILES['file'].name
+                    notification = _t('Plugin "%s" is read successful.') % request.FILES['file'].name
                     botsglobal.logger.info(notification)
                     messages.add_message(request, messages.INFO, notification)
                 finally:
                     request.FILES['file'].close()  # seems to be needed according to django docs.
             else:
-                messages.add_message(request, messages.INFO, _('No plugin read.'))
+                messages.add_message(request, messages.INFO, _t('No plugin read.'))
         return shortcuts.redirect('/home')
 
 
@@ -515,7 +515,7 @@ def plugin_index(request, *kw, **kwargs):
                 botsglobal.logger.error(notification)
                 messages.add_message(request, messages.INFO, notification)
             else:
-                notification = _('Configuration index file is read successful.')
+                notification = _t('Configuration index file is read successful.')
                 botsglobal.logger.info(notification)
                 messages.add_message(request, messages.INFO, notification)
         return shortcuts.redirect('/home')
@@ -524,7 +524,7 @@ def plugin_index(request, *kw, **kwargs):
 def plugout_index(request, *kw, **kwargs):  # @UnusedVariable
     if request.method == 'GET':
         filename = botslib.join(botsglobal.ini.get('directories', 'usersysabs'), 'index.py')
-        botsglobal.logger.info(_('Start writing configuration index file "%(file)s".'), {'file': filename})
+        botsglobal.logger.info(_t('Start writing configuration index file "%(file)s".'), {'file': filename})
         try:
             dummy_for_cleaned_data = {
                 'databaseconfiguration': True,
@@ -533,11 +533,11 @@ def plugout_index(request, *kw, **kwargs):  # @UnusedVariable
             }
             pluglib.make_index(dummy_for_cleaned_data, filename)
         except Exception as msg:
-            notification = _('Error writing configuration index file: "%s".') % str(msg)
+            notification = _t('Error writing configuration index file: "%s".') % str(msg)
             botsglobal.logger.error(notification)
             messages.add_message(request, messages.INFO, notification)
         else:
-            notification = _('Configuration index file "%s" is written successful.') % filename
+            notification = _t('Configuration index file "%s" is written successful.') % filename
             botsglobal.logger.info(notification)
             messages.add_message(request, messages.INFO, notification)
         return shortcuts.redirect('/home')
@@ -551,7 +551,7 @@ def plugout_backup(request, *kw, **kwargs):
 
 def plugout_backup_core(request, *kw, **kwargs):  # @UnusedVariable
     filename = botslib.join(botsglobal.ini.get('directories', 'botssys'), 'backup_plugin_%s.zip' % time.strftime('%Y%m%d%H%M%S'))
-    botsglobal.logger.info(_('Start writing backup plugin "%(file)s".'), {'file': filename})
+    botsglobal.logger.info(_t('Start writing backup plugin "%(file)s".'), {'file': filename})
     try:
         dummy_for_cleaned_data = {
             'databaseconfiguration': True,
@@ -571,7 +571,7 @@ def plugout_backup_core(request, *kw, **kwargs):  # @UnusedVariable
         botsglobal.logger.error(notification)
         messages.add_message(request, messages.INFO, notification)
     else:
-        notification = _('Backup plugin "%s" is written successful.') % filename
+        notification = _t('Backup plugin "%s" is written successful.') % filename
         botsglobal.logger.info(notification)
         messages.add_message(request, messages.INFO, notification)
 
@@ -585,14 +585,14 @@ def plugout(request, *kw, **kwargs):  # @UnusedVariable
             form = forms.PlugoutForm(request.POST)
             if form.is_valid():
                 filename = botslib.join(botsglobal.ini.get('directories', 'botssys'), 'plugin_temp.zip')
-                botsglobal.logger.info(_('Start writing plugin "%(file)s".'), {'file': filename})
+                botsglobal.logger.info(_t('Start writing plugin "%(file)s".'), {'file': filename})
                 try:
                     pluglib.make_plugin(form.cleaned_data, filename)
                 except botslib.PluginError as msg:
                     botsglobal.logger.error(str(msg))
                     messages.add_message(request, messages.INFO, str(msg))
                 else:
-                    botsglobal.logger.info(_('Plugin "%(file)s" created successful.'), {'file': filename})
+                    botsglobal.logger.info(_t('Plugin "%(file)s" created successful.'), {'file': filename})
                     response = http.HttpResponse(open(filename, 'rb').read(), content_type='application/zip')
                     # response['Content-Length'] = os.path.getsize(filename)
                     response['Content-Disposition'] = 'attachment; filename=' + 'plugin' + time.strftime('_%Y%m%d') + '.zip'
@@ -612,7 +612,7 @@ def delete(request, *kw, **kwargs):
                 if form.cleaned_data['delconfiguration'] or form.cleaned_data['delcodelists'] or form.cleaned_data['deluserscripts']:
                     # write backup plugin first
                     plugout_backup_core(request, *kw, **kwargs)
-                botsglobal.logger.info(_('Start deleting in configuration.'))
+                botsglobal.logger.info(_t('Start deleting in configuration.'))
                 if form.cleaned_data['deltransactions']:
                     # while testing with very big loads, deleting gave error. Using raw SQL solved this.
                     cursor = connection.cursor()
@@ -620,13 +620,13 @@ def delete(request, *kw, **kwargs):
                     cursor.execute("DELETE FROM filereport")
                     cursor.execute("DELETE FROM report")
                     transaction.commit_unless_managed()
-                    messages.add_message(request, messages.INFO, _('Transactions are deleted.'))
-                    botsglobal.logger.info(_('Transactions are deleted.'))
+                    messages.add_message(request, messages.INFO, _t('Transactions are deleted.'))
+                    botsglobal.logger.info(_t('Transactions are deleted.'))
                     # clean data files
                     deletefrompath = botsglobal.ini.get('directories', 'data', 'botssys/data')
                     shutil.rmtree(deletefrompath, ignore_errors=True)
                     botslib.dirshouldbethere(deletefrompath)
-                    notification = _('Data files are deleted.')
+                    notification = _t('Data files are deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 elif form.cleaned_data['delacceptance']:
@@ -648,7 +648,7 @@ def delete(request, *kw, **kwargs):
                         for filename in list_file:  # delete all files in data directory geenrated during acceptance testing
                             if filename.isdigit():
                                 botslib.deldata(filename)
-                    notification = _('Transactions from acceptance-testing deleted.')
+                    notification = _t('Transactions from acceptance-testing deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 if form.cleaned_data['delconfiguration']:
@@ -658,7 +658,7 @@ def delete(request, *kw, **kwargs):
                     models.chanpar.objects.all().delete()
                     models.translate.objects.all().delete()
                     models.partner.objects.all().delete()
-                    notification = _('Database configuration is deleted.')
+                    notification = _t('Database configuration is deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 if form.cleaned_data['delcodelists']:
@@ -667,26 +667,26 @@ def delete(request, *kw, **kwargs):
                     cursor.execute("DELETE FROM ccode")
                     cursor.execute("DELETE FROM ccodetrigger")
                     transaction.commit_unless_managed()
-                    notification = _('User code lists are deleted.')
+                    notification = _t('User code lists are deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 if form.cleaned_data['delpersist']:
                     cursor = connection.cursor()
                     cursor.execute("DELETE FROM persist")
                     transaction.commit_unless_managed()
-                    notification = _('Persist data is deleted.')
+                    notification = _t('Persist data is deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 if form.cleaned_data['delinfile']:
                     deletefrompath = botslib.join(botsglobal.ini.get('directories', 'botssys', 'botssys'), 'infile')
                     shutil.rmtree(deletefrompath, ignore_errors=True)
-                    notification = _('Files in botssys/infile are deleted.')
+                    notification = _t('Files in botssys/infile are deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 if form.cleaned_data['deloutfile']:
                     deletefrompath = botslib.join(botsglobal.ini.get('directories', 'botssys', 'botssys'), 'outfile')
                     shutil.rmtree(deletefrompath, ignore_errors=True)
-                    notification = _('Files in botssys/outfile are deleted.')
+                    notification = _t('Files in botssys/outfile are deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 if form.cleaned_data['deluserscripts']:
@@ -699,10 +699,10 @@ def delete(request, *kw, **kwargs):
                         for bestand in files:
                             if bestand != '__init__.py':
                                 os.remove(os.path.join(root, bestand))
-                    notification = _('User scripts are deleted (in usersys).')
+                    notification = _t('User scripts are deleted (in usersys).')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
-                botsglobal.logger.info(_('Finished deleting in configuration.'))
+                botsglobal.logger.info(_t('Finished deleting in configuration.'))
     return shortcuts.redirect('/home')
 
 
@@ -728,12 +728,12 @@ def runengine(request, *kw, **kwargs):  # @UnusedVariable
             messages.add_message(request, messages.INFO, job2queue.JOBQUEUEMESSAGE2TXT[terug])
             botsglobal.logger.info(job2queue.JOBQUEUEMESSAGE2TXT[terug])
         else:  # run bots-engine direct.; reports back if bots-engien is started succesful. **not reported: problems with running.
-            botsglobal.logger.info(_('Run bots-engine with parameters: "%(parameters)s"'), {'parameters': str(lijst)})
+            botsglobal.logger.info(_t('Run bots-engine with parameters: "%(parameters)s"'), {'parameters': str(lijst)})
             # first check if another instance of bots-engine is running/if port is free
             try:
                 engine_socket = botslib.check_if_other_engine_is_running()
             except socket.error:
-                notification = _('Trying to run "bots-engine", but another instance of "bots-engine" is running. Please try again later.')
+                notification = _t('Trying to run "bots-engine", but another instance of "bots-engine" is running. Please try again later.')
                 messages.add_message(request, messages.INFO, notification)
                 botsglobal.logger.info(notification)
                 return shortcuts.redirect('/home')
@@ -743,11 +743,11 @@ def runengine(request, *kw, **kwargs):  # @UnusedVariable
             try:
                 terug = subprocess.Popen(lijst).pid
             except Exception as msg:
-                notification = _('Errors while trying to run bots-engine: "%s".') % msg
+                notification = _t('Errors while trying to run bots-engine: "%s".') % msg
                 messages.add_message(request, messages.INFO, notification)
                 botsglobal.logger.info(notification)
             else:
-                messages.add_message(request, messages.INFO, _('Bots-engine is started.'))
+                messages.add_message(request, messages.INFO, _t('Bots-engine is started.'))
     return shortcuts.redirect('/home')
 
 
@@ -757,20 +757,20 @@ def sendtestmailmanagers(request, *kw, **kwargs):  # @UnusedVariable
     except botslib.BotsError:
         sendornot = False
     if not sendornot:
-        notification = _('Trying to send test mail, but in bots.ini, section [settings], "sendreportiferror" is not "True".')
+        notification = _t('Trying to send test mail, but in bots.ini, section [settings], "sendreportiferror" is not "True".')
         botsglobal.logger.info(notification)
         messages.add_message(request, messages.INFO, notification)
         return shortcuts.redirect('/home')
 
     from django.core.mail import mail_managers
     try:
-        mail_managers(_('testsubject'), _('test content of report'))
+        mail_managers(_t('testsubject'), _t('test content of report'))
     except Exception:
         txt = botslib.txtexc()
-        messages.add_message(request, messages.INFO, _('Sending test mail failed.'))
-        botsglobal.logger.info(_('Sending test mail failed, error:\n%(txt)s'), {'txt': txt})
+        messages.add_message(request, messages.INFO, _t('Sending test mail failed.'))
+        botsglobal.logger.info(_t('Sending test mail failed, error:\n%(txt)s'), {'txt': txt})
         return shortcuts.redirect('/home')
-    notification = _('Sending test mail succeeded.')
+    notification = _t('Sending test mail succeeded.')
     messages.add_message(request, messages.INFO, notification)
     botsglobal.logger.info(notification)
     return shortcuts.redirect('/home')

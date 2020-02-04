@@ -19,7 +19,7 @@ import ftplib
 import pickle
 import socket
 import ssl
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # Bots modules
 from . import botslib
@@ -91,7 +91,7 @@ def run(idchannel, command, idroute, rootidta=None):
         botsglobal.logger.debug('Finished communication channel "%(idchannel)s" type %(type)s %(inorout)s.', channeldict)
         break  # there can only be one channel; this break takes care that if found, the 'else'-clause is skipped
     else:
-        raise botslib.CommunicationError(_('Channel "%(idchannel)s" is unknown.'), {'idchannel': idchannel})
+        raise botslib.CommunicationError(_t('Channel "%(idchannel)s" is unknown.'), {'idchannel': idchannel})
 
 
 class _comsession(object):
@@ -440,14 +440,14 @@ class _comsession(object):
         def mdnreceive():
             tmp = msg.get_param('reporttype')
             if tmp is None or email.utils.collapse_rfc2231_value(tmp) != 'disposition-notification':  # invalid MDN
-                raise botslib.CommunicationInError(_('Received email-MDN with errors.'))
+                raise botslib.CommunicationInError(_t('Received email-MDN with errors.'))
             for part in msg.get_payload():
                 if part.get_content_type() == 'message/disposition-notification':
                     originalmessageid = part['original-message-id']
                     if originalmessageid is not None:
                         break
             else:  # invalid MDN: 'message/disposition-notification' not in email
-                raise botslib.CommunicationInError(_('Received email-MDN with errors.'))
+                raise botslib.CommunicationInError(_t('Received email-MDN with errors.'))
             botslib.changeq(
                 '''UPDATE ta
                    SET confirmed=%(confirmed)s, confirmidta=%(confirmidta)s
@@ -575,7 +575,7 @@ class _comsession(object):
                     frompartner = self.mailaddress2idpartner(frommail)
                     if frompartner is None:
                         raise botslib.CommunicationInError(
-                            _('"From" emailaddress(es) %(email)s not authorised/unknown for channel "%(idchannel)s".'),
+                            _t('"From" emailaddress(es) %(email)s not authorised/unknown for channel "%(idchannel)s".'),
                             {'email': frommail, 'idchannel': self.channeldict['idchannel']}
                         )
                 # topartner, cc (incl autorization)
@@ -592,7 +592,7 @@ class _comsession(object):
                             break
                     else:  # if no valid topartner: generate error
                         raise botslib.CommunicationInError(
-                            _('"To" emailaddress(es) %(email)s not authorised/unknown for channel "%(idchannel)s".'),
+                            _t('"To" emailaddress(es) %(email)s not authorised/unknown for channel "%(idchannel)s".'),
                             {'email': list_to_address, 'idchannel': self.channeldict['idchannel']}
                         )
 
@@ -618,7 +618,7 @@ class _comsession(object):
                             confirmasked = True
                     nrmimesaved = savemime(msg)
                     if not nrmimesaved:
-                        raise botslib.CommunicationInError(_('No valid attachment in received email'))
+                        raise botslib.CommunicationInError(_t('No valid attachment in received email'))
             except Exception:
                 txt = botslib.txtexc()
                 ta_from.update(statust=ERROR, errortext=txt)
@@ -644,7 +644,7 @@ class _comsession(object):
             header.encode('utf8')
             return header
         except Exception:
-            raise botslib.CommunicationInError(_('Email header invalid - probably issues with characterset.'))
+            raise botslib.CommunicationInError(_t('Email header invalid - probably issues with characterset.'))
 
     def mailaddress2idpartner(self, mailaddress):
         ''' lookup email address to see if know in configuration. '''
@@ -708,7 +708,7 @@ class _comsession(object):
                 return row['mail'], row['cc']
 
         raise botslib.CommunicationOutError(
-            _('No mail-address for partner "%(partner)s" (channel "%(idchannel)s").'),
+            _t('No mail-address for partner "%(partner)s" (channel "%(idchannel)s").'),
             {'partner': idpartner, 'idchannel': self.channeldict['idchannel']}
         )
 
@@ -768,7 +768,7 @@ class _comsession(object):
                 if format_spec == 'name':
                     return name
                 raise botslib.CommunicationOutError(
-                    _('Error in format of "{filename}": unknown format: "%(format)s".'),
+                    _t('Error in format of "{filename}": unknown format: "%(format)s".'),
                     {'format': format_spec}
                 )
         unique = str(botslib.unique(self.channeldict['idchannel']))  # create unique part for attachment-filename
@@ -792,7 +792,7 @@ class _comsession(object):
             except Exception:
                 txt = botslib.txtexc()
                 raise botslib.CommunicationOutError(
-                    _('Error in formatting outgoing filename "%(filename)s". Error: "%(error)s".'),
+                    _t('Error in formatting outgoing filename "%(filename)s". Error: "%(error)s".'),
                     {'filename': tofilename, 'error': txt}
                 )
         if self.userscript and hasattr(self.userscript, 'filename'):
@@ -843,7 +843,7 @@ class file(_comsession):
                     elif os.name == 'posix':
                         fcntl.lockf(fromfile.fileno(), fcntl.LOCK_SH | fcntl.LOCK_NB)
                     else:
-                        raise botslib.LockedFileError(_('Can not do a systemlock on this platform'))
+                        raise botslib.LockedFileError(_t('Can not do a systemlock on this platform'))
                 # open tofile
                 tofilename = str(ta_to.idta)
                 tofile = botslib.opendata(tofilename, 'wb')
@@ -915,7 +915,7 @@ class file(_comsession):
                     elif os.name == 'posix':
                         fcntl.lockf(tofile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
                     else:
-                        raise botslib.LockedFileError(_('Can not do a systemlock on this platform'))
+                        raise botslib.LockedFileError(_t('Can not do a systemlock on this platform'))
                 # open fromfile
                 fromfile = botslib.opendata(row['filename'], 'rb')
                 # copy
@@ -1011,10 +1011,10 @@ class pop3(_comsession):
     def disconnect(self):
         try:
             if not self.session:
-                raise Exception(_('Pop3 connection not OK'))
+                raise Exception(_t('Pop3 connection not OK'))
             resp = self.session.quit()  # pop3 server will now actually delete the mails
             if resp[:1] != '+':
-                raise Exception(_('QUIT command to POP3 server failed'))
+                raise Exception(_t('QUIT command to POP3 server failed'))
         except Exception:  # connection is gone. Delete everything that is received to avoid double receiving.
             botslib.ErrorProcess(functionname='pop3-incommunicate', errortext='Could not fetch emails via POP3; probably communication problems', channeldict=self.channeldict)
             for idta in self.listoftamarkedfordelete:
@@ -1163,10 +1163,10 @@ class smtp(_comsession):
                 # error in python 2.6.4....user and password can not be unicode
                 self.session.login(str(self.channeldict['username']), str(self.channeldict['secret']))
             except smtplib.SMTPAuthenticationError:
-                raise botslib.CommunicationOutError(_('SMTP server did not accept user/password combination.'))
+                raise botslib.CommunicationOutError(_t('SMTP server did not accept user/password combination.'))
             except Exception:
                 txt = botslib.txtexc()
-                raise botslib.CommunicationOutError(_('SMTP login failed. Error:\n%(txt)s'), {'txt': txt})
+                raise botslib.CommunicationOutError(_t('SMTP login failed. Error:\n%(txt)s'), {'txt': txt})
 
     @botslib.log_session
     def outcommunicate(self):
@@ -1424,7 +1424,7 @@ class ftps(ftp):
     '''
     def connect(self):
         if not hasattr(ftplib, 'FTP_TLS'):
-            raise botslib.CommunicationError(_('ftps is not supported by your python version, use >=2.7'))
+            raise botslib.CommunicationError(_t('ftps is not supported by your python version, use >=2.7'))
         if self.userscript and hasattr(self.userscript, 'keyfile'):
             keyfile, certfile = botslib.runscript(
                 self.userscript,
@@ -1505,7 +1505,7 @@ class ftpis(ftp):
     '''
     def connect(self):
         if not hasattr(ftplib, 'FTP_TLS'):
-            raise botslib.CommunicationError(_('ftpis is not supported by your python version, use >=2.7'))
+            raise botslib.CommunicationError(_t('ftpis is not supported by your python version, use >=2.7'))
         if self.userscript and hasattr(self.userscript, 'keyfile'):
             keyfile, certfile = botslib.runscript(
                 self.userscript,
@@ -1546,11 +1546,11 @@ class sftp(_comsession):
         try:
             import paramiko
         except Exception:
-            raise ImportError(_('Dependency failure: communicationtype "sftp" requires python library "paramiko".'))
+            raise ImportError(_t('Dependency failure: communicationtype "sftp" requires python library "paramiko".'))
         try:
             from Crypto import Cipher
         except Exception:
-            raise ImportError(_('Dependency failure: communicationtype "sftp" requires python library "pycrypto".'))
+            raise ImportError(_t('Dependency failure: communicationtype "sftp" requires python library "pycrypto".'))
         # setup logging if required
         ftpdebug = botsglobal.ini.getint('settings', 'ftpdebug', 0)
         if ftpdebug > 0:
@@ -1813,28 +1813,28 @@ class db(_comsession):
     def connect(self):
         if self.userscript is None:
             raise botslib.BotsImportError(
-                _('Channel "%(idchannel)s" is type "db", but no communicationscript exists.'),
+                _t('Channel "%(idchannel)s" is type "db", but no communicationscript exists.'),
                 {'idchannel': self.channeldict['idchannel']}
             )
         # check functions bots assumes to be present in userscript:
         if not hasattr(self.userscript, 'connect'):
             raise botslib.ScriptImportError(
-                _('No function "connect" in imported communicationscript "%(communicationscript)s".'),
+                _t('No function "connect" in imported communicationscript "%(communicationscript)s".'),
                 {'communicationscript': self.scriptname}
             )
         if self.channeldict['inorout'] == 'in' and not hasattr(self.userscript, 'incommunicate'):
             raise botslib.ScriptImportError(
-                _('No function "incommunicate" in imported communicationscript "%(communicationscript)s".'),
+                _t('No function "incommunicate" in imported communicationscript "%(communicationscript)s".'),
                 {'communicationscript': self.scriptname}
             )
         if self.channeldict['inorout'] == 'out' and not hasattr(self.userscript, 'outcommunicate'):
             raise botslib.ScriptImportError(
-                _('No function "outcommunicate" in imported communicationscript "%(communicationscript)s".'),
+                _t('No function "outcommunicate" in imported communicationscript "%(communicationscript)s".'),
                 {'communicationscript': self.scriptname}
             )
         if not hasattr(self.userscript, 'disconnect'):
             raise botslib.ScriptImportError(
-                _('No function "disconnect" in imported communicationscript "%(communicationscript)s".'),
+                _t('No function "disconnect" in imported communicationscript "%(communicationscript)s".'),
                 {'communicationscript': self.scriptname}
             )
 
@@ -1970,7 +1970,7 @@ class communicationscript(_comsession):
     def connect(self):
         if self.userscript is None or not botslib.tryrunscript(self.userscript, self.scriptname, 'connect', channeldict=self.channeldict):
             raise botslib.BotsImportError(
-                _('Channel "%(idchannel)s" is type "communicationscript", but no communicationscript exists.'),
+                _t('Channel "%(idchannel)s" is type "communicationscript", but no communicationscript exists.'),
                 {'idchannel': self.channeldict}
             )
 
@@ -2168,7 +2168,7 @@ class http(_comsession):
         try:
             self.requests = botslib.botsbaseimport('requests')
         except ImportError:
-            raise ImportError(_('Dependency failure: communicationtype "http(s)" requires python library "requests".'))
+            raise ImportError(_t('Dependency failure: communicationtype "http(s)" requires python library "requests".'))
         if self.channeldict['username'] and self.channeldict['secret']:
             self.auth = (self.channeldict['username'], self.channeldict['secret'])
         else:
@@ -2193,7 +2193,7 @@ class http(_comsession):
                 )
                 if outResponse.status_code != self.requests.codes.ok:  # communication not OK: exception
                     raise botslib.CommunicationError(
-                        _('%(scheme)s receive error, response code: "%(status_code)s".'),
+                        _t('%(scheme)s receive error, response code: "%(status_code)s".'),
                         {'scheme': self.scheme, 'status_code': outResponse.status_code}
                     )
                 if not outResponse.content:  # communication OK, but nothing received: break
@@ -2268,7 +2268,7 @@ class http(_comsession):
                 )
                 if outResponse.status_code != self.requests.codes.ok:
                     raise botslib.CommunicationError(
-                        _('%(scheme)s send error, response code: "%(status_code)s".'),
+                        _t('%(scheme)s send error, response code: "%(status_code)s".'),
                         {'scheme': self.scheme, 'status_code': outResponse.status_code}
                     )
             except Exception:

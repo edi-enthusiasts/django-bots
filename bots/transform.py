@@ -4,7 +4,7 @@
 import os
 import pickle
 import collections
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots-modules
 from . import botslib
@@ -58,13 +58,13 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
         if row['filesize'] > botsglobal.ini.getint('settings', 'maxfilesizeincoming', 5000000):
             ta_parsed.update(filesize=row['filesize'])
             raise botslib.FileTooLargeError(
-                _('File size of %(filesize)s is too big; option "maxfilesizeincoming" in bots.ini is %(maxfilesizeincoming)s.'),
+                _t('File size of %(filesize)s is too big; option "maxfilesizeincoming" in bots.ini is %(maxfilesizeincoming)s.'),
                 {
                     'filesize': row['filesize'],
                     'maxfilesizeincoming': botsglobal.ini.getint('settings', 'maxfilesizeincoming', 5000000)
                 }
             )
-        botsglobal.logger.debug(_('Start translating file "%(filename)s" editype "%(editype)s" messagetype "%(messagetype)s".'), row)
+        botsglobal.logger.debug(_t('Start translating file "%(filename)s" editype "%(editype)s" messagetype "%(messagetype)s".'), row)
         # read whole edi-file: read, parse and made into a inmessage-object. Message is represented as a tree (inmessage.root is the root of the tree).
         edifile = inmessage.parse_edi_file(
             frompartner=row['frompartner'],
@@ -112,7 +112,7 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
                             )
                         if not tscript:
                             raise botslib.TranslationNotFoundError(
-                                _('Translation not found for editype "%(editype)s", messagetype "%(messagetype)s", frompartner "%(frompartner)s", topartner "%(topartner)s", alt "%(alt)s".'),
+                                _t('Translation not found for editype "%(editype)s", messagetype "%(messagetype)s", frompartner "%(frompartner)s", topartner "%(topartner)s", alt "%(alt)s".'),
                                 inn_splitup.ta_info
                             )
 
@@ -131,7 +131,7 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
 
                     # run mapping script #
                     botsglobal.logger.debug(
-                        _('Mappingscript "%(tscript)s" translates messagetype "%(messagetype)s" to messagetype "%(tomessagetype)s".'),
+                        _t('Mappingscript "%(tscript)s" translates messagetype "%(messagetype)s" to messagetype "%(tomessagetype)s".'),
                         {
                             'tscript': tscript,
                             'messagetype': inn_splitup.ta_info['messagetype'],
@@ -147,7 +147,7 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
                         inn=inn_splitup,
                         out=out_translated
                     )
-                    botsglobal.logger.debug(_('Mappingscript "%(tscript)s" finished.'), {'tscript': tscript})
+                    botsglobal.logger.debug(_t('Mappingscript "%(tscript)s" finished.'), {'tscript': tscript})
 
                     # manipulate for some attributes after mapping script
                     if 'topartner' not in out_translated.ta_info:  # out_translated does not contain values from ta......
@@ -166,7 +166,7 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
                         # some extended cases; a dict is returned that contains 'instructions' for some type of chained translations
                         if 'type' not in doalttranslation or 'alt' not in doalttranslation:
                             raise botslib.BotsError(
-                                _("Mappingscript returned '%(alt)s'. This dict should not have 'type' and 'alt'."),
+                                _t("Mappingscript returned '%(alt)s'. This dict should not have 'type' and 'alt'."),
                                 {'alt': doalttranslation}
                             )
                         if alt_from_previous_run == doalttranslation['alt']:
@@ -194,7 +194,7 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
                             inn_splitup.ta_info['alt'] = doalttranslation['alt']  # get the alt-value for the next chained translation
                         else:  # there is nothing else
                             raise botslib.BotsError(
-                                _('Mappingscript returned dict with an unknown "type": "%(doalttranslation)s".'),
+                                _t('Mappingscript returned dict with an unknown "type": "%(doalttranslation)s".'),
                                 {'doalttranslation': doalttranslation}
                             )
                     else:  # note: this includes alt '' (empty string)
@@ -207,7 +207,7 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
                         inn_splitup.ta_info['alt'] = doalttranslation  # get the alt-value for the next chained translation
                     if number_of_loops_with_same_alt > 10:
                         raise botslib.BotsError(
-                            _('Mappingscript returns same alt value over and over again (infinite loop?). Alt: "%(doalttranslation)s".'),
+                            _t('Mappingscript returns same alt value over and over again (infinite loop?). Alt: "%(doalttranslation)s".'),
                             {'doalttranslation': doalttranslation}
                         )
                 # end of while-loop (trans**********************************************************************************
@@ -227,7 +227,7 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
         ta_parsed.update(statust=DONE, filesize=row['filesize'], **edifile.ta_info)  # update with info from eg queries
         ta_parsed.copyta(status=MERGED, statust=OK)  # original file goes straight to MERGED
         edifile.handleconfirm(ta_fromfile, error=False)
-        botsglobal.logger.debug(_('Parse & passthrough for input file "%(filename)s".'), row)
+        botsglobal.logger.debug(_t('Parse & passthrough for input file "%(filename)s".'), row)
     except botslib.FileTooLargeError as msg:
         ta_parsed.update(statust=ERROR, errortext=str(msg))
         ta_parsed.deletechildren()
@@ -241,18 +241,18 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
     else:
         edifile.handleconfirm(ta_fromfile, error=False)
         ta_parsed.update(statust=DONE, filesize=row['filesize'], **edifile.ta_info)
-        botsglobal.logger.debug(_('Translated input file "%(filename)s".'), row)
+        botsglobal.logger.debug(_t('Translated input file "%(filename)s".'), row)
     finally:
         ta_fromfile.update(statust=DONE)
 
 
 def handle_out_message(out_translated, ta_translated):
     if out_translated.ta_info['statust'] == DONE:  # if indicated in mappingscript the message should be discarded
-        botsglobal.logger.debug(_('No output file because mappingscript explicitly indicated this.'))
+        botsglobal.logger.debug(_t('No output file because mappingscript explicitly indicated this.'))
         out_translated.ta_info['filename'] = ''
         out_translated.ta_info['status'] = DISCARD
     else:
-        botsglobal.logger.debug(_('Start writing output file editype "%(editype)s" messagetype "%(messagetype)s".'), out_translated.ta_info)
+        botsglobal.logger.debug(_t('Start writing output file editype "%(editype)s" messagetype "%(messagetype)s".'), out_translated.ta_info)
         out_translated.writeall()  # write result of translation.
         out_translated.ta_info['filesize'] = os.path.getsize(botslib.abspathdata(out_translated.ta_info['filename']))  # get filesize
     ta_translated.update(**out_translated.ta_info)  # update outmessage transaction with ta_info; statust = OK
@@ -278,7 +278,7 @@ def persist_add(domein, botskey, value):
         )
     except Exception:
         raise botslib.PersistError(
-            _('Failed to add for domein "%(domein)s", botskey "%(botskey)s", value "%(value)s".'),
+            _t('Failed to add for domein "%(domein)s", botskey "%(botskey)s", value "%(value)s".'),
             {'domein': domein, 'botskey': botskey, 'value': value}
         )
 
@@ -351,7 +351,7 @@ def ccode(ccodeid, leftcode, field='rightcode', safe=False):
         return leftcode
     else:
         raise botslib.CodeConversionError(
-            _('Value "%(value)s" not in code-conversion, user table "%(table)s".'),
+            _t('Value "%(value)s" not in code-conversion, user table "%(table)s".'),
             {'value': leftcode, 'table': ccodeid}
         )
 
@@ -376,7 +376,7 @@ def reverse_ccode(ccodeid, rightcode, field='leftcode', safe=False):
         return rightcode
     else:
         raise botslib.CodeConversionError(
-            _('Value "%(value)s" not in code-conversion, user table "%(table)s".'),
+            _t('Value "%(value)s" not in code-conversion, user table "%(table)s".'),
             {'value': rightcode, 'table': ccodeid}
         )
 
@@ -414,9 +414,9 @@ def calceancheckdigit(ean):
     ''' input: EAN without checkdigit; returns the checkdigit'''
     try:
         if not ean.isdigit():
-            raise botslib.EanError(_('GTIN "%(ean)s" should be string with only numericals.'), {'ean': ean})
+            raise botslib.EanError(_t('GTIN "%(ean)s" should be string with only numericals.'), {'ean': ean})
     except AttributeError:
-        raise botslib.EanError(_('GTIN "%(ean)s" should be string, but is a "%(type)s".'), {'ean': ean, 'type': type(ean)})
+        raise botslib.EanError(_t('GTIN "%(ean)s" should be string, but is a "%(type)s".'), {'ean': ean, 'type': type(ean)})
     sum1 = sum([int(x)*3 for x in ean[-1::-2]]) + sum([int(x) for x in ean[-2::-2]])
     return str((1000-sum1) % 10)
 
@@ -487,7 +487,7 @@ def dateformat(date):
         return '203'
     if len(date) == 16:
         return '718'
-    raise botslib.BotsError(_('No valid edifact date format for "%(date)s".'), {'date': date})
+    raise botslib.BotsError(_t('No valid edifact date format for "%(date)s".'), {'date': date})
 
 
 def datemask(value, frommask, tomask):
@@ -508,7 +508,7 @@ def datemask(value, frommask, tomask):
             terug += convdict.get(char, [char]).pop(0)  # for this character, lookup value in convdict (a list). pop(0) this list: get first member of list, and drop it. If char not in convdict as key, use char itself.
     except Exception:
         raise botslib.BotsError(
-            _('Error in function datamask("%(value)s", "%(frommask)s", "%(tomask)s").'),
+            _t('Error in function datamask("%(value)s", "%(frommask)s", "%(tomask)s").'),
             {'value': value, 'frommask': frommask, 'tomask': tomask}
         )
     return terug
@@ -554,6 +554,6 @@ def partnerlookup(value, field, field_where_value_is_searched='idpartner', safe=
         return value
     else:
         raise botslib.CodeConversionError(
-            _('No result found for partner lookup; either partner "%(idpartner)s" does not exist or field "%(field)s" has no value.'),
+            _t('No result found for partner lookup; either partner "%(idpartner)s" does not exist or field "%(field)s" has no value.'),
             {'idpartner': value, 'field': field}
         )

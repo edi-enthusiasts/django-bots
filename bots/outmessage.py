@@ -3,7 +3,7 @@
 import time
 import pickle
 import decimal
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots-modules
 from . import botslib
@@ -49,7 +49,7 @@ def outmessage_init(**ta_info):
     try:
         classtocall = globals()[ta_info['editype']]
     except KeyError:
-        raise botslib.OutMessageError(_('Unknown editype for outgoing message: %(editype)s'), ta_info)
+        raise botslib.OutMessageError(_t('Unknown editype for outgoing message: %(editype)s'), ta_info)
     return classtocall(ta_info)
 
 
@@ -107,7 +107,7 @@ class Outmessage(message.Message):
             self.ta_info['nrmessages'] = self.nrmessagewritten
             self._closewrite()
         elif not self.root.children:
-            raise botslib.OutMessageError(_('No outgoing message'))  # then there is nothing to write...
+            raise botslib.OutMessageError(_t('No outgoing message'))  # then there is nothing to write...
         else:
             self.multiplewrite = True
             self._initwrite()
@@ -144,7 +144,7 @@ class Outmessage(message.Message):
             except UnicodeError as msg:
                 content = botslib.get_relevant_text_for_UnicodeError(msg)
                 raise botslib.OutMessageError(
-                    _('[F50]: Characters not in character-set "%(char)s": %(content)s'),
+                    _t('[F50]: Characters not in character-set "%(char)s": %(content)s'),
                     {'char': self.ta_info['charset'], 'content': content}
                 )
         else:
@@ -153,7 +153,7 @@ class Outmessage(message.Message):
             except UnicodeError as msg:
                 content = botslib.get_relevant_text_for_UnicodeError(msg)
                 raise botslib.OutMessageError(
-                    _('[F50]: Characters not in character-set "%(char)s": %(content)s'),
+                    _t('[F50]: Characters not in character-set "%(char)s": %(content)s'),
                     {'char': self.ta_info['charset'], 'content': content}
                 )
 
@@ -324,7 +324,7 @@ class Outmessage(message.Message):
                     value = value.ljust(field_definition[MINLENGTH])  # add spaces (left, because A-field is right aligned)
             if len(value) > field_definition[LENGTH]:
                 self.add2errorlist(
-                    _('[F20]: Record "%(record)s" field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
+                    _t('[F20]: Record "%(record)s" field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
                     {
                         'record': self.mpathformat(structure_record[MPATH]),
                         'field': field_definition[ID],
@@ -334,7 +334,7 @@ class Outmessage(message.Message):
                 )
             if len(value) < field_definition[MINLENGTH]:
                 self.add2errorlist(
-                    _('[F21]: Record "%(record)s" field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
+                    _t('[F21]: Record "%(record)s" field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
                     {
                         'record': self.mpathformat(structure_record[MPATH]),
                         'field': field_definition[ID],
@@ -353,7 +353,7 @@ class Outmessage(message.Message):
                         raise ValueError('To be catched')
                 except ValueError:
                     self.add2errorlist(
-                        _('[F22]: Record "%(record)s" date field "%(field)s" not a valid date: "%(content)s".\n') %
+                        _t('[F22]: Record "%(record)s" date field "%(field)s" not a valid date: "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -362,7 +362,7 @@ class Outmessage(message.Message):
                     )
                 if lenght > field_definition[LENGTH]:
                     self.add2errorlist(
-                        _('[F31]: Record "%(record)s" date field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
+                        _t('[F31]: Record "%(record)s" date field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -372,7 +372,7 @@ class Outmessage(message.Message):
                     )
                 if lenght < field_definition[MINLENGTH]:
                     self.add2errorlist(
-                        _('[F32]: Record "%(record)s" date field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
+                        _t('[F32]: Record "%(record)s" date field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -390,7 +390,7 @@ class Outmessage(message.Message):
                         raise ValueError('To be catched')
                 except ValueError:
                     self.add2errorlist(
-                        _('[F23]: Record "%(record)s" time field "%(field)s" not a valid time: "%(content)s".\n') %
+                        _t('[F23]: Record "%(record)s" time field "%(field)s" not a valid time: "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -399,7 +399,7 @@ class Outmessage(message.Message):
                     )
                 if lenght > field_definition[LENGTH]:
                     self.add2errorlist(
-                        _('[F33]: Record "%(record)s" time field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
+                        _t('[F33]: Record "%(record)s" time field "%(field)s" too big (max %(max)s): "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -409,7 +409,7 @@ class Outmessage(message.Message):
                     )
                 if lenght < field_definition[MINLENGTH]:
                     self.add2errorlist(
-                        _('[F34]: Record "%(record)s" time field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
+                        _t('[F34]: Record "%(record)s" time field "%(field)s" too small (min %(min)s): "%(content)s".\n') %
                         {
                             'record': self.mpathformat(structure_record[MPATH]),
                             'field': field_definition[ID],
@@ -427,7 +427,7 @@ class Outmessage(message.Message):
             digits, decimalsign, decimals = absvalue.partition('.')
             if not digits and not decimals:  # and decimalsign:
                 self.add2errorlist(
-                    _('[F24]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                    _t('[F24]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
                     {
                         'field': field_definition[ID],
                         'content': value,
@@ -448,7 +448,7 @@ class Outmessage(message.Message):
                     value = str(decimal.Decimal(minussign + digits + decimalsign + decimals).quantize(decimal.Decimal(10) ** -len(decimals)))
                 except Exception:
                     self.add2errorlist(
-                        _('[F25]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                        _t('[F25]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
                         {
                             'field': field_definition[ID],
                             'content': value,
@@ -472,7 +472,7 @@ class Outmessage(message.Message):
                     value = str(decimal.Decimal(minussign + digits + decimalsign + decimals).quantize(decimal.Decimal(10) ** -field_definition[DECIMALS]))
                 except Exception:
                     self.add2errorlist(
-                        _('[F26]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                        _t('[F26]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
                         {
                             'field': field_definition[ID],
                             'content': value,
@@ -495,7 +495,7 @@ class Outmessage(message.Message):
                     value = str(dec_value.quantize(NODECIMAL))
                 except Exception:
                     self.add2errorlist(
-                        _('[F27]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                        _t('[F27]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
                         {
                             'field': field_definition[ID],
                             'content': value,
@@ -506,7 +506,7 @@ class Outmessage(message.Message):
 
             if len(value)-lengthcorrection > field_definition[LENGTH]:
                 self.add2errorlist(
-                    _('[F28]: Record "%(record)s" field "%(field)s" too big: "%(content)s".\n') %
+                    _t('[F28]: Record "%(record)s" field "%(field)s" too big: "%(content)s".\n') %
                     {
                         'record': self.mpathformat(structure_record[MPATH]),
                         'field': field_definition[ID],
@@ -594,7 +594,7 @@ class Outmessage(message.Message):
                                 char = self.ta_info['replacechar']
                             else:
                                 raise botslib.OutMessageError(
-                                    _('[F51]: Character "%(char)s" is used as separator in this x12 file, so it can not be used in content. Field: "%(content)s".'),
+                                    _t('[F51]: Character "%(char)s" is used as separator in this x12 file, so it can not be used in content. Field: "%(content)s".'),
                                     {'char': char, 'content': field[VALUE]}
                                 )
                         else:
@@ -708,7 +708,7 @@ class tradacoms(var):
         '''
         self.nrmessagewritten = 0
         if not self.root.children:
-            raise botslib.OutMessageError(_('No outgoing message'))  # then there is nothing to write...
+            raise botslib.OutMessageError(_t('No outgoing message'))  # then there is nothing to write...
         messagetype = self.ta_info['messagetype']
         for tradacomsmessage in self.root.getloop({'BOTSID': 'STX'}, {'BOTSID': 'MHD'}):
             self.ta_info['messagetype'] = tradacomsmessage.get({'BOTSID': 'MHD', 'TYPE.01': None}) +\
@@ -846,7 +846,7 @@ class xmlnocheck(xml):
             output is sorted alfabetically, attributes alfabetically. Empty xml-entities comes as last.
         '''
         if 'BOTSID' not in noderecord:
-            raise botslib.OutMessageError(_('[X52]: No field "BOTSID" in xml-output in: "%(record)s"'), {'record': noderecord})
+            raise botslib.OutMessageError(_t('[X52]: No field "BOTSID" in xml-output in: "%(record)s"'), {'record': noderecord})
         # generate the xml-record-entity
         recordtag = noderecord['BOTSID']
         del noderecord['BOTSID']  # remove 'record' tag
@@ -972,7 +972,7 @@ class templatehtml(Outmessage):
         try:
             self.template = botslib.botsbaseimport('genshi.template')
         except ImportError:
-            raise ImportError(_('Dependency failure: editype "templatehtml" requires python library "genshi".'))
+            raise ImportError(_t('Dependency failure: editype "templatehtml" requires python library "genshi".'))
         super(templatehtml, self).__init__(ta_info)
         self.data = templatehtml.TemplateData()  # self.data can be used by mappingscript as container for content
 
@@ -985,7 +985,7 @@ class templatehtml(Outmessage):
         except Exception:
             txt = botslib.txtexc()
             raise botslib.OutMessageError(
-                _('While templating "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
+                _t('While templating "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
                 {
                     'editype': self.ta_info['editype'],
                     'messagetype': self.ta_info['messagetype'],
@@ -1004,14 +1004,14 @@ class templatehtml(Outmessage):
         except Exception:
             txt = botslib.txtexc()
             raise botslib.OutMessageError(
-                _('While templating "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
+                _t('While templating "%(editype)s.%(messagetype)s", error:\n%(txt)s'),
                 {
                     'editype': self.ta_info['editype'],
                     'messagetype': self.ta_info['messagetype'],
                     'txt': txt
                 }
             )
-        botsglobal.logger.debug(_('End writing to file "%(filename)s".'), self.ta_info)
+        botsglobal.logger.debug(_t('End writing to file "%(filename)s".'), self.ta_info)
 
     def writeall(self):
         if not self.root.record:
@@ -1029,7 +1029,7 @@ class db(Outmessage):
 
     def writeall(self):
         if self.root is None:
-            raise botslib.OutMessageError(_('No outgoing message'))  # then there is nothing to write...
+            raise botslib.OutMessageError(_t('No outgoing message'))  # then there is nothing to write...
         botsglobal.logger.debug('Start writing to file "%(filename)s".', self.ta_info)
         self._outstream = botslib.opendata(self.ta_info['filename'], 'wb')
         pickle.dump(self.root, self._outstream)
@@ -1048,7 +1048,7 @@ class raw(Outmessage):
 
     def writeall(self):
         if self.root is None:
-            raise botslib.OutMessageError(_('No outgoing message'))  # then there is nothing to write...
+            raise botslib.OutMessageError(_t('No outgoing message'))  # then there is nothing to write...
         botsglobal.logger.debug('Start writing to file "%(filename)s".', self.ta_info)
         self._outstream = botslib.opendata(self.ta_info['filename'], 'wb')
         self._outstream.write(self.root)

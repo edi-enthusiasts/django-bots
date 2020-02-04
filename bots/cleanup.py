@@ -6,7 +6,7 @@ import time
 import datetime
 import stat
 import shutil
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots modules
 from . import botslib
@@ -93,7 +93,7 @@ def _cleandatafile():
             try:
                 os.remove(filename)  # remove files - should be no files in root of data dir
             except Exception:
-                botsglobal.logger.exception(_('Cleanup could not remove file'))
+                botsglobal.logger.exception(_t('Cleanup could not remove file'))
         elif statinfo.st_mtime > vanaf:
             continue  # directory is newer than maxdays, which is also true for the data files in it. Skip it.
         else:  # check files in dir and remove all older than maxdays
@@ -107,12 +107,12 @@ def _cleandatafile():
                     try:
                         os.remove(filename2)
                     except Exception:
-                        botsglobal.logger.exception(_('Cleanup could not remove file'))
+                        botsglobal.logger.exception(_t('Cleanup could not remove file'))
             if emptydir:
                 try:
                     os.rmdir(filename)
                 except Exception:
-                    botsglobal.logger.exception(_('Cleanup could not remove directory'))
+                    botsglobal.logger.exception(_t('Cleanup could not remove directory'))
 
 
 def _cleanpersist():

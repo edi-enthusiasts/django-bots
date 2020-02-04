@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots-modules
 from . import botslib
@@ -34,7 +34,7 @@ class Message(object):
             self.errorlist.append(self.messagetypetxt + errortxt)
         elif len(self.errorlist) == botsglobal.ini.getint('settings', 'max_number_errors', 10):
             self.errorlist.append(
-                _('Found at least %(max_number_errors)s errors.') %
+                _t('Found at least %(max_number_errors)s errors.') %
                 {'max_number_errors': len(self.errorlist)}
             )
         else:
@@ -112,7 +112,7 @@ class Message(object):
         structure = defmessage.structure
         if node_instance.record['BOTSID'] != structure[0][ID]:
             raise botslib.MessageRootError(
-                _('[G50]: Grammar "%(grammar)s" starts with record "%(grammarroot)s"; but in edi-file found start-record "%(root)s".'),
+                _t('[G50]: Grammar "%(grammar)s" starts with record "%(grammarroot)s"; but in edi-file found start-record "%(root)s".'),
                 {'root': node_instance.record['BOTSID'], 'grammarroot': structure[0][ID], 'grammar': defmessage.grammarname}
             )
         self._checkifrecordsingrammar(node_instance, structure[0], defmessage.grammarname)
@@ -131,7 +131,7 @@ class Message(object):
         if node_instance.children and LEVEL not in structure:  # if record has children, but these are not in the grammar
             if self.ta_info['checkunknownentities']:
                 self.add2errorlist(
-                    _('[S01]%(linpos)s: Record "%(record)s" in message has children, but these are not in grammar "%(grammar)s". Found record "%(xx)s".\n') %
+                    _t('[S01]%(linpos)s: Record "%(record)s" in message has children, but these are not in grammar "%(grammar)s". Found record "%(xx)s".\n') %
                     {
                         'linpos': node_instance.linpos(),
                         'record': node_instance.record['BOTSID'],
@@ -151,7 +151,7 @@ class Message(object):
             else:  # record/childnode in not in grammar
                 if self.ta_info['checkunknownentities']:
                     self.add2errorlist(
-                        _('[S02]%(linpos)s: Unknown record "%(record)s" in message.\n') %
+                        _t('[S02]%(linpos)s: Unknown record "%(record)s" in message.\n') %
                         {'linpos': node_instance.linpos(), 'record': childnode.record['BOTSID']}
                     )
                 deletelist.append(childnode)
@@ -185,7 +185,7 @@ class Message(object):
             else:           # field not found in grammar
                 if self.ta_info['checkunknownentities']:
                     self.add2errorlist(
-                        _('[F01]%(linpos)s: Record: "%(mpath)s" has unknown field "%(field)s".\n') %
+                        _t('[F01]%(linpos)s: Record: "%(mpath)s" has unknown field "%(field)s".\n') %
                         {
                             'linpos': node_instance.linpos(),
                             'field': field,
@@ -211,7 +211,7 @@ class Message(object):
                     sortednodelist.append(childnode)
                 if record_definition[MIN] > count:
                     self.add2errorlist(
-                        _('[S03]%(linpos)s: Record "%(mpath)s" occurs %(count)d times, min is %(mincount)d.\n') %
+                        _t('[S03]%(linpos)s: Record "%(mpath)s" occurs %(count)d times, min is %(mincount)d.\n') %
                         {
                             'linpos': node_instance.linpos(),
                             'mpath': self.mpathformat(record_definition[MPATH]),
@@ -221,7 +221,7 @@ class Message(object):
                     )
                 if record_definition[MAX] < count:
                     self.add2errorlist(
-                        _('[S04]%(linpos)s: Record "%(mpath)s" occurs %(count)d times, max is %(maxcount)d.\n') %
+                        _t('[S04]%(linpos)s: Record "%(mpath)s" occurs %(count)d times, max is %(maxcount)d.\n') %
                         {
                             'linpos': node_instance.linpos(),
                             'mpath': self.mpathformat(record_definition[MPATH]),
@@ -244,7 +244,7 @@ class Message(object):
                     if not value:
                         if field_definition[MANDATORY]:
                             self.add2errorlist(
-                                _('[F02]%(linpos)s: Record "%(mpath)s" field "%(field)s" is mandatory.\n') %
+                                _t('[F02]%(linpos)s: Record "%(mpath)s" field "%(field)s" is mandatory.\n') %
                                 {
                                     'linpos': node_instance.linpos(),
                                     'mpath': self.mpathformat(record_definition[MPATH]),
@@ -259,7 +259,7 @@ class Message(object):
                     if valuelist is None:  # empty lists are already catched in node.put()
                         if field_definition[MANDATORY]:
                             self.add2errorlist(
-                                _('[F41]%(linpos)s: Record "%(mpath)s" repeating field "%(field)s" is mandatory.\n') %
+                                _t('[F41]%(linpos)s: Record "%(mpath)s" repeating field "%(field)s" is mandatory.\n') %
                                 {
                                     'linpos': node_instance.linpos(),
                                     'mpath': self.mpathformat(record_definition[MPATH]),
@@ -268,10 +268,10 @@ class Message(object):
                             )
                         continue
                     if not isinstance(valuelist, list):
-                        raise botslib.MappingFormatError(_('Repeating field: must be a list: put(%(valuelist)s)'), {'mpath': valuelist})
+                        raise botslib.MappingFormatError(_t('Repeating field: must be a list: put(%(valuelist)s)'), {'mpath': valuelist})
                     if len(valuelist) > field_definition[MAXREPEAT]:
                         self.add2errorlist(
-                            _('[F42]%(linpos)s: Record "%(mpath)s" repeating field "%(field)s" occurs %(occurs)s times, max is %(max)s.\n') %
+                            _t('[F42]%(linpos)s: Record "%(mpath)s" repeating field "%(field)s" occurs %(occurs)s times, max is %(max)s.\n') %
                             {
                                 'linpos': node_instance.linpos(),
                                 'mpath': self.mpathformat(record_definition[MPATH]),
@@ -293,7 +293,7 @@ class Message(object):
                     if not repeating_field_has_data:
                         if field_definition[MANDATORY]:
                             self.add2errorlist(
-                                _('[F43]%(linpos)s: Record "%(mpath)s" repeating field "%(field)s" is mandatory.\n') %
+                                _t('[F43]%(linpos)s: Record "%(mpath)s" repeating field "%(field)s" is mandatory.\n') %
                                 {
                                     'linpos': node_instance.linpos(),
                                     'mpath': self.mpathformat(record_definition[MPATH]),
@@ -312,7 +312,7 @@ class Message(object):
                     else:  # composite has no data
                         if field_definition[MANDATORY]:
                             self.add2errorlist(
-                                _('[F03]%(linpos)s: Record "%(mpath)s" composite "%(field)s" is mandatory.\n') %
+                                _t('[F03]%(linpos)s: Record "%(mpath)s" composite "%(field)s" is mandatory.\n') %
                                 {
                                     'linpos': node_instance.linpos(),
                                     'mpath': self.mpathformat(record_definition[MPATH]),
@@ -326,7 +326,7 @@ class Message(object):
                         if not value:
                             if grammarsubfield[MANDATORY]:
                                 self.add2errorlist(
-                                    _('[F04]%(linpos)s: Record "%(mpath)s" subfield "%(field)s" is mandatory.\n') %
+                                    _t('[F04]%(linpos)s: Record "%(mpath)s" subfield "%(field)s" is mandatory.\n') %
                                     {
                                         'linpos': node_instance.linpos(),
                                         'mpath': self.mpathformat(record_definition[MPATH]),
@@ -341,7 +341,7 @@ class Message(object):
                     if valuelist is None:  # empty lists are catched in node.put()
                         if field_definition[MANDATORY]:
                             self.add2errorlist(
-                                _('[F44]%(linpos)s: Record "%(mpath)s" repeating composite "%(field)s" is mandatory.\n') %
+                                _t('[F44]%(linpos)s: Record "%(mpath)s" repeating composite "%(field)s" is mandatory.\n') %
                                 {
                                     'linpos': node_instance.linpos(),
                                     'mpath': self.mpathformat(record_definition[MPATH]),
@@ -350,10 +350,10 @@ class Message(object):
                             )
                         continue
                     if not isinstance(valuelist, list):
-                        raise botslib.MappingFormatError(_('Repeating composite: must be a list: put(%(valuelist)s)'), {'mpath': valuelist})
+                        raise botslib.MappingFormatError(_t('Repeating composite: must be a list: put(%(valuelist)s)'), {'mpath': valuelist})
                     if len(valuelist) > field_definition[MAXREPEAT]:
                         self.add2errorlist(
-                            _('[F45]%(linpos)s: Record "%(mpath)s" repeating composite "%(field)s" occurs %(occurs)s times, max is %(max)s.\n') %
+                            _t('[F45]%(linpos)s: Record "%(mpath)s" repeating composite "%(field)s" occurs %(occurs)s times, max is %(max)s.\n') %
                             {
                                 'linpos': node_instance.linpos(),
                                 'mpath': self.mpathformat(record_definition[MPATH]),
@@ -373,13 +373,13 @@ class Message(object):
                     repeating_composite_has_data = False
                     for comp in valuelist:
                         if not isinstance(comp, dict):
-                            raise botslib.MappingFormatError(_('Repeating composite: each composite must be a dict: put(%(valuelist)s)'), {'mpath': valuelist})
+                            raise botslib.MappingFormatError(_t('Repeating composite: each composite must be a dict: put(%(valuelist)s)'), {'mpath': valuelist})
                         # check each dict, convert values to unicode
                         # also: check if dict has data at all
                         composite_has_data = False
                         for key, value in comp.items():
                             if not isinstance(key, str):
-                                raise botslib.MappingFormatError(_('Repeating composite: keys must be strings: put(%(mpath)s)'), {'mpath': valuelist})
+                                raise botslib.MappingFormatError(_t('Repeating composite: keys must be strings: put(%(mpath)s)'), {'mpath': valuelist})
                             if value is None:
                                 comp[key] = ''
                             else:
@@ -393,7 +393,7 @@ class Message(object):
                                 if not value:
                                     if grammarsubfield[MANDATORY]:
                                         self.add2errorlist(
-                                            _('[F46]%(linpos)s: Record "%(mpath)s" subfield "%(field)s" in repeating composite is mandatory.\n') %
+                                            _t('[F46]%(linpos)s: Record "%(mpath)s" subfield "%(field)s" in repeating composite is mandatory.\n') %
                                             {
                                                 'linpos': node_instance.linpos(),
                                                 'mpath': self.mpathformat(record_definition[MPATH]),
@@ -408,7 +408,7 @@ class Message(object):
                     if not repeating_composite_has_data:
                         if field_definition[MANDATORY]:
                             self.add2errorlist(
-                                _('[F47]%(linpos)s: Record "%(mpath)s" repeating composite "%(field)s" is mandatory.\n') %
+                                _t('[F47]%(linpos)s: Record "%(mpath)s" repeating composite "%(field)s" is mandatory.\n') %
                                 {
                                     'linpos': node_instance.linpos(),
                                     'mpath': self.mpathformat(record_definition[MPATH]),
@@ -437,7 +437,7 @@ class Message(object):
     def getrecord(self, *mpaths):
         if self.root.record is None:
             raise botslib.MappingRootError(
-                _('getrecord(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
+                _t('getrecord(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
                 {'mpath': mpaths}
             )
         return self.root.getrecord(*mpaths)
@@ -446,7 +446,7 @@ class Message(object):
         ''' query tree (self.root) with where; if found replace with change; return True if change, return False if not changed.'''
         if self.root.record is None:
             raise botslib.MappingRootError(
-                _('change(%(where)s,%(change)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
+                _t('change(%(where)s,%(change)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
                 {'where': where, 'change': change}
             )
         return self.root.change(where, change)
@@ -455,7 +455,7 @@ class Message(object):
         ''' query tree (self.root) with mpath; delete if found. return True if deleted, return False if not deleted.'''
         if self.root.record is None:
             raise botslib.MappingRootError(
-                _('delete(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
+                _t('delete(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
                 {'mpath': mpaths}
             )
         return self.root.delete(*mpaths)
@@ -464,7 +464,7 @@ class Message(object):
         ''' query tree (self.root) with mpath; get value (string); get None if not found.'''
         if self.root.record is None:
             raise botslib.MappingRootError(
-                _('get(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
+                _t('get(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
                 {'mpath': mpaths}
             )
         return self.root.get(*mpaths)
@@ -474,7 +474,7 @@ class Message(object):
             Is sometimes usefull in mapping.'''
         if self.root.record is None:
             raise botslib.MappingRootError(
-                _('getnozero(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
+                _t('getnozero(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
                 {'mpath': mpaths}
             )
         return self.root.getnozero(*mpaths)
@@ -484,7 +484,7 @@ class Message(object):
             Is sometimes usefull in mapping.'''
         if self.root.record is None:
             raise botslib.MappingRootError(
-                _('getdecimal(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
+                _t('getdecimal(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
                 {'mpath': mpaths}
             )
         return self.root.getdecimal(*mpaths)
@@ -501,7 +501,7 @@ class Message(object):
         ''' return the sum for all values found in mpath. Eg total number of ordered quantities.'''
         if self.root.record is None:
             raise botslib.MappingRootError(
-                _('get(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
+                _t('get(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
                 {'mpath': mpaths}
             )
         return self.root.getcountsum(*mpaths)
@@ -520,7 +520,7 @@ class Message(object):
     def put(self, *mpaths, **kwargs):
         if self.root.record is None and self.root.children:
             raise botslib.MappingRootError(
-                _('put(%(mpath)s): "root" of outgoing message is empty; use out.putloop'),
+                _t('put(%(mpath)s): "root" of outgoing message is empty; use out.putloop'),
                 {'mpath': mpaths}
             )
         return self.root.put(*mpaths, **kwargs)
@@ -532,7 +532,7 @@ class Message(object):
                 return self.root.children[-1]
             else:
                 raise botslib.MappingRootError(
-                    _('putloop(%(mpath)s): mpath too long???'),
+                    _t('putloop(%(mpath)s): mpath too long???'),
                     {'mpath': mpaths}
                 )
         return self.root.putloop(*mpaths)
@@ -540,7 +540,7 @@ class Message(object):
     def sort(self, *mpaths):
         if self.root.record is None:
             raise botslib.MappingRootError(
-                _('get(%(mpath)s): "root" of message is empty; either split messages or use inn.getloop'),
+                _t('get(%(mpath)s): "root" of message is empty; either split messages or use inn.getloop'),
                 {'mpath': mpaths}
             )
         self.root.sort(*mpaths)

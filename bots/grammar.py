@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots-modules
 from . import botslib
@@ -24,7 +24,7 @@ def grammarread(editype, grammarname, typeofgrammarfile='grammars'):
         classtocall = globals()[editype]
     except KeyError:
         raise botslib.GrammarError(
-            _('Read grammar for editype "%(editype)s" messagetype "%(messagetype)s", but editype is unknown.'),
+            _t('Read grammar for editype "%(editype)s" messagetype "%(messagetype)s", but editype is unknown.'),
             {'editype': editype, 'messagetype': grammarname}
         )
     if typeofgrammarfile == 'grammars':
@@ -94,7 +94,7 @@ class Grammar(object):
         syntaxfromgrammar = getattr(self.module, 'syntax', {})
         if not isinstance(syntaxfromgrammar, dict):
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s": syntax is not a dict{}.'),
+                _t('Grammar "%(grammar)s": syntax is not a dict{}.'),
                 {'grammar': self.grammarname}
             )
         self.syntax = syntaxfromgrammar.copy()  # copy to get independent syntax-object
@@ -108,13 +108,13 @@ class Grammar(object):
         if self.nextmessage is None:
             if self.nextmessage2 is not None:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s": if nextmessage2: nextmessage has to be used.'),
+                    _t('Grammar "%(grammar)s": if nextmessage2: nextmessage has to be used.'),
                     {'grammar': self.grammarname}
                 )
         else:
             if self.nextmessageblock is not None:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s": nextmessageblock and nextmessage not both allowed.'),
+                    _t('Grammar "%(grammar)s": nextmessageblock and nextmessage not both allowed.'),
                     {'grammar': self.grammarname}
                 )
         if self._get_fromsyntax_or_defaultsyntax('has_structure'):
@@ -129,7 +129,7 @@ class Grammar(object):
                 self._dostructure()
             except AttributeError:  # if grammarpart does not exist set to None; test required grammarpart elsewhere
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s": no structure, is required.'),
+                    _t('Grammar "%(grammar)s": no structure, is required.'),
                     {'grammar': self.grammarname}
                 )
             except Exception:
@@ -145,48 +145,48 @@ class Grammar(object):
             self.recorddefs = getattr(self.module, 'recorddefs')
         except AttributeError:
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s": no recorddefs.'),
+                _t('Grammar "%(grammar)s": no recorddefs.'),
                 {'grammar': self.grammarname}
             )
         if not isinstance(self.recorddefs, dict):
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s": recorddefs is not a dict{}.'),
+                _t('Grammar "%(grammar)s": recorddefs is not a dict{}.'),
                 {'grammar': self.grammarname}
             )
         # check if grammar is read & checked earlier in this run. If so, we can skip all checks.
         if 'BOTS_1$@#%_error' in self.recorddefs:  # if checked before
             if self.recorddefs['BOTS_1$@#%_error']:  # if grammar had errors
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s" has error that is already reported in this run.'),
+                    _t('Grammar "%(grammar)s" has error that is already reported in this run.'),
                     {'grammar': self.grammarname}
                 )
             return  # no error, skip checks
         for recordid, fields in self.recorddefs.items():
             if not isinstance(recordid, str):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s": is not a string.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s": is not a string.'),
                     {'grammar': self.grammarname, 'record': recordid}
                 )
             if not recordid:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s": recordid with empty string.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s": recordid with empty string.'),
                     {'grammar': self.grammarname, 'record': recordid}
                 )
             if not isinstance(fields, list):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s": no correct fields found.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s": no correct fields found.'),
                     {'grammar': self.grammarname, 'record': recordid}
                 )
             if isinstance(self, (xml, json)):
                 if len(fields) < 1:
                     raise botslib.GrammarError(
-                        _('Grammar "%(grammar)s", record "%(record)s": too few fields.'),
+                        _t('Grammar "%(grammar)s", record "%(record)s": too few fields.'),
                         {'grammar': self.grammarname, 'record': recordid}
                     )
             else:
                 if len(fields) < 2:
                     raise botslib.GrammarError(
-                        _('Grammar "%(grammar)s", record "%(record)s": too few fields.'),
+                        _t('Grammar "%(grammar)s", record "%(record)s": too few fields.'),
                         {'grammar': self.grammarname, 'record': recordid}
                     )
 
@@ -199,7 +199,7 @@ class Grammar(object):
                         self._checkfield(sfield, recordid)
                         if sfield[ID] in fieldnamelist:
                             raise botslib.GrammarError(
-                                _('Grammar "%(grammar)s", record "%(record)s": field "%(field)s" appears twice. Field names should be unique within a record.'),
+                                _t('Grammar "%(grammar)s", record "%(record)s": field "%(field)s" appears twice. Field names should be unique within a record.'),
                                 {'grammar': self.grammarname, 'record': recordid, 'field': sfield[ID]}
                             )
                         fieldnamelist.append(sfield[ID])
@@ -208,14 +208,14 @@ class Grammar(object):
                         has_botsid = True
                     if field[ID] in fieldnamelist:
                         raise botslib.GrammarError(
-                            _('Grammar "%(grammar)s", record "%(record)s": field "%(field)s" appears twice. Field names should be unique within a record.'),
+                            _t('Grammar "%(grammar)s", record "%(record)s": field "%(field)s" appears twice. Field names should be unique within a record.'),
                             {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
                         )
                     fieldnamelist.append(field[ID])
 
             if not has_botsid:  # there is no field 'BOTSID' in record
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s": no field BOTSID.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s": no field BOTSID.'),
                     {'grammar': self.grammarname, 'record': recordid}
                 )
 
@@ -229,47 +229,47 @@ class Grammar(object):
         # each field is now equal length list
         elif len_field == 9:  # this happens when there are errors in a table and table is read again
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s": error in grammar; error is already reported in this run.'),
+                _t('Grammar "%(grammar)s": error in grammar; error is already reported in this run.'),
                 {'grammar': self.grammarname}
             )
         else:
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": list has invalid number of arguments.'),
+                _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": list has invalid number of arguments.'),
                 {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
             )
         if not isinstance(field[ID], str) or not field[ID]:
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": fieldID has to be a string.'),
+                _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": fieldID has to be a string.'),
                 {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
             )
         if isinstance(field[MANDATORY], str):
             if field[MANDATORY] not in 'MC':
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": mandatory/conditional must be "M" or "C".'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": mandatory/conditional must be "M" or "C".'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
                 )
             field[MANDATORY] = 0 if field[MANDATORY] == 'C' else 1
         elif isinstance(field[MANDATORY], tuple):
             if not isinstance(field[MANDATORY][0], str):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": mandatory/conditional must be "M" or "C".'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": mandatory/conditional must be "M" or "C".'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
                 )
             if field[MANDATORY][0] not in 'MC':
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": mandatory/conditional must be "M" or "C".'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": mandatory/conditional must be "M" or "C".'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
                 )
             if not isinstance(field[MANDATORY][1], int):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": number of repeats must be integer.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": number of repeats must be integer.'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
                 )
             field[MAXREPEAT] = field[MANDATORY][1]
             field[MANDATORY] = 0 if field[MANDATORY][0] == 'C' else 1
         else:
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": mandatory/conditional has to be a string (or tuple in case of repeating field).'),
+                _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": mandatory/conditional has to be a string (or tuple in case of repeating field).'),
                 {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
             )
 
@@ -281,40 +281,40 @@ class Grammar(object):
             elif isinstance(field[LENGTH], tuple):
                 if not isinstance(field[LENGTH][0], (int, float)):
                     raise botslib.GrammarError(
-                        _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": min length "%(min)s" has to be a number.'),
+                        _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": min length "%(min)s" has to be a number.'),
                         {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'min': field[LENGTH][0]}
                     )
                 if not isinstance(field[LENGTH][1], (int, float)):
                     raise botslib.GrammarError(
-                        _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": max length "%(max)s" has to be a number.'),
+                        _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": max length "%(max)s" has to be a number.'),
                         {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'max': field[LENGTH][1]}
                     )
                 if field[LENGTH][0] > field[LENGTH][1]:
                     raise botslib.GrammarError(
-                        _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": min length "%(min)s" must be > max length "%(max)s".'),
+                        _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": min length "%(min)s" must be > max length "%(max)s".'),
                         {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'min': field[LENGTH][0], 'max': field[LENGTH][1]}
                     )
                 field[MINLENGTH] = field[LENGTH][0]
                 field[LENGTH] = field[LENGTH][1]
             else:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": length "%(len)s" has to be number or (min,max).'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": length "%(len)s" has to be number or (min,max).'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'len': field[LENGTH]}
                 )
             if field[LENGTH] < 1:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": length "%(len)s" has to be at least 1.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": length "%(len)s" has to be at least 1.'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'len': field[LENGTH]}
                 )
             if field[MINLENGTH] < 0:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": minlength "%(len)s" has to be at least 0.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": minlength "%(len)s" has to be at least 0.'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'len': field[LENGTH]}
                 )
             # format
             if not isinstance(field[FORMAT], str):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": format "%(format)s" has to be a string.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": format "%(format)s" has to be a string.'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'format': field[FORMAT]}
                 )
             self._manipulatefieldformat(field, recordid)
@@ -325,7 +325,7 @@ class Grammar(object):
                     field[LENGTH] = int(length)
                     if field[DECIMALS] >= field[LENGTH]:
                         raise botslib.GrammarError(
-                            _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": field length "%(len)s" has to be greater that nr of decimals "%(decimals)s".'),
+                            _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": field length "%(len)s" has to be greater that nr of decimals "%(decimals)s".'),
                             {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'decimals': field[DECIMALS]}
                         )
                 if isinstance(field[MINLENGTH], float):
@@ -333,23 +333,23 @@ class Grammar(object):
             else:  # if format 'R', A, D, T
                 if isinstance(field[LENGTH], float):
                     raise botslib.GrammarError(
-                        _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": if format "%(format)s", no length "%(len)s".'),
+                        _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": if format "%(format)s", no length "%(len)s".'),
                         {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'format': field[FORMAT], 'len': field[LENGTH]}
                     )
                 if isinstance(field[MINLENGTH], float):
                     raise botslib.GrammarError(
-                        _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": if format "%(format)s", no minlength "%(len)s".'),
+                        _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": if format "%(format)s", no minlength "%(len)s".'),
                         {'grammar': self.grammarname, 'record': recordid, 'field': field[ID], 'format': field[FORMAT], 'len': field[MINLENGTH]}
                     )
         else:  # check composite
             if not isinstance(field[SUBFIELDS], list):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": is a composite field, has to have subfields.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": is a composite field, has to have subfields.'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
                 )
             if len(field[SUBFIELDS]) < 2:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s" has < 2 sfields.'),
+                    _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s" has < 2 sfields.'),
                     {'grammar': self.grammarname, 'record': recordid, 'field': field[ID]}
                 )
 
@@ -362,7 +362,7 @@ class Grammar(object):
                 i[FIELDS] = self.recorddefs[i[ID]]
             except KeyError:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s": in recorddef no record "%(record)s".'),
+                    _t('Grammar "%(grammar)s": in recorddef no record "%(record)s".'),
                     {'grammar': self.grammarname, 'record': i[ID]}
                 )
             if LEVEL in i:
@@ -376,7 +376,7 @@ class Grammar(object):
         self.structure = getattr(self.module, 'structure')
         if len(self.structure) != 1:  # every structure has only 1 root!!
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s", in structure: only one root record allowed.'),
+                _t('Grammar "%(grammar)s", in structure: only one root record allowed.'),
                 {'grammar': self.grammarname}
             )
         # check if structure is read & checked earlier in this run. If so, we can skip all checks.
@@ -398,58 +398,58 @@ class Grammar(object):
         '''
         if not isinstance(structure, list):
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s", in structure, at "%(mpath)s": not a list.'),
+                _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": not a list.'),
                 {'grammar': self.grammarname, 'mpath': mpath}
             )
         for i in structure:
             if not isinstance(i, dict):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": record should be a dict: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": record should be a dict: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': i}
                 )
             if ID not in i:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": record without ID: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": record without ID: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': i}
                 )
             if not isinstance(i[ID], str):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": recordid of record is not a string: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": recordid of record is not a string: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': i}
                 )
             if not i[ID]:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": recordid of record is empty: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": recordid of record is empty: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': i}
                 )
             if MIN not in i:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": record without MIN: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": record without MIN: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': i}
                 )
             if MAX not in i:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": record without MAX: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": record without MAX: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': i}
                 )
             if not isinstance(i[MIN], int):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": record where MIN is not whole number: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": record where MIN is not whole number: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': i}
                 )
             if not isinstance(i[MAX], int):
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": record where MAX is not whole number: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": record where MAX is not whole number: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': i}
                 )
             if not i[MAX]:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": MAX is zero: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": MAX is zero: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': i}
                 )
             if i[MIN] > i[MAX]:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure, at "%(mpath)s": record where MIN > MAX: "%(record)s".'),
+                    _t('Grammar "%(grammar)s", in structure, at "%(mpath)s": record where MIN > MAX: "%(record)s".'),
                     {'grammar': self.grammarname, 'mpath': mpath, 'record': str(i)[:100]}
                 )
             i[MPATH] = mpath + [i[ID]]
@@ -470,7 +470,7 @@ class Grammar(object):
             # print('check back segment:', i[MPATH], 'with list:', collision)
             if i[ID] in collision:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure: back-collision detected at record "%(mpath)s".'),
+                    _t('Grammar "%(grammar)s", in structure: back-collision detected at record "%(mpath)s".'),
                     {'grammar': self.grammarname, 'mpath': i[MPATH]}
                 )
             if i[MIN]:
@@ -499,7 +499,7 @@ class Grammar(object):
         for i in structure:
             if i[ID] in collision:
                 # raise botslib.GrammarError(
-                #     _('Grammar "%(grammar)s", in structure: bots-collision detected at record "%(mpath)s".'),
+                #     _t('Grammar "%(grammar)s", in structure: bots-collision detected at record "%(mpath)s".'),
                 #     {'grammar': self.grammarname, 'mpath': i[MPATH]}
                 # )
                 i[BOTSIDNR] = str(collision[i[ID]] + 1)
@@ -535,7 +535,7 @@ class Grammar(object):
                 pass  # no check needed
             elif i[ID] in levelcollision:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s", in structure: nesting collision detected at record "%(mpath)s".'),
+                    _t('Grammar "%(grammar)s", in structure: nesting collision detected at record "%(mpath)s".'),
                     {'grammar': self.grammarname, 'mpath': i[MPATH]}
                 )
             if i[MIN]:
@@ -582,7 +582,7 @@ class Grammar(object):
             field[BFORMAT] = self.formatconvert[field[FORMAT]]
         except KeyError:
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": format "%(format)s" has to be one of "%(keys)s".'),
+                _t('Grammar "%(grammar)s", record "%(record)s", field "%(field)s": format "%(format)s" has to be one of "%(keys)s".'),
                 {
                     'grammar': self.grammarname,
                     'record': recordid,
@@ -611,12 +611,12 @@ class csv(Grammar):
     def extracheck(self):
         if self._get_fromsyntax_or_defaultsyntax('noBOTSID') and len(self.recorddefs) != 1:
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s": if syntax["noBOTSID"]: there can be only one record in recorddefs.'),
+                _t('Grammar "%(grammar)s": if syntax["noBOTSID"]: there can be only one record in recorddefs.'),
                 {'grammar': self.grammarname}
             )
         if self.nextmessageblock is not None and len(self.recorddefs) != 1:
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s": if nextmessageblock: there can be only one record in recorddefs.'),
+                _t('Grammar "%(grammar)s": if nextmessageblock: there can be only one record in recorddefs.'),
                 {'grammar': self.grammarname}
             )
 
@@ -663,12 +663,12 @@ class fixed(Grammar):
     def extracheck(self):
         if self._get_fromsyntax_or_defaultsyntax('noBOTSID') and len(self.recorddefs) != 1:
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s": if syntax["noBOTSID"]: there can be only one record in recorddefs.'),
+                _t('Grammar "%(grammar)s": if syntax["noBOTSID"]: there can be only one record in recorddefs.'),
                 {'grammar': self.grammarname}
             )
         if self.nextmessageblock is not None and len(self.recorddefs) != 1:
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s": if nextmessageblock: there can be only one record in recorddefs.'),
+                _t('Grammar "%(grammar)s": if nextmessageblock: there can be only one record in recorddefs.'),
                 {'grammar': self.grammarname}
             )
 
@@ -732,7 +732,7 @@ class fixed(Grammar):
                 i[FIELDS] = self.recorddefs[i[ID]]
             except KeyError:
                 raise botslib.GrammarError(
-                    _('Grammar "%(grammar)s": in recorddef no record "%(record)s".'),
+                    _t('Grammar "%(grammar)s": in recorddef no record "%(record)s".'),
                     {'grammar': self.grammarname, 'record': i[ID]}
                 )
             # determine start/end of BOTSID; check if pos and length BOTSID is the same for all records.
@@ -754,7 +754,7 @@ class fixed(Grammar):
                     else:  # check startrecordID, endrecordID
                         if self.syntax['startrecordID'] != position_in_record or self.syntax['endrecordID'] != position_in_record + field[LENGTH]:
                             raise botslib.GrammarError(
-                                _('Grammar "%(grammar)s", record %(key)s: position and length of BOTSID should be equal in all records.'),
+                                _t('Grammar "%(grammar)s", record %(key)s: position and length of BOTSID should be equal in all records.'),
                                 {'grammar': self.grammarname, 'key': i[ID]}
                             )
                     break
@@ -808,7 +808,7 @@ class xml(Grammar):
     def extracheck(self):
         if not self._get_fromsyntax_or_defaultsyntax('envelope') and self._get_fromsyntax_or_defaultsyntax('merge'):
             raise botslib.GrammarError(
-                _('Grammar "%(grammar)s": in this xml grammar merge is "True" but no (user) enveloping is specified. This will lead to invalid xml files'),
+                _t('Grammar "%(grammar)s": in this xml grammar merge is "True" but no (user) enveloping is specified. This will lead to invalid xml files'),
                 {'grammar': self.grammarname}
             )
 

@@ -7,7 +7,7 @@ from django.forms import (
     CharField
 )
 from django.forms.widgets import FileInput, HiddenInput as HIDDENINPUT
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 # ***********
 from . import models
 from . import viewlib
@@ -104,8 +104,8 @@ class SelectDocument(Select):
     status = TypedChoiceField(
         [
             (0, "---------"),
-            (320, _('Document-in')),
-            (330, _('Document-out'))
+            (320, _t('Document-in')),
+            (330, _t('Document-out'))
         ],
         required=False,
         initial=0,

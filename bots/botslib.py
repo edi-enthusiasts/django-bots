@@ -11,7 +11,7 @@ import platform
 import collections
 import django
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 try:
     import importlib  # @UnusedImport
 except Exception:
@@ -445,17 +445,17 @@ def botsimport(*args):
     modulepath = '.'.join((botsglobal.usersysimportpath,) + args)  # assemble import string
     modulefile = join(botsglobal.ini.get('directories', 'usersysabs'), *args)  # assemble abs filename for errortexts; note that 'join' is function in this script-file.
     if modulepath in botsglobal.not_import:  # check if previous import failed (no need to try again).This eliminates eg lots of partner specific imports.
-        botsglobal.logger.debug(_('No import of module "%(modulefile)s".'), {'modulefile': modulefile})
-        raise BotsImportError(_('No import of module "%(modulefile)s".'), {'modulefile': modulefile})
+        botsglobal.logger.debug(_t('No import of module "%(modulefile)s".'), {'modulefile': modulefile})
+        raise BotsImportError(_t('No import of module "%(modulefile)s".'), {'modulefile': modulefile})
     try:
         module = botsbaseimport(modulepath)
     except ImportError as msg:
         botsglobal.not_import.add(modulepath)
-        botsglobal.logger.debug(_('No import of module "%(modulefile)s": %(txt)s.'), {'modulefile': modulefile, 'txt': msg})
-        raise BotsImportError(_('No import of module "%(modulefile)s": %(txt)s'), {'modulefile': modulefile, 'txt': msg})
+        botsglobal.logger.debug(_t('No import of module "%(modulefile)s": %(txt)s.'), {'modulefile': modulefile, 'txt': msg})
+        raise BotsImportError(_t('No import of module "%(modulefile)s": %(txt)s'), {'modulefile': modulefile, 'txt': msg})
     except Exception as msg:
-        botsglobal.logger.debug(_('Error in import of module "%(modulefile)s": %(txt)s.'), {'modulefile': modulefile, 'txt': msg})
-        raise ScriptImportError(_('Error in import of module "%(modulefile)s":\n%(txt)s'), {'modulefile': modulefile, 'txt': msg})
+        botsglobal.logger.debug(_t('Error in import of module "%(modulefile)s": %(txt)s.'), {'modulefile': modulefile, 'txt': msg})
+        raise ScriptImportError(_t('Error in import of module "%(modulefile)s":\n%(txt)s'), {'modulefile': modulefile, 'txt': msg})
     else:
         botsglobal.logger.debug('Imported "%(modulefile)s".', {'modulefile': modulefile})
         return module, modulefile
@@ -540,7 +540,7 @@ def runscript(module, modulefile, functioninscript, **argv):
         return functiontorun(**argv)
     except Exception:
         txt = txtexc()
-        raise ScriptError(_('Userscript "%(modulefile)s": "%(txt)s".'), {'modulefile': modulefile, 'txt': txt})
+        raise ScriptError(_t('Userscript "%(modulefile)s": "%(txt)s".'), {'modulefile': modulefile, 'txt': txt})
 
 
 def tryrunscript(module, modulefile, functioninscript, **argv):
@@ -559,7 +559,7 @@ def runscriptyield(module, modulefile, functioninscript, **argv):
             yield result
     except Exception:
         txt = txtexc()
-        raise ScriptError(_('Script file "%(modulefile)s": "%(txt)s".'), {'modulefile': modulefile, 'txt': txt})
+        raise ScriptError(_t('Script file "%(modulefile)s": "%(txt)s".'), {'modulefile': modulefile, 'txt': txt})
 
 
 # **********************************************************/**
@@ -797,16 +797,16 @@ def lookup_translation(frommessagetype, fromeditype, alt, frompartner, topartner
 
 def botsinfo():
     return [
-        (_('served at port'), botsglobal.ini.getint('webserver', 'port', 8080)),
-        (_('platform'), platform.platform()),
-        (_('machine'), platform.machine()),
-        (_('python version'), platform.python_version()),
-        (_('django version'), django.VERSION),
-        (_('bots version'), botsglobal.version),
-        (_('bots installation path'), botsglobal.ini.get('directories', 'botspath')),
-        (_('config path'), botsglobal.ini.get('directories', 'config')),
-        (_('botssys path'), botsglobal.ini.get('directories', 'botssys')),
-        (_('usersys path'), botsglobal.ini.get('directories', 'usersysabs')),
+        (_t('served at port'), botsglobal.ini.getint('webserver', 'port', 8080)),
+        (_t('platform'), platform.platform()),
+        (_t('machine'), platform.machine()),
+        (_t('python version'), platform.python_version()),
+        (_t('django version'), django.VERSION),
+        (_t('bots version'), botsglobal.version),
+        (_t('bots installation path'), botsglobal.ini.get('directories', 'botspath')),
+        (_t('config path'), botsglobal.ini.get('directories', 'config')),
+        (_t('botssys path'), botsglobal.ini.get('directories', 'botssys')),
+        (_t('usersys path'), botsglobal.ini.get('directories', 'usersysabs')),
         ('DATABASE_ENGINE', botsglobal.settings.DATABASES['default']['ENGINE']),
         ('DATABASE_NAME', botsglobal.settings.DATABASES['default']['NAME']),
         ('DATABASE_USER', botsglobal.settings.DATABASES['default']['USER']),

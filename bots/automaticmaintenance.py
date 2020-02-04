@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots modules
 from . import botslib
@@ -113,26 +113,26 @@ def email_error_report(rootidtaofrun):
     ):
         break
     else:
-        raise botslib.PanicError(_('In generate report: could not find report?'))
+        raise botslib.PanicError(_t('In generate report: could not find report?'))
 
-    subject = _('[Bots Error Report] %(time)s') % {'time': str(results['ts'])[:16]}
-    reporttext = _('Bots Report; type: %(type)s, time: %(time)s\n') % {'type': results['type'], 'time': str(results['ts'])[:19]}
-    reporttext += _('    %d files received/processed in run.\n') % results['lastreceived']
+    subject = _t('[Bots Error Report] %(time)s') % {'time': str(results['ts'])[:16]}
+    reporttext = _t('Bots Report; type: %(type)s, time: %(time)s\n') % {'type': results['type'], 'time': str(results['ts'])[:19]}
+    reporttext += _t('    %d files received/processed in run.\n') % results['lastreceived']
     if results['lastdone']:
-        reporttext += _('    %d files without errors,\n') % results['lastdone']
+        reporttext += _t('    %d files without errors,\n') % results['lastdone']
     if results['lasterror']:
-        subject += _('; %d file errors') % results['lasterror']
-        reporttext += _('    %d files with errors,\n') % results['lasterror']
+        subject += _t('; %d file errors') % results['lasterror']
+        reporttext += _t('    %d files with errors,\n') % results['lasterror']
     if results['lastok']:
-        subject += _('; %d files stuck') % results['lastok']
-        reporttext += _('    %d files got stuck,\n') % results['lastok']
+        subject += _t('; %d files stuck') % results['lastok']
+        reporttext += _t('    %d files got stuck,\n') % results['lastok']
     if results['lastopen']:
-        subject += _('; %d system errors') % results['lastopen']
-        reporttext += _('    %d system errors,\n') % results['lastopen']
+        subject += _t('; %d system errors') % results['lastopen']
+        reporttext += _t('    %d system errors,\n') % results['lastopen']
     if results['processerrors']:
-        subject += _('; %d process errors') % results['processerrors']
-        reporttext += _('    %d errors in processes.\n') % results['processerrors']
-    reporttext += _('    %d files send in run.\n') % results['send']
+        subject += _t('; %d process errors') % results['processerrors']
+        reporttext += _t('    %d errors in processes.\n') % results['processerrors']
+    reporttext += _t('    %d files send in run.\n') % results['send']
 
     botsglobal.logger.info(reporttext)  # log the report texts
     # only send email report if there are errors.
@@ -185,7 +185,7 @@ class Trace(object):
         try:
             self.statust = self._getstatusfortreeoftransactions(self.rootofinfile)
         except Exception as msg:
-            botsglobal.logger.exception(_('Error in automatic maintenance: "%(msg)s".'), {'msg': msg})
+            botsglobal.logger.exception(_t('Error in automatic maintenance: "%(msg)s".'), {'msg': msg})
             self.statust = OPEN
         self._collectdataforfilereport()
 
@@ -244,16 +244,16 @@ class Trace(object):
                 return DONE
         elif tacurrent['statust'] == OK:  # file is stucked. There should be no children
             if tacurrent['talijst']:
-                raise botslib.TraceError(_('Statust OK (stuck) but has child(ren) (idta: %(idta)s).'), tacurrent)
+                raise botslib.TraceError(_t('Statust OK (stuck) but has child(ren) (idta: %(idta)s).'), tacurrent)
             else:
                 return OK
         elif tacurrent['statust'] == ERROR:  # should be no children.
             if tacurrent['talijst']:
-                raise botslib.TraceError(_('Statust ERROR but has child(ren) (idta: %(idta)s).'), tacurrent)
+                raise botslib.TraceError(_t('Statust ERROR but has child(ren) (idta: %(idta)s).'), tacurrent)
             else:
                 return ERROR
         else:  # tacurrent.statust==OPEN: something is very wrong. Raise exception.
-            raise botslib.TraceError(_('Severe error: found statust OPEN for idta: %(idta)s.'), tacurrent)
+            raise botslib.TraceError(_t('Severe error: found statust OPEN for idta: %(idta)s.'), tacurrent)
 
     def _collectdataforfilereport(self):
         ''' Walk the ta-tree again in order to retrieve information/data belonging to incoming file (but not statust).

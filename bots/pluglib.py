@@ -12,7 +12,7 @@ from django import db
 from django.apps.registry import apps
 from django.db.models.fields import FieldDoesNotExist
 from django.core import serializers
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots-modules
 from . import models
@@ -33,19 +33,19 @@ def read_index(filename):  # @UnusedVariable
             del sys.modules['botsindex']
     except Exception:
         txt = botslib.txtexc()
-        raise botslib.PluginError(_('Error in configuration index file. Nothing is written. Error:\n%(txt)s'), {'txt': txt})
+        raise botslib.PluginError(_t('Error in configuration index file. Nothing is written. Error:\n%(txt)s'), {'txt': txt})
     else:
-        botsglobal.logger.info(_('Configuration index file is OK.'))
-        botsglobal.logger.info(_('Start writing to database.'))
+        botsglobal.logger.info(_t('Configuration index file is OK.'))
+        botsglobal.logger.info(_t('Start writing to database.'))
 
     # write content of index file to the bots database
     try:
         read_index2database(pluglist)
     except Exception:
         txt = botslib.txtexc()
-        raise botslib.PluginError(_('Error writing configuration index to database. Nothing is written. Error:\n%(txt)s'), {'txt': txt})
+        raise botslib.PluginError(_t('Error writing configuration index to database. Nothing is written. Error:\n%(txt)s'), {'txt': txt})
     else:
-        botsglobal.logger.info(_('Writing to database is OK.'))
+        botsglobal.logger.info(_t('Writing to database is OK.'))
 
 
 @db.transaction.commit_on_success  # if no exception raised: commit, else rollback.
@@ -53,7 +53,7 @@ def read_plugin(pathzipfile):
     ''' process uploaded plugin. '''
     # test if valid zipfile
     if not zipfile.is_zipfile(pathzipfile):
-        raise botslib.PluginError(_('Plugin is not a valid file.'))
+        raise botslib.PluginError(_t('Plugin is not a valid file.'))
 
     # read index file
     try:
@@ -64,22 +64,22 @@ def read_plugin(pathzipfile):
             del sys.modules['botsindex']
     except Exception:
         txt = botslib.txtexc()
-        raise botslib.PluginError(_('Error in plugin. Nothing is written. Error:\n%(txt)s'), {'txt': txt})
+        raise botslib.PluginError(_t('Error in plugin. Nothing is written. Error:\n%(txt)s'), {'txt': txt})
     else:
-        botsglobal.logger.info(_('Plugin is OK.'))
-        botsglobal.logger.info(_('Start writing to database.'))
+        botsglobal.logger.info(_t('Plugin is OK.'))
+        botsglobal.logger.info(_t('Start writing to database.'))
 
     # write content of index file to the bots database
     try:
         read_index2database(pluglist)
     except Exception:
         txt = botslib.txtexc()
-        raise botslib.PluginError(_('Error writing plugin to database. Nothing is written. Error:\n%(txt)s'), {'txt': txt})
+        raise botslib.PluginError(_t('Error writing plugin to database. Nothing is written. Error:\n%(txt)s'), {'txt': txt})
     else:
-        botsglobal.logger.info(_('Writing to database is OK.'))
+        botsglobal.logger.info(_t('Writing to database is OK.'))
 
     # write files to the file system.
-    botsglobal.logger.info(_('Start writing to files'))
+    botsglobal.logger.info(_t('Start writing to files'))
     try:
         warnrenamed = False  # to report in GUI files have been overwritten.
         myzip = zipfile.ZipFile(pathzipfile, mode="r")
@@ -103,10 +103,10 @@ def read_plugin(pathzipfile):
                     targetpath = targetpath.replace('config', botsglobal.ini.get('directories', 'config'), 1)
                 targetpath = botslib.join(orgtargetpath, targetpath)
                 # targetpath is OK now.
-                botsglobal.logger.info(_('    Start writing file: "%(targetpath)s".'), {'targetpath': targetpath})
+                botsglobal.logger.info(_t('    Start writing file: "%(targetpath)s".'), {'targetpath': targetpath})
 
                 if botslib.dirshouldbethere(os.path.dirname(targetpath)):
-                    botsglobal.logger.info(_('        Create directory "%(directory)s".'), {'directory': os.path.dirname(targetpath)})
+                    botsglobal.logger.info(_t('        Create directory "%(directory)s".'), {'directory': os.path.dirname(targetpath)})
                 if zipfileobject.filename[-1] == '/':  # check if this is a dir; if so continue
                     continue
                 if os.path.isfile(targetpath):  # check if file already exists
@@ -118,14 +118,14 @@ def read_plugin(pathzipfile):
                 target = open(targetpath, "wb")
                 target.write(source)
                 target.close()
-                botsglobal.logger.info(_('        File written: "%(targetpath)s".'), {'targetpath': targetpath})
+                botsglobal.logger.info(_t('        File written: "%(targetpath)s".'), {'targetpath': targetpath})
     except Exception:
         txt = botslib.txtexc()
         myzip.close()
-        raise botslib.PluginError(_('Error writing files to system. Nothing is written to database. Error:\n%(txt)s'), {'txt': txt})
+        raise botslib.PluginError(_t('Error writing files to system. Nothing is written to database. Error:\n%(txt)s'), {'txt': txt})
     else:
         myzip.close()
-        botsglobal.logger.info(_('Writing files to filesystem is OK.'))
+        botsglobal.logger.info(_t('Writing files to filesystem is OK.'))
         return warnrenamed
 
 
@@ -143,15 +143,15 @@ def read_index2database(orgpluglist):
     if not orgpluglist:  # list of plugins is empty: is OK. DO nothing
         return
     if not isinstance(orgpluglist, list):  # has to be a list!!
-        raise botslib.PluginError(_('Plugins should be list of dicts. Nothing is written.'))
+        raise botslib.PluginError(_t('Plugins should be list of dicts. Nothing is written.'))
     for plug in orgpluglist:
         if not isinstance(plug, dict):
-            raise botslib.PluginError(_('Plugins should be list of dicts. Nothing is written.'))
+            raise botslib.PluginError(_t('Plugins should be list of dicts. Nothing is written.'))
         for key in plug.keys():
             if not isinstance(key, str):
-                raise botslib.PluginError(_('Key of dict is not a string: "%(plug)s". Nothing is written.'), {'plug': plug})
+                raise botslib.PluginError(_t('Key of dict is not a string: "%(plug)s". Nothing is written.'), {'plug': plug})
         if 'plugintype' not in plug:
-            raise botslib.PluginError(_('"Plugintype" missing in: "%(plug)s". Nothing is written.'), {'plug': plug})
+            raise botslib.PluginError(_t('"Plugintype" missing in: "%(plug)s". Nothing is written.'), {'plug': plug})
 
     # special case: compatibility with bots 1.* plugins.
     # in bots 1.*, partnergroup was in separate tabel; in bots 2.* partnergroup is in partner
@@ -247,7 +247,7 @@ def read_index2database(orgpluglist):
                     plug[fieldobject.column] = plug[fieldname]  # add new key in plug
                     del plug[fieldname]                         # delete old key in plug
             except Exception:
-                raise botslib.PluginError(_('No field column for: "%(fieldname)s".'), {'fieldname': fieldname})
+                raise botslib.PluginError(_t('No field column for: "%(fieldname)s".'), {'fieldname': fieldname})
         # get real column names for fields in sleutel; basically the same loop but now for sleutel
         loopdictionary = sleutel.keys()
         for fieldname in loopdictionary:
@@ -257,7 +257,7 @@ def read_index2database(orgpluglist):
                     sleutel[fieldobject.column] = sleutel[fieldname]
                     del sleutel[fieldname]
             except Exception:
-                raise botslib.PluginError(_('No field column for: "%(fieldname)s".'), {'fieldname': fieldname})
+                raise botslib.PluginError(_t('No field column for: "%(fieldname)s".'), {'fieldname': fieldname})
 
         # find existing entry (if exists)
         if sleutelorg:  # note that translate and confirmrule have an empty 'sleutel'
@@ -290,7 +290,7 @@ def read_index2database(orgpluglist):
         for key, value in plug.items():  # update object with attributes from plugin
             setattr(dbobject, key, value)
         dbobject.save()                      # and save the updated object.
-        botsglobal.logger.info(_('        Write to database is OK.'))
+        botsglobal.logger.info(_t('        Write to database is OK.'))
 
 
 # *********************************************

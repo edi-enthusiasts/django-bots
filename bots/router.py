@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _t
 
 # bots-modules
 from . import automaticmaintenance
@@ -26,7 +26,7 @@ def rundispatcher(command, routestorun):
     if botsglobal.currentrun.run():
         return botsglobal.currentrun.evaluate()  # return result of evaluation of run: nr of errors, 0 (no error)
     else:
-        botsglobal.logger.info(_('Nothing to do in run.'))
+        botsglobal.logger.info(_t('Nothing to do in run.'))
         return 0  # return 0 (no error)
 
 
@@ -86,13 +86,13 @@ class new(object):
             routedict = dict(row)  # convert to real dictionary (as self.command is added to routedict)
             routedict['command'] = self.command  # this way command is passed to ohter functions.
             foundroute = True
-            botsglobal.logger.info(_('Running route %(idroute)s %(seq)s'), routedict)
+            botsglobal.logger.info(_t('Running route %(idroute)s %(seq)s'), routedict)
             self.routepart(routedict)
             # handle deferred-logic: mark if channel is deffered, umark if run
             self.keep_track_if_outchannel_deferred[routedict['tochannel']] = routedict['defer']
             botsglobal.logger.debug('Finished route %(idroute)s %(seq)s', routedict)
         if not foundroute:
-            botsglobal.logger.warning(_('There is no (active) route "%(route)s".'), {'route': route})
+            botsglobal.logger.warning(_t('There is no (active) route "%(route)s".'), {'route': route})
 
     @botslib.log_session
     def routepart(self, routedict):
@@ -109,7 +109,7 @@ class new(object):
         if botslib.tryrunscript(self.userscript, self.scriptname, 'main', routedict=routedict):
             return  # so: if function ' main' : communication.run only the routescript, nothing else.
         if not (self.userscript or routedict['fromchannel'] or routedict['tochannel'] or routedict['translateind']):
-            raise botslib.ScriptError(_('Route "%(idroute)s" is empty: no routescript, not enough parameters.'), routedict)
+            raise botslib.ScriptError(_t('Route "%(idroute)s" is empty: no routescript, not enough parameters.'), routedict)
 
         botslib.tryrunscript(self.userscript, self.scriptname, 'start', routedict=routedict)
 
@@ -294,7 +294,7 @@ class new(object):
         try:
             return automaticmaintenance.evaluate(self.command, self.get_minta4query())
         except Exception:
-            botsglobal.logger.exception(_('Error in automatic maintenance.'))
+            botsglobal.logger.exception(_t('Error in automatic maintenance.'))
             return 1
 
     def get_minta4query(self):
