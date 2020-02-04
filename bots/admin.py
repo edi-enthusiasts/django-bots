@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ''' Bots configuration for django's admin site.'''
 from django import forms
 from django.utils.translation import ugettext as _

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ''' Base library for bots. Botslib should not import code from other Bots-modules.'''
 import sys
 import os

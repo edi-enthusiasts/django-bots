@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 # Django settings for bots project.
+
 import os
 import bots
 PROJECT_PATH = os.path.abspath(os.path.dirname(bots.__file__))

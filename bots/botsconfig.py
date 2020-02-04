@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # constants/definitions for Bots
 # to be used as:
 # from botsconfig import *

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Globals used by Bots
 version = '3.2.0'       # bots version
 db = None               # db-object

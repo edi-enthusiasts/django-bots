@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ''' functions for reading and making plugins.
     Reading an making functions are seperate functions.
 '''

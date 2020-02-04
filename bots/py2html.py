@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # {{{ http://code.activestate.com/recipes/578178/ (r20)
 '''Add syntax highlighting to Python source code'''
 __author__ = 'Raymond Hettinger'

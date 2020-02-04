@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ''' Reading/lexing/parsing/splitting an edifile.'''
 import time
 import pickle

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """ Regular UNOA: UNOA char, CR, LF and Crtl-Z
 Adapted by Henk-Jan Ebbers for Bots open source EDI translator
 Controls handing of UNOA both incoming (decode) and outgoing (encode).

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # code found at code.djangoproject.com/ticket/3777
 from django import http
 

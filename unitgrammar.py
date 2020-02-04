@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 import bots.botslib as botslib
 import bots.botsinit as botsinit

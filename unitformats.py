@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 import bots
 import bots.node as node

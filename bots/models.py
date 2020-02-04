@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ''' Declare database tables.
     Django is not always perfect in generating db - but improving ;-)).
     The generated database can be manipulated SQL. see bots/sql/*.

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ''' converts xml file to a bots grammar.
     Usage: python  bots-xml2botsgrammar.py botssys/infile/test.xml botssys/infile/resultgrammar.py -cconfig
     Try to have a 'completely filled' xml file.

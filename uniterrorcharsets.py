@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import bots.botslib as botslib
 import bots.botsglobal as botsglobal
 import bots.botsinit as botsinit

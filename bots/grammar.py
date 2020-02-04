@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from django.utils.translation import ugettext as _
+
 # bots-modules
 from . import botslib
 from .botsconfig import (

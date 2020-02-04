@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # changed hje 20140624:
 # - only do matching with regular expressions
 # - do not use assert statement

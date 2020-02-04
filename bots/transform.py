@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ''' module contains functions to be called from user scripts. '''
 import os
 import pickle

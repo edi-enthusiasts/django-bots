@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.forms import (
     Form, DateTimeField, FileField,
     ChoiceField, TypedChoiceField,

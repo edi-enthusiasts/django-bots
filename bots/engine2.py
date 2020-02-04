@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 ''' Start bots-engine2: do not use database for logging and configuration. (so: no GUI).
     Parameters are hard-coded for now (inpath, infilename, outpath, outfilename, editype, messagetype)

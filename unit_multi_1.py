@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
+
 import filecmp
 import os
 import logging

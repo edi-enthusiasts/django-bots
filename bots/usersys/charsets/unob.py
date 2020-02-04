@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """ Regular UNOB: UNOB char, CR, LF and Crtl-Z
 Adapted by Henk-Jan Ebbers for Bots open source EDI translator
 Controls handing of UNOB both incoming (decode) and outgoing (encode).

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import decimal
 from django.utils.translation import ugettext as _
 from . import botslib

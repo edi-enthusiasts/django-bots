@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 try:
     from pysqlite2 import dbapi2 as sqlite  # prefer external modules for pylite
 except ImportError:
