@@ -1,5 +1,5 @@
 ''' converts xml file to a bots grammar.
-    Usage: c:\python27\python  bots-xml2botsgrammar.py  botssys/infile/test.xml   botssys/infile/resultgrammar.py  -cconfig
+    Usage: python  bots-xml2botsgrammar.py botssys/infile/test.xml botssys/infile/resultgrammar.py -cconfig
     Try to have a 'completely filled' xml file.
 '''
 import os
@@ -7,6 +7,7 @@ import sys
 import atexit
 import copy
 import logging
+from collections import OrderedDict
 
 # bots-modules
 from . import botslib
@@ -30,10 +31,6 @@ except ImportError:
             from xml.etree import cElementTree as ET
         except ImportError:
             from xml.etree import ElementTree as ET
-try:
-    from collections import OrderedDict
-except ImportError:
-    from .bots_ordereddict import OrderedDict  # @Reimport
 
 
 # **************************************************************************************
