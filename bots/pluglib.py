@@ -27,7 +27,7 @@ from . import botsglobal
 def read_index(filename):  # @UnusedVariable
     ''' process index file in default location. '''
     try:
-        importedbotsindex, scriptname = botslib.botsimport('index')  # @UnusedVariable
+        importedbotsindex, _ = botslib.botsimport('index')
         pluglist = importedbotsindex.plugins[:]
         if 'botsindex' in sys.modules:
             del sys.modules['botsindex']
@@ -431,8 +431,7 @@ def plugout_files(cleaned_data):
 def plugout_files_bydir(dirname, defaultdirname):
     ''' gather all files from directory dirname'''
     files2return = []
-    for root, dirs, files in os.walk(dirname):  # @UnusedVariable
-        head, tail = os.path.split(root)  # @UnusedVariable
+    for root, _, files in os.walk(dirname):
         # convert for correct environment: replace dirname with the default directory name
         rootinplugin = root.replace(dirname, defaultdirname, 1)
         for bestand in files:

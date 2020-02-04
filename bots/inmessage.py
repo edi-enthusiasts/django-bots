@@ -1066,6 +1066,10 @@ class csv(var):
                 lex_record[0:0] = [{VALUE: botsid, POS: 0, LIN: lex_record[0][LIN], SFIELD: False}]
 
 
+def nonzero(n):
+    return n != 0
+
+
 class excel(csv):
 
     def initfromfile(self):
@@ -1155,7 +1159,6 @@ class excel(csv):
         # Turns a gregorian (year, month, day, hour, minute, nearest_second) into a
         # standard YYYY-MM-DDTHH:MM:SS ISO date.
         (y, m, d,  hh, mm, ss) = tupledate
-        nonzero = lambda n: n != 0  # @IgnorePep8
         datestring = "%04d-%02d-%02d"  % (y, m, d) if list(filter(nonzero, (y, m, d))) else ''
         timestring = "T%02d:%02d:%02d" % (hh, mm, ss) if list(filter(nonzero, (hh, mm, ss))) or not datestring else ''
         return datestring+timestring
@@ -1698,7 +1701,7 @@ class x12(var):
                 frompartner=receiver,
                 topartner=sender,
                 alt=''
-            )  # @UnusedVariable
+            )
             if not tscript:
                 tomessagetype = '997004010'  # default messagetype for CONTRL
                 translationscript = None
@@ -1834,7 +1837,7 @@ class xml(Inmessage):
             # if found, and 'content' in the dict; if 'content' is equal to value found by xpath-search, then set messagetype.
             # if found, and no 'content' in the dict; set messagetype.
             try:
-                module, grammarname = botslib.botsimport('grammars', 'xml', 'mailbag')  # @UnusedVariable
+                module, _ = botslib.botsimport('grammars', 'xml', 'mailbag')
                 mailbagsearch = getattr(module, 'mailbagsearch')
             except AttributeError:
                 botsglobal.logger.error('Missing mailbagsearch in mailbag definitions for xml.')

@@ -692,7 +692,7 @@ def delete(request, *kw, **kwargs):
                 if form.cleaned_data['deluserscripts']:
                     deletefrompath = botsglobal.ini.get('directories', 'usersysabs')
                     for root, dirs, files in os.walk(deletefrompath):
-                        head, tail = os.path.split(root)  # @UnusedVariable
+                        _, tail = os.path.split(root)
                         if tail == 'charsets':
                             del dirs[:]
                             continue

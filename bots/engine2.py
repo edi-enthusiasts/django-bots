@@ -188,7 +188,7 @@ def get_control_information():
 
 def read_incoming(run):
     outputdir = botslib.join(run.inpath, run.infilename)
-    filelist = [filename for filename in glob.iglob(outputdir) if os.path.isfile(filename)]
+    filelist = [_ for _ in glob.iglob(outputdir) if os.path.isfile(_)]
     filelist.sort()
     for infilename in filelist:
         try:

@@ -579,8 +579,8 @@ class _comsession(object):
                             {'email': frommail, 'idchannel': self.channeldict['idchannel']}
                         )
                 # topartner, cc (incl autorization)
-                list_to_address = [self.checkheaderforcharset(address) for name_not_used_variable, address in email.utils.getaddresses(msg.get_all('to', []))]  # @UnusedVariable
-                list_cc_address = [self.checkheaderforcharset(address) for name_not_used_variable, address in email.utils.getaddresses(msg.get_all('cc', []))]  # @UnusedVariable
+                list_to_address = [self.checkheaderforcharset(address) for _, address in email.utils.getaddresses(msg.get_all('to', []))]
+                list_cc_address = [self.checkheaderforcharset(address) for _, address in email.utils.getaddresses(msg.get_all('cc', []))]
                 cc_content      = ','.join([address for address in (list_to_address + list_cc_address)])
                 topartner = ''  # initialise topartner
                 tomail = ''     # initialise tomail
@@ -820,7 +820,7 @@ class file(_comsession):
         ''' gets files from filesystem.
         '''
         frompath = botslib.join(self.channeldict['path'], self.channeldict['filename'])
-        filelist = [filename for filename in glob.iglob(frompath) if os.path.isfile(filename)]
+        filelist = [_ for _ in glob.iglob(frompath) if os.path.isfile(_)]
         filelist.sort()
         startdatetime = datetime.datetime.now()
         remove_ta = False
@@ -1192,7 +1192,7 @@ class smtp(_comsession):
                 ta_from = botslib.OldTransaction(row['idta'])
                 ta_to = ta_from.copyta(status=EXTERNOUT)
                 addresslist = row['tomail'].split(',') + row['cc'].split(',')
-                addresslist = [x.strip() for x in addresslist if x.strip()]
+                addresslist = [_.strip() for _ in addresslist if _.strip()]
                 sendfile = botslib.opendata(row['filename'], 'rb')
                 msg = sendfile.read()
                 sendfile.close()
@@ -2019,7 +2019,7 @@ class communicationscript(_comsession):
                         break
         else:  # all files have been set ready by external communicationscript using 'connect'.
             frompath = botslib.join(self.channeldict['path'], self.channeldict['filename'])
-            filelist = [filename for filename in glob.iglob(frompath) if os.path.isfile(filename)]
+            filelist = [_ for _ in glob.iglob(frompath) if os.path.isfile(_)]
             filelist.sort()
             remove_ta = False
             for fromfilename in filelist:

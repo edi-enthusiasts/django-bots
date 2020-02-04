@@ -79,13 +79,13 @@ def test_ccode_with_unicode():
     tests = [
         ('key1', 'leftcode'),
         ('key2', '~!@#$%^&*()_+}{:";][=-/.,<>?`'),
-        ('key3', '?érýúíó?ás??lzcn?'),
-        ('key4', '?ë?ÿüïöä´¨???è?ùì'),
-        ('key5', 'òà???UIÕÃ?Ñ`~'),
+        ('key3', '?ï¿½rï¿½ï¿½ï¿½ï¿½?ï¿½s??lzcn?'),
+        ('key4', '?ï¿½?ï¿½ï¿½ï¿½ï¿½ä´¨???ï¿½?ï¿½ï¿½'),
+        ('key5', 'ï¿½ï¿½???UIï¿½ï¿½?ï¿½`~'),
         ('key6', "a\xac\u1234\u20ac\U00008000"),
         ('key7', "abc_\u03a0\u03a3\u03a9.txt"),
-        ('key8', "?ÉRÝÚÍÓ?ÁS??LZCN??"),
-        ('key9', "Ë?¨YÜ¨IÏÏÖÄ???È?ÙÌÒ`À`Z?"),
+        ('key8', "?ï¿½Rï¿½ï¿½ï¿½ï¿½?ï¿½S??LZCN??"),
+        ('key9', "ï¿½?ï¿½YÜ¨Iï¿½ï¿½ï¿½ï¿½???ï¿½?ï¿½ï¿½ï¿½`ï¿½`Z?"),
     ]
 
     try:  # clean before test
@@ -155,7 +155,7 @@ def test_partner_lookup():
         raise Exception('test_partner_lookup')
     try:
         transform.partnerlookup(idpartner, 'attr1')
-    except botslib.CodeConversionError as msg:  # @UnusedVariable
+    except botslib.CodeConversionError:
         pass
     else:
         raise Exception('expect exception in test_partner_lookup')
@@ -166,7 +166,7 @@ def test_partner_lookup():
         raise Exception('test_partner_lookup')
     try:
         transform.partnerlookup(idpartner, str('attr2'))
-    except botslib.CodeConversionError as msg:  # @UnusedVariable
+    except botslib.CodeConversionError:
         pass
     else:
         raise Exception('expect exception in test_partner_lookup')

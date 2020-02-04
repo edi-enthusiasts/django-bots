@@ -89,7 +89,7 @@ def getdirbysize(path):
 
 def getdir(path):
     ''' read files in directory path, return incl length.'''
-    return [s for s in glob.glob(path) if os.path.isfile(s)]
+    return [f for f in glob.glob(path) if os.path.isfile(f)]
 
 
 def dummylogger():

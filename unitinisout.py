@@ -14,16 +14,6 @@ try:
     import json as simplejson
 except ImportError:
     import simplejson  # @UnusedImport
-try:
-    import cElementTree as ET
-except ImportError:
-    try:
-        import elementtree.ElementTree as ET
-    except ImportError:
-        try:
-            from xml.etree import cElementTree as ET
-        except ImportError:
-            from xml.etree import ElementTree as ET  # @UnusedImport
 
 '''
 pluging unitinisout.zip
