@@ -288,7 +288,7 @@ def unique(domein, updatewith=None):
         - if updatewith is None: return current number plus 1; update database with  current number plus 1
             if domain not used before, initialize with 1.
     '''
-    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
         return unique_runcounter(domein)
     else:
         cursor = botsglobal.db.cursor()
@@ -318,7 +318,7 @@ def checkunique(domein, receivednumber):
         return True
     else:
         # received number is not OK. Reset counter in database to previous value.
-        if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+        if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
             return False  # TODO: set the unique_runcounter
         else:
             changeq('''UPDATE uniek SET nummer=%(nummer)s WHERE domein=%(domein)s''', {'domein': domein, 'nummer': newnumber-1})
@@ -333,7 +333,8 @@ def sendbotserrorreport(subject, reporttext):
         Email is send to MANAGERS in config/settings.py.
         Email parameters are in config/settings.py (EMAIL_HOST, etc).
     '''
-    if botsglobal.ini.getboolean('settings', 'sendreportiferror', False) and not botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+    if botsglobal.ini.getboolean('settings', 'sendreportiferror', fallback=False) and \
+        not botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
         from django.core.mail import mail_managers
         try:
             mail_managers(subject, reporttext)
@@ -689,7 +690,7 @@ def check_if_other_engine_is_running():
     '''
     try:
         engine_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        port = botsglobal.ini.getint('settings', 'port', 28081)
+        port = botsglobal.ini.getint('settings', 'port', fallback=28081)
         engine_socket.bind(('127.0.0.1', port))
     except socket.error:
         engine_socket.close()
@@ -797,7 +798,7 @@ def lookup_translation(frommessagetype, fromeditype, alt, frompartner, topartner
 
 def botsinfo():
     return [
-        (_t('served at port'), botsglobal.ini.getint('webserver', 'port', 8080)),
+        (_t('served at port'), botsglobal.ini.getint('webserver', 'port', fallback=8080)),
         (_t('platform'), platform.platform()),
         (_t('machine'), platform.machine()),
         (_t('python version'), platform.python_version()),
@@ -817,7 +818,7 @@ def botsinfo():
 
 
 def strftime(timeformat):
-    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
         return time.strftime(timeformat, time.strptime("2013-01-23 01:23:45", "%Y-%m-%d %H:%M:%S"))  # if acceptance test use fixed date/time
     else:
         return time.strftime(timeformat)

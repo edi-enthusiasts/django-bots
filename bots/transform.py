@@ -55,13 +55,13 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
     try:
         ta_fromfile = botslib.OldTransaction(row['idta'])
         ta_parsed = ta_fromfile.copyta(status=PARSED)
-        if row['filesize'] > botsglobal.ini.getint('settings', 'maxfilesizeincoming', 5000000):
+        if row['filesize'] > botsglobal.ini.getint('settings', 'maxfilesizeincoming', fallback=5000000):
             ta_parsed.update(filesize=row['filesize'])
             raise botslib.FileTooLargeError(
                 _t('File size of %(filesize)s is too big; option "maxfilesizeincoming" in bots.ini is %(maxfilesizeincoming)s.'),
                 {
                     'filesize': row['filesize'],
-                    'maxfilesizeincoming': botsglobal.ini.getint('settings', 'maxfilesizeincoming', 5000000)
+                    'maxfilesizeincoming': botsglobal.ini.getint('settings', 'maxfilesizeincoming', fallback=5000000)
                 }
             )
         botsglobal.logger.debug(_t('Start translating file "%(filename)s" editype "%(editype)s" messagetype "%(messagetype)s".'), row)
@@ -214,7 +214,7 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
             # exceptions file_out-level: exception in mappingscript or writing of out-file
             except Exception:
                 # 2 modes: either every error leads to skipping of  whole infile (old  mode) or errors in mappingscript/outfile only affect that branche
-                if botsglobal.ini.getboolean('settings', 'oldmessageerrors', False):
+                if botsglobal.ini.getboolean('settings', 'oldmessageerrors', fallback=False):
                     raise
                 txt = botslib.txtexc()
                 ta_splitup.update(statust=ERROR, errortext=txt, **inn_splitup.ta_info)  # update db. inn_splitup.ta_info could be changed by mappingscript. Is this useful?

@@ -112,7 +112,7 @@ def start():
         userscript = scriptname = None
     # ***acceptance tests: initialiase acceptance user script******************************
     acceptance_userscript = acceptance_scriptname = None
-    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
         botsglobal.logger.info(_t('This run is an acceptance test - as indicated in option "runacceptancetest" in bots.ini.'))
         try:
             acceptance_userscript, acceptance_scriptname = botslib.botsimport('routescripts', 'bots_acceptancetest')
@@ -453,7 +453,7 @@ def filename_formatter(filename_mask, ta_info):
     unique = str(botslib.unique('bots_outgoing_file_name'))  # create unique part for filename
     tofilename = filename_mask.replace('*', unique)  # filename_mask is filename in channel where '*' is replaced by idta
     if '{' in tofilename:
-        if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+        if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
             datetime_object = datetime.datetime.strptime("2013-01-23 01:23:45", "%Y-%m-%d %H:%M:%S")
         else:
             datetime_object = datetime.datetime.now()

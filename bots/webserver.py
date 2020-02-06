@@ -46,7 +46,7 @@ def start():
     cherrypy.config.update({
         'global': {
             'log.screen': False,
-            'server.environment': botsglobal.ini.get('webserver', 'environment', 'production')
+            'server.environment': botsglobal.ini.get('webserver', 'environment', fallback='production')
         }
     })
     # cherrypy handling of static files
@@ -63,9 +63,9 @@ def start():
     # cherrypy uses a dispatcher in order to handle the serving of static files and django.
     dispatcher = wsgiserver.WSGIPathInfoDispatcher({'/': servedjango, '/media': servestaticfiles})
     botswebserver = wsgiserver.CherryPyWSGIServer(
-        bind_addr=('0.0.0.0', botsglobal.ini.getint('webserver', 'port', 8080)),
+        bind_addr=('0.0.0.0', botsglobal.ini.getint('webserver', 'port', fallback=8080)),
         wsgi_app=dispatcher,
-        server_name=botsglobal.ini.get('webserver', 'name', 'bots-webserver')
+        server_name=botsglobal.ini.get('webserver', 'name', fallback='bots-webserver')
     )
     botsglobal.logger.log(
         25,
@@ -80,11 +80,11 @@ def start():
     botsglobal.logger.log(
         25,
         _t('Bots %(process_name)s serving at port: "%(port)s".'),
-        {'process_name': process_name, 'port': botsglobal.ini.getint('webserver', 'port', 8080)}
+        {'process_name': process_name, 'port': botsglobal.ini.getint('webserver', 'port', fallback=8080)}
     )
     # handle ssl: cherrypy < 3.2 always uses pyOpenssl. cherrypy >= 3.2 uses python buildin ssl (python >= 2.6 has buildin support for ssl).
-    ssl_certificate = botsglobal.ini.get('webserver', 'ssl_certificate', None)
-    ssl_private_key = botsglobal.ini.get('webserver', 'ssl_private_key', None)
+    ssl_certificate = botsglobal.ini.get('webserver', 'ssl_certificate', fallback=None)
+    ssl_private_key = botsglobal.ini.get('webserver', 'ssl_private_key', fallback=None)
     if ssl_certificate and ssl_private_key:
         if cherrypy.__version__ >= '3.2.0':
             adapter_class = wsgiserver.get_ssl_adapter_class('builtin')

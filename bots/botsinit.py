@@ -5,7 +5,7 @@ import os
 import encodings
 import codecs
 import logging.handlers
-from configparser import RawConfigParser
+from configparser import NoOptionError, NoSectionError, RawConfigParser, _UNSET
 
 # Bots-modules
 from . import botsglobal
@@ -14,27 +14,15 @@ from . import node
 
 
 class BotsConfig(RawConfigParser):
-    ''' As ConfigParser, but with defaults.
-    '''
-    def get(self, section, option, default=''):
-        if self.has_option(section, option):
-            return RawConfigParser.get(self, section, option)
-        elif default == '':
-            raise botslib.BotsError('No entry "%(option)s" in section "%(section)s" in "bots.ini".', {'option': option, 'section': section})
-        else:
-            return default
-
-    def getint(self, section, option, default):
-        if self.has_option(section, option):
-            return RawConfigParser.getint(self, section, option)
-        else:
-            return default
-
-    def getboolean(self, section, option, default):
-        if self.has_option(section, option):
-            return RawConfigParser.getboolean(self, section, option)
-        else:
-            return default
+    ''' As ConfigParser, but raises BotsError.'''
+    def get(self, section, option, *, raw=False, vars=None, fallback=_UNSET):  # @ReservedAssignment
+        try:
+            return RawConfigParser.get(self, section, option, raw=raw, vars=vars, fallback=fallback)
+        except (NoOptionError, NoSectionError):
+            raise botslib.BotsError(
+                'No entry "%(option)s" in section "%(section)s" in "bots.ini".',
+                {'option': option, 'section': section}
+            ) from None
 
 
 def generalinit(configdir):
@@ -72,7 +60,7 @@ def generalinit(configdir):
     # ###########################################################################
     # Usersys####################################################################
     # usersys MUST be importable. So usersys is relative to PYTHONPATH. Try several options for this import.
-    usersys = botsglobal.ini.get('directories', 'usersys', 'usersys')
+    usersys = botsglobal.ini.get('directories', 'usersys', fallback='usersys')
     try:  # usersys outside bots-directory: import usersys
         importnameforusersys = os.path.normpath(usersys).replace(os.sep, '.')
         importedusersys = botslib.botsbaseimport(importnameforusersys)
@@ -96,20 +84,20 @@ def generalinit(configdir):
     # ###########################################################################
     # Botssys####################################################################
     # 'directories','botssys': absolute path for config botssys
-    botssys = botsglobal.ini.get('directories', 'botssys', 'botssys')
+    botssys = botsglobal.ini.get('directories', 'botssys', fallback='botssys')
     botsglobal.ini.set('directories', 'botssys_org', botssys)            # store original botssys setting
     botsglobal.ini.set('directories', 'botssys', botslib.join(botssys))  # use absolute path
     botsglobal.ini.set('directories', 'data', botslib.join(botssys, 'data'))
     botsglobal.ini.set('directories', 'logging', botslib.join(botssys, 'logging'))
     # ###########################################################################
     # other inits##############################################################
-    if botsglobal.ini.get('webserver', 'environment', 'development') != 'development':  # values in bots.ini are also used in setting up cherrypy
+    if botsglobal.ini.get('webserver', 'environment', fallback='development') != 'development':  # values in bots.ini are also used in setting up cherrypy
         logging.raiseExceptions = 0  # during production: if errors occurs in writing to log: ignore error. (leads to a missing log line, better than error;-).
     botslib.dirshouldbethere(botsglobal.ini.get('directories', 'data'))
     botslib.dirshouldbethere(botsglobal.ini.get('directories', 'logging'))
     initbotscharsets()  # initialise bots charsets
-    node.Node.checklevel = botsglobal.ini.getint('settings', 'get_checklevel', 1)
-    botslib.settimeout(botsglobal.ini.getint('settings', 'globaltimeout', 10))
+    node.Node.checklevel = botsglobal.ini.getint('settings', 'get_checklevel', fallback=1)
+    botslib.settimeout(botsglobal.ini.getint('settings', 'globaltimeout', fallback=10))
     # ###########################################################################
     # Init django#################################################################################
     os.environ['DJANGO_SETTINGS_MODULE'] = importnameforsettings
@@ -129,7 +117,7 @@ def initbotscharsets():
     # syntax has parameters checkcharsetin or checkcharsetout. These can have value 'botsreplace'
     # eg: 'checkcharsetin':'botsreplace',  #strict, ignore or botsreplace
     # in case of errors: the 'wrong' character is replaced with char as set in bots.ini. Default value in bots.ini is ' ' (space)
-    botsglobal.botsreplacechar = str(botsglobal.ini.get('settings', 'botsreplacechar', ' '))
+    botsglobal.botsreplacechar = str(botsglobal.ini.get('settings', 'botsreplacechar', fallback=' '))
     codecs.register_error('botsreplace', botsreplacechar_handler)  # need to register the handler for botsreplacechar
     # set aliases for the charsets in bots.ini
     for key, value in botsglobal.ini.items('charsets'):
@@ -210,10 +198,10 @@ convertini2logger = {
 def initenginelogging(logname):
     # initialise file logging: create main logger 'bots'
     logger = logging.getLogger(logname)
-    logger.setLevel(convertini2logger[botsglobal.ini.get('settings', 'log_file_level', 'INFO')])
+    logger.setLevel(convertini2logger[botsglobal.ini.get('settings', 'log_file_level', fallback='INFO')])
     handler = logging.handlers.RotatingFileHandler(
         botslib.join(botsglobal.ini.get('directories', 'logging'), logname+'.log'),
-        backupCount=botsglobal.ini.getint('settings', 'log_file_number', 10)
+        backupCount=botsglobal.ini.getint('settings', 'log_file_number', fallback=10)
     )
     fileformat = logging.Formatter("%(asctime)s %(levelname)-8s %(name)s : %(message)s", '%Y%m%d %H:%M:%S')
     handler.setFormatter(fileformat)
@@ -221,12 +209,12 @@ def initenginelogging(logname):
     logger.addHandler(handler)
     # initialise file logging: logger for trace of mapping; tried to use filters but got this not to work.....
     botsglobal.logmap = logging.getLogger('engine.map')
-    if not botsglobal.ini.getboolean('settings', 'mappingdebug', False):
+    if not botsglobal.ini.getboolean('settings', 'mappingdebug', fallback=False):
         botsglobal.logmap.setLevel(logging.CRITICAL)
     # logger for reading edifile. is now used only very limited (1 place); is done with 'if'
-    # botsglobal.ini.getboolean('settings', 'readrecorddebug', False)
+    # botsglobal.ini.getboolean('settings', 'readrecorddebug', fallback=False)
     # initialise console/screen logging
-    if botsglobal.ini.getboolean('settings', 'log_console', True):
+    if botsglobal.ini.getboolean('settings', 'log_console', fallback=True):
         console = logging.StreamHandler()
         console.setLevel(logging.INFO)
         consuleformat = logging.Formatter("%(levelname)-8s %(message)s")
@@ -238,7 +226,7 @@ def initenginelogging(logname):
 def initserverlogging(logname):
     # initialise file logging
     logger = logging.getLogger(logname)
-    logger.setLevel(convertini2logger[botsglobal.ini.get(logname, 'log_file_level', 'INFO')])
+    logger.setLevel(convertini2logger[botsglobal.ini.get(logname, 'log_file_level', fallback='INFO')])
     handler = logging.handlers.TimedRotatingFileHandler(
         os.path.join(botsglobal.ini.get('directories', 'logging'), logname+'.log'),
         when='midnight',
@@ -248,9 +236,9 @@ def initserverlogging(logname):
     handler.setFormatter(fileformat)
     logger.addHandler(handler)
     # initialise console/screen logging
-    if botsglobal.ini.getboolean(logname, 'log_console', True):
+    if botsglobal.ini.getboolean(logname, 'log_console', fallback=True):
         console = logging.StreamHandler()
-        console.setLevel(convertini2logger[botsglobal.ini.get(logname, 'log_console_level', 'STARTINFO')])
+        console.setLevel(convertini2logger[botsglobal.ini.get(logname, 'log_console_level', fallback='STARTINFO')])
         consoleformat = logging.Formatter("%(asctime)s %(levelname)-9s: %(message)s", '%Y%m%d %H:%M:%S')
         console.setFormatter(consoleformat)  # add formatter to console
         logger.addHandler(console)  # add console to logger

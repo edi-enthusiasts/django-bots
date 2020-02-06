@@ -53,7 +53,7 @@ def run(idchannel, command, idroute, rootidta=None):
         channeldict = dict(row)  # convert to real dictionary ()
         botsglobal.logger.debug('Start communication channel "%(idchannel)s" type %(type)s %(inorout)s.', channeldict)
         # for acceptance testing bots has an option to turn of external communication in channels
-        if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+        if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
             # override values in channels for acceptance testing.
             # testpath is used to 'trigger' this: if testpath has value, use acceptance.
             if channeldict['testpath']:
@@ -118,7 +118,7 @@ class _comsession(object):
         else:  # incommunication
             if self.command == 'new':  # only in-communicate for new run
                 # handle maxsecondsperchannel: use global value from bots.ini unless specified in channel. (In database this is field 'rsrv2'.)
-                self.maxsecondsperchannel = botsglobal.ini.getint('settings', 'maxsecondsperchannel', sys.maxsize) if self.channeldict['rsrv2'] <= 0 else self.channeldict['rsrv2']
+                self.maxsecondsperchannel = botsglobal.ini.getint('settings', 'maxsecondsperchannel', fallback=sys.maxsize) if self.channeldict['rsrv2'] <= 0 else self.channeldict['rsrv2']
                 try:
                     self.connect()
                 except Exception:  # in-connection failed. note that no files are received yet. useful if scheduled quite often, and you do nto want error-report eg when server is down.
@@ -151,10 +151,10 @@ class _comsession(object):
         '''
         if not self.channeldict['archivepath']:
             return  # do not archive if not indicated
-        if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+        if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
             return  # do not archive in acceptance testing
         if self.channeldict['filename'] and self.channeldict['type'] in ('file', 'ftp', 'ftps', 'ftpis', 'sftp', 'mimefile', 'communicationscript'):
-            archiveexternalname = botsglobal.ini.getboolean('settings', 'archiveexternalname', False)  # use external filename in archive
+            archiveexternalname = botsglobal.ini.getboolean('settings', 'archiveexternalname', fallback=False)  # use external filename in archive
         else:
             archiveexternalname = False
         if self.channeldict['inorout'] == 'in':
@@ -173,7 +173,7 @@ class _comsession(object):
             archivepath = botslib.runscript(self.userscript, self.scriptname, 'archivepath', channeldict=self.channeldict)
         else:
             archivepath = botslib.join(self.channeldict['archivepath'], time.strftime('%Y%m%d'))
-        archivezip = botsglobal.ini.getboolean('settings', 'archivezip', False)  # archive to zip or not
+        archivezip = botsglobal.ini.getboolean('settings', 'archivezip', fallback=False)  # archive to zip or not
         if archivezip:
             archivepath += '.zip'
         checkedifarchivepathisthere = False  # for a outchannel that is less used, lots of empty dirs will be created. This var is used to check within loop if dir exist, but this is only checked one time.
@@ -293,7 +293,7 @@ class _comsession(object):
                     if ccto:
                         message.add_header('CC', ccto)
 
-                    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+                    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
                         reference = '123message-ID email should be unique123'
                         email_datetime = email.utils.formatdate(timeval=time.mktime(time.strptime("2013-01-23 01:23:45", "%Y-%m-%d %H:%M:%S")), localtime=True)
                     else:
@@ -316,7 +316,7 @@ class _comsession(object):
                         confirmasked = True
 
                     # set subject
-                    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+                    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
                         subject = '12345678'
                     else:
                         subject = str(row['idta'])
@@ -506,7 +506,7 @@ class _comsession(object):
             # write email to file;
             ta_mdn = botslib.NewTransaction(status=MERGED)  # new transaction for group-file
 
-            if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+            if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
                 mdn_reference = '123message-ID email should be unique123'
                 mdn_datetime = email.utils.formatdate(timeval=time.mktime(time.strptime("2013-01-23 01:23:45", "%Y-%m-%d %H:%M:%S")), localtime=True)
             else:
@@ -784,7 +784,7 @@ class _comsession(object):
             else:
                 infilename = ''
             try:
-                if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):
+                if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
                     datetime_object = datetime.datetime.strptime("2013-01-23 01:23:45", "%Y-%m-%d %H:%M:%S")
                 else:
                     datetime_object = datetime.datetime.now()
@@ -947,7 +947,7 @@ class pop3(_comsession):
     def connect(self):
         import poplib
         self.session = poplib.POP3(host=self.channeldict['host'], port=int(self.channeldict['port']))
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'pop3debug', 0))  # if used, gives information about session (on screen), for debugging pop3
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'pop3debug', fallback=0))  # if used, gives information about session (on screen), for debugging pop3
         self.session.user(self.channeldict['username'])
         self.session.pass_(self.channeldict['secret'])
 
@@ -1038,7 +1038,7 @@ class pop3s(pop3):
         else:
             keyfile = certfile = None
         self.session = poplib.POP3_SSL(host=self.channeldict['host'], port=int(self.channeldict['port']), keyfile=keyfile, certfile=certfile)
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'pop3debug', 0))  # if used, gives information about session (on screen), for debugging pop3
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'pop3debug', fallback=0))  # if used, gives information about session (on screen), for debugging pop3
         self.session.user(self.channeldict['username'])
         self.session.pass_(self.channeldict['secret'])
 
@@ -1048,7 +1048,7 @@ class pop3apop(pop3):
     def connect(self):
         import poplib
         self.session = poplib.POP3(host=self.channeldict['host'], port=int(self.channeldict['port']))
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'pop3debug', 0))  # if used, gives information about session (on screen), for debugging pop3
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'pop3debug', fallback=0))  # if used, gives information about session (on screen), for debugging pop3
         self.session.apop(self.channeldict['username'], self.channeldict['secret'])  # python handles apop password encryption
 
 
@@ -1057,7 +1057,7 @@ class imap4(_comsession):
     '''
     def connect(self):
         import imaplib
-        imaplib.Debug = botsglobal.ini.getint('settings', 'imap4debug', 0)  # if used, gives information about session (on screen), for debugging imap4
+        imaplib.Debug = botsglobal.ini.getint('settings', 'imap4debug', fallback=0)  # if used, gives information about session (on screen), for debugging imap4
         self.session = imaplib.IMAP4(host=self.channeldict['host'], port=int(self.channeldict['port']))
         self.session.login(self.channeldict['username'], self.channeldict['secret'])
 
@@ -1142,7 +1142,7 @@ class imap4s(imap4):
             certfile = self.channeldict['certfile']
         else:
             keyfile = certfile = None
-        imaplib.Debug = botsglobal.ini.getint('settings', 'imap4debug', 0)  # if used, gives information about session (on screen), for debugging imap4
+        imaplib.Debug = botsglobal.ini.getint('settings', 'imap4debug', fallback=0)  # if used, gives information about session (on screen), for debugging imap4
         self.session = imaplib.IMAP4_SSL(host=self.channeldict['host'], port=int(self.channeldict['port']), keyfile=keyfile, certfile=certfile)
         self.session.login(self.channeldict['username'], self.channeldict['secret'])
 
@@ -1154,7 +1154,7 @@ class smtp(_comsession):
 
     def connect(self):
         self.session = smtplib.SMTP(host=self.channeldict['host'], port=int(self.channeldict['port']))  # make connection
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'smtpdebug', 0))  # if used, gives information about session (on screen), for debugging smtp
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'smtpdebug', fallback=0))  # if used, gives information about session (on screen), for debugging smtp
         self.login()
 
     def login(self):
@@ -1230,7 +1230,7 @@ class smtps(smtp):
         else:
             keyfile = certfile = None
         self.session = smtplib.SMTP_SSL(host=self.channeldict['host'], port=int(self.channeldict['port']), keyfile=keyfile, certfile=certfile)  # make connection
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'smtpdebug', 0))  # if used, gives information about session (on screen), for debugging smtp
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'smtpdebug', fallback=0))  # if used, gives information about session (on screen), for debugging smtp
         self.login()
 
 
@@ -1250,7 +1250,7 @@ class smtpstarttls(smtp):
         else:
             keyfile = certfile = None
         self.session = smtplib.SMTP(host=self.channeldict['host'], port=int(self.channeldict['port']))  # make connection
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'smtpdebug', 0))  # if used, gives information about session (on screen), for debugging smtp
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'smtpdebug', fallback=0))  # if used, gives information about session (on screen), for debugging smtp
         self.session.ehlo()
         self.session.starttls(keyfile=keyfile, certfile=certfile)
         self.session.ehlo()
@@ -1271,9 +1271,9 @@ class mimefile(file):
 class ftp(_comsession):
 
     def connect(self):
-        botslib.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', 10))
+        botslib.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', fallback=10))
         self.session = ftplib.FTP()
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'ftpdebug', 0))  # set debug level (0=no, 1=medium, 2=full debug)
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'ftpdebug', fallback=0))  # set debug level (0=no, 1=medium, 2=full debug)
         self.session.set_pasv(not self.channeldict['ftpactive'])  # active or passive ftp
         self.session.connect(host=self.channeldict['host'], port=int(self.channeldict['port']))
         self.session.login(user=self.channeldict['username'], passwd=self.channeldict['secret'], acct=self.channeldict['ftpaccount'])
@@ -1414,7 +1414,7 @@ class ftp(_comsession):
             self.session.quit()
         except Exception:
             self.session.close()
-        botslib.settimeout(botsglobal.ini.getint('settings', 'globaltimeout', 10))
+        botslib.settimeout(botsglobal.ini.getint('settings', 'globaltimeout', fallback=10))
 
 
 class ftps(ftp):
@@ -1437,9 +1437,9 @@ class ftps(ftp):
             certfile = self.channeldict['certfile']
         else:
             keyfile = certfile = None
-        botslib.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', 10))
+        botslib.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', fallback=10))
         self.session = ftplib.FTP_TLS(keyfile=keyfile, certfile=certfile)
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'ftpdebug', 0))  # set debug level (0=no, 1=medium, 2=full debug)
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'ftpdebug', fallback=0))  # set debug level (0=no, 1=medium, 2=full debug)
         self.session.set_pasv(not self.channeldict['ftpactive'])  # active or passive ftp
         self.session.connect(host=self.channeldict['host'], port=int(self.channeldict['port']))
         self.session.auth()
@@ -1518,11 +1518,11 @@ class ftpis(ftp):
             certfile = self.channeldict['certfile']
         else:
             keyfile = certfile = None
-        botslib.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', 10))
+        botslib.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', fallback=10))
         self.session = Ftp_tls_implicit(keyfile=keyfile, certfile=certfile)
         if self.channeldict['parameters']:
             self.session.ssl_version = int(self.channeldict['parameters'])
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'ftpdebug', 0))  # set debug level (0=no, 1=medium, 2=full debug)
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'ftpdebug', fallback=0))  # set debug level (0=no, 1=medium, 2=full debug)
         self.session.set_pasv(not self.channeldict['ftpactive'])  # active or passive ftp
         self.session.connect(host=self.channeldict['host'], port=int(self.channeldict['port']))
         # self.session.auth()
@@ -1552,7 +1552,7 @@ class sftp(_comsession):
         except Exception:
             raise ImportError(_t('Dependency failure: communicationtype "sftp" requires python library "pycrypto".'))
         # setup logging if required
-        ftpdebug = botsglobal.ini.getint('settings', 'ftpdebug', 0)
+        ftpdebug = botsglobal.ini.getint('settings', 'ftpdebug', fallback=0)
         if ftpdebug > 0:
             log_file = botslib.join(botsglobal.ini.get('directories', 'logging'), 'sftp.log')
             # Convert ftpdebug to paramiko logging level (1=20=info, 2=10=debug)
@@ -1597,7 +1597,7 @@ class sftp(_comsession):
         self.transport.connect(username=self.channeldict['username'], password=secret, hostkey=hostkey, pkey=pkey)
         self.session = paramiko.SFTPClient.from_transport(self.transport)
         channel = self.session.get_channel()
-        channel.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', 10))
+        channel.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', fallback=10))
         self.set_cwd()
 
     def set_cwd(self):

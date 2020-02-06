@@ -155,7 +155,7 @@ def start():
             sys.exit(0)
     # ***end handling command line arguments**************************
     botsinit.generalinit(configdir)  # find locating of bots, configfiles, init paths etc.
-    if not botsglobal.ini.getboolean('jobqueue', 'enabled', False):
+    if not botsglobal.ini.getboolean('jobqueue', 'enabled', fallback=False):
         print('Error: bots jobqueue cannot start; not enabled in %s/bots.ini' % configdir)
         sys.exit(1)
     process_name = 'dirmonitor'
@@ -171,9 +171,9 @@ def start():
         if section.startswith('dirmonitor') and section[len('dirmonitor'):]:
             dir_watch_data.append({})
             dir_watch_data[-1]['path'] = botsglobal.ini.get(section, 'path')
-            dir_watch_data[-1]['rec'] = botsglobal.ini.getboolean(section, 'recursive', False)
-            dir_watch_data[-1]['filemask'] = botsglobal.ini.get(section, 'filemask', '*')
-            dir_watch_data[-1]['route'] = botsglobal.ini.get(section, 'route', '')
+            dir_watch_data[-1]['rec'] = botsglobal.ini.getboolean(section, 'recursive', fallback=False)
+            dir_watch_data[-1]['filemask'] = botsglobal.ini.get(section, 'filemask', fallback='*')
+            dir_watch_data[-1]['route'] = botsglobal.ini.get(section, 'route', fallback='')
     if not dir_watch_data:
         logger.error('Nothing to watch!')
         sys.exit(0)

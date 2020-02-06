@@ -528,7 +528,7 @@ def plugout_index(request, *kw, **kwargs):  # @UnusedVariable
         try:
             dummy_for_cleaned_data = {
                 'databaseconfiguration': True,
-                'umlists': botsglobal.ini.getboolean('settings', 'codelists_in_plugin', True),
+                'umlists': botsglobal.ini.getboolean('settings', 'codelists_in_plugin', fallback=True),
                 'databasetransactions': False
             }
             pluglib.make_index(dummy_for_cleaned_data, filename)
@@ -555,7 +555,7 @@ def plugout_backup_core(request, *kw, **kwargs):  # @UnusedVariable
     try:
         dummy_for_cleaned_data = {
             'databaseconfiguration': True,
-            'umlists': botsglobal.ini.getboolean('settings', 'codelists_in_plugin', True),
+            'umlists': botsglobal.ini.getboolean('settings', 'codelists_in_plugin', fallback=True),
             'fileconfiguration': True,
             'infiles': False,
             'charset': True,
@@ -623,7 +623,7 @@ def delete(request, *kw, **kwargs):
                     messages.add_message(request, messages.INFO, _t('Transactions are deleted.'))
                     botsglobal.logger.info(_t('Transactions are deleted.'))
                     # clean data files
-                    deletefrompath = botsglobal.ini.get('directories', 'data', 'botssys/data')
+                    deletefrompath = botsglobal.ini.get('directories', 'data', fallback='botssys/data')
                     shutil.rmtree(deletefrompath, ignore_errors=True)
                     botslib.dirshouldbethere(deletefrompath)
                     notification = _t('Data files are deleted.')
@@ -678,13 +678,13 @@ def delete(request, *kw, **kwargs):
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 if form.cleaned_data['delinfile']:
-                    deletefrompath = botslib.join(botsglobal.ini.get('directories', 'botssys', 'botssys'), 'infile')
+                    deletefrompath = botslib.join(botsglobal.ini.get('directories', 'botssys', fallback='botssys'), 'infile')
                     shutil.rmtree(deletefrompath, ignore_errors=True)
                     notification = _t('Files in botssys/infile are deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 if form.cleaned_data['deloutfile']:
-                    deletefrompath = botslib.join(botsglobal.ini.get('directories', 'botssys', 'botssys'), 'outfile')
+                    deletefrompath = botslib.join(botsglobal.ini.get('directories', 'botssys', fallback='botssys'), 'outfile')
                     shutil.rmtree(deletefrompath, ignore_errors=True)
                     notification = _t('Files in botssys/outfile are deleted.')
                     messages.add_message(request, messages.INFO, notification)
@@ -713,8 +713,8 @@ def runengine(request, *kw, **kwargs):  # @UnusedVariable
         #  2. botsengine_path. Problem in apache. Use setting in bots.ini if there
         #  3. environment (config). OK
         #  4. commandstorun (eg --new) and routes. OK
-        python_executable_path = botsglobal.ini.get('settings', 'python_executable_path', sys.executable)
-        botsengine_path = botsglobal.ini.get('settings', 'botsengine_path', os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), 'bots-engine.py'))
+        python_executable_path = botsglobal.ini.get('settings', 'python_executable_path', fallback=sys.executable)
+        botsengine_path = botsglobal.ini.get('settings', 'botsengine_path', fallback=os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), 'bots-engine.py'))
         environment = '-c' + botsglobal.ini.get('directories', 'config_org')
         lijst = [python_executable_path, botsengine_path, environment]
         # get 4. commandstorun (eg --new) and routes via request
@@ -722,7 +722,7 @@ def runengine(request, *kw, **kwargs):  # @UnusedVariable
             lijst.append(request.GET['clparameter'])
 
         # either bots-engine is run directly or via jobqueue-server:
-        if botsglobal.ini.getboolean('jobqueue', 'enabled', False):  # run bots-engine via jobqueue-server; reports back if job is queued
+        if botsglobal.ini.getboolean('jobqueue', 'enabled', fallback=False):  # run bots-engine via jobqueue-server; reports back if job is queued
             from .import job2queue
             terug = job2queue.send_job_to_jobqueue(lijst)
             messages.add_message(request, messages.INFO, job2queue.JOBQUEUEMESSAGE2TXT[terug])
@@ -753,7 +753,7 @@ def runengine(request, *kw, **kwargs):  # @UnusedVariable
 
 def sendtestmailmanagers(request, *kw, **kwargs):  # @UnusedVariable
     try:
-        sendornot = botsglobal.ini.getboolean('settings', 'sendreportiferror', False)
+        sendornot = botsglobal.ini.getboolean('settings', 'sendreportiferror', fallback=False)
     except botslib.BotsError:
         sendornot = False
     if not sendornot:

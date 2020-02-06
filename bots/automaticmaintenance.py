@@ -94,7 +94,7 @@ def make_run_report(rootidtaofrun, resultsofrun, command, totalfilesize):
             'status': status,
             'type': command,
             'totalfilesize': totalfilesize,
-            'acceptance': int(botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False)),
+            'acceptance': int(botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False)),
             'rsrv1': commandline
         }
     )
@@ -137,7 +137,7 @@ def email_error_report(rootidtaofrun):
     botsglobal.logger.info(reporttext)  # log the report texts
     # only send email report if there are errors.
     # sendreportifprocesserror (in bots.ini): no email reports if only process errors
-    if results['lasterror'] or results['lastopen'] or results['lastok'] or (results['processerrors'] and botsglobal.ini.getboolean('settings', 'sendreportifprocesserror', True)):
+    if results['lasterror'] or results['lastopen'] or results['lastok'] or (results['processerrors'] and botsglobal.ini.getboolean('settings', 'sendreportifprocesserror', fallback=True)):
 
         # Include details about process errors in the email report; if debug is True: includes trace
         if results['processerrors']:
@@ -356,7 +356,7 @@ class Trace(object):
                 core(child)
             # end of core function
 
-        asterisk = botsglobal.ini.getboolean('settings', 'multiplevaluesasterisk', True)
+        asterisk = botsglobal.ini.getboolean('settings', 'multiplevaluesasterisk', fallback=True)
         self.idta = self.rootofinfile['idta']
         self.reportidta = self.rootidtaofrun
         self.retransmit = 0

@@ -37,7 +37,7 @@ def start():
     index_filename = os.path.join(usersys, 'index.py')
     dummy_for_cleaned_data = {
         'databaseconfiguration': True,
-        'umlists': botsglobal.ini.getboolean('settings', 'codelists_in_plugin', True),
+        'umlists': botsglobal.ini.getboolean('settings', 'codelists_in_plugin', fallback=True),
         'databasetransactions': False
     }
     pluglib.make_index(dummy_for_cleaned_data, index_filename)

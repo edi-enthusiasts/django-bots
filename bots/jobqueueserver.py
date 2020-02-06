@@ -149,19 +149,19 @@ def start():
             sys.exit(0)
     # ***end handling command line arguments**************************
     botsinit.generalinit(configdir)  # find locating of bots, configfiles, init paths etc.
-    if not botsglobal.ini.getboolean('jobqueue', 'enabled', False):
+    if not botsglobal.ini.getboolean('jobqueue', 'enabled', fallback=False):
         print('Error: bots jobqueue cannot start; not enabled in %s/bots.ini' % configdir)
         sys.exit(1)
     process_name = 'jobqueue'
     logger = botsinit.initserverlogging(process_name)
     logger.log(25, 'Bots %(process_name)s started.', {'process_name': process_name})
     logger.log(25, 'Bots %(process_name)s configdir: "%(configdir)s".', {'process_name': process_name, 'configdir': botsglobal.ini.get('directories', 'config')})
-    port = botsglobal.ini.getint('jobqueue', 'port', 28082)
+    port = botsglobal.ini.getint('jobqueue', 'port', fallback=28082)
     logger.log(25, 'Bots %(process_name)s listens for xmlrpc at port: "%(port)s".', {'process_name': process_name, 'port': port})
 
     # start launcher thread
-    lauchfrequency = botsglobal.ini.getint('jobqueue', 'lauchfrequency', 5)
-    maxruntime = botsglobal.ini.getint('settings', 'maxruntime', 60)
+    lauchfrequency = botsglobal.ini.getint('jobqueue', 'lauchfrequency', fallback=5)
+    maxruntime = botsglobal.ini.getint('settings', 'maxruntime', fallback=60)
     launcher_thread = threading.Thread(name='launcher', target=launcher, args=(logger, port, lauchfrequency, maxruntime))
     launcher_thread.daemon = True
     launcher_thread.start()

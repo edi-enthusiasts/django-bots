@@ -17,10 +17,10 @@ def cleanup(do_cleanup_parameter, userscript, scriptname):
     ''' public function, does all cleanup of the database and file system.
         most cleanup functions are by default done only once a day.
     '''
-    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', False):  # no cleanup during acceptance testing
+    if botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):  # no cleanup during acceptance testing
         return
 
-    whencleanup = botsglobal.ini.get('settings', 'whencleanup', 'daily')
+    whencleanup = botsglobal.ini.get('settings', 'whencleanup', fallback='daily')
     if do_cleanup_parameter:  # if explicit indicated via commandline parameter
         do_full_cleanup = True
     elif whencleanup in ['always', 'daily']:
@@ -65,7 +65,7 @@ def _cleanupsession():
 
 def _cleanarchive():
     ''' delete all archive directories older than maxdaysarchive days. Errors are ignored.'''
-    vanaf_default = (datetime.date.today()-datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdaysarchive', 180))).strftime('%Y%m%d')
+    vanaf_default = (datetime.date.today()-datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdaysarchive', fallback=180))).strftime('%Y%m%d')
     for row in botslib.query('''SELECT archivepath,rsrv3 FROM channel WHERE archivepath != '' '''):
         if row['rsrv3']:
             vanaf = (datetime.date.today()-datetime.timedelta(days=row['rsrv3'])).strftime('%Y%m%d')
@@ -85,8 +85,8 @@ def _cleanarchive():
 
 def _cleandatafile():
     ''' delete all data files older than xx days.'''
-    vanaf = time.time() - (botsglobal.ini.getint('settings', 'maxdays', 30) * 3600 * 24)
-    frompath = botslib.join(botsglobal.ini.get('directories', 'data', 'botssys/data'), '*')
+    vanaf = time.time() - (botsglobal.ini.getint('settings', 'maxdays', fallback=30) * 3600 * 24)
+    frompath = botslib.join(botsglobal.ini.get('directories', 'data', fallback='botssys/data'), '*')
     for filename in glob.iglob(frompath):
         statinfo = os.stat(filename)
         if not stat.S_ISDIR(statinfo.st_mode):
@@ -117,7 +117,7 @@ def _cleandatafile():
 
 def _cleanpersist():
     '''delete all persist older than xx days.'''
-    vanaf = datetime.datetime.today() - datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdayspersist', 30))
+    vanaf = datetime.datetime.today() - datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdayspersist', fallback=30))
     botslib.changeq('''DELETE FROM persist WHERE ts < %(vanaf)s''', {'vanaf': vanaf})
 
 
@@ -125,7 +125,7 @@ def _cleantransactions():
     ''' delete records from report, filereport and ta.
         best indexes are on idta/reportidta; this should go fast.
     '''
-    vanaf = datetime.datetime.today() - datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdays', 30))
+    vanaf = datetime.datetime.today() - datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdays', fallback=30))
     for row in botslib.query('''SELECT MAX(idta) as max_idta FROM report WHERE ts < %(vanaf)s''', {'vanaf': vanaf}):
         maxidta = row['max_idta']
     if maxidta is None:  # if there is no maxidta to delete, do nothing
@@ -142,7 +142,7 @@ def _cleanrunsnothingreceived():
     ''' delete all report off new runs that received no files and no process errors.
         #20120830: if new run with nothing received and no process errors: ta's are already deleted in automaticmaintenance.
     '''
-    vanaf = datetime.datetime.today() - datetime.timedelta(hours=botsglobal.ini.getint('settings', 'hoursrunwithoutresultiskept', 1))
+    vanaf = datetime.datetime.today() - datetime.timedelta(hours=botsglobal.ini.getint('settings', 'hoursrunwithoutresultiskept', fallback=1))
     onlycheckrunsofoneday = datetime.datetime.today() - datetime.timedelta(hours=25)
     botslib.changeq(
         '''DELETE FROM report

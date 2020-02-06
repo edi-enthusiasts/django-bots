@@ -263,7 +263,7 @@ def trace2detail(ta_object):
 
 
 def datetimefrom():
-    terug = datetime.datetime.today() - datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdays', 30))
+    terug = datetime.datetime.today() - datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdays', fallback=30))
     return terug.strftime('%Y-%m-%d 00:00:00')
 
 
@@ -335,7 +335,7 @@ def filterquery(query, org_cleaned_data, incoming=False, paginate=True):
             del cleaned_data[key]
     query = query.filter(**cleaned_data)
     if paginate:
-        paginator = Paginator(query, botsglobal.ini.getint('settings', 'limit', 30))
+        paginator = Paginator(query, botsglobal.ini.getint('settings', 'limit', fallback=30))
         try:
             return paginator.page(page)
         except (EmptyPage, InvalidPage):  # page does not exist: use last page

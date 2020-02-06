@@ -239,7 +239,7 @@ class edifact(Envelope):
             reserve = self.ta_info['reserve']
 
         # UNB reference is counter is per sender or receiver
-        if botsglobal.ini.getboolean('settings', 'interchangecontrolperpartner', False):
+        if botsglobal.ini.getboolean('settings', 'interchangecontrolperpartner', fallback=False):
             self.ta_info['reference'] = str(botslib.unique('unbcounter_' + self.ta_info['topartner']))
         else:
             self.ta_info['reference'] = str(botslib.unique('unbcounter_' + self.ta_info['frompartner']))
@@ -316,7 +316,7 @@ class tradacoms(Envelope):
         self.ta_info.update(self.out.ta_info)
         botslib.tryrunscript(self.userscript, self.scriptname, 'ta_infocontent', ta_info=self.ta_info)
         # prepare data for envelope
-        if botsglobal.ini.getboolean('settings', 'interchangecontrolperpartner', False):
+        if botsglobal.ini.getboolean('settings', 'interchangecontrolperpartner', fallback=False):
             self.ta_info['reference'] = str(botslib.unique('stxcounter_' + self.ta_info['topartner']))
         else:
             self.ta_info['reference'] = str(botslib.unique('stxcounter_' + self.ta_info['frompartner']))
@@ -429,7 +429,7 @@ class x12(Envelope):
         else:
             testindicator = self.ta_info['ISA15']
         # print(self.ta_info['messagetype'], 'grammar:', self.ta_info['ISA15'], 'ta:', self.ta_info['testindicator'], 'out:', testindicator)
-        if botsglobal.ini.getboolean('settings', 'interchangecontrolperpartner', False):
+        if botsglobal.ini.getboolean('settings', 'interchangecontrolperpartner', fallback=False):
             self.ta_info['reference'] = str(botslib.unique('isacounter_' + self.ta_info['topartner']))
         else:
             self.ta_info['reference'] = str(botslib.unique('isacounter_' + self.ta_info['frompartner']))

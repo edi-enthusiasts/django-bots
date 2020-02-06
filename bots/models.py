@@ -173,7 +173,7 @@ def multiple_email_validator(value):
         use case: x400 via IPmail (x400 addresses are used in email-addresses).
         Use re-expressions to get this better/conform email standards.
     '''
-    if botsglobal.ini.getboolean('webserver', 'use_email_address_validation', True):  # tric to disable email validation via bots.ini
+    if botsglobal.ini.getboolean('webserver', 'use_email_address_validation', fallback=True):  # tric to disable email validation via bots.ini
         emails = re.split(',(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)', value)  # split emails
         for email in emails:
             if not validate_email.validate_email_address(email):

@@ -26,7 +26,7 @@ def send_job_to_jobqueue(task_args, priority=5):
         4 = job is a duplicate of job already in the queue
     '''
     try:
-        remote_server = xmlrpc.client.ServerProxy('http://localhost:' + str(botsglobal.ini.getint('jobqueue', 'port', 28082)))
+        remote_server = xmlrpc.client.ServerProxy('http://localhost:' + str(botsglobal.ini.getint('jobqueue', 'port', fallback=28082)))
         return remote_server.addjob(task_args, priority)
     except socket.error as msg:
         print('socket.error', msg)
@@ -77,7 +77,7 @@ def start():
             task_args.append(arg)
     # ***end handling command line arguments**************************
     botsinit.generalinit(configdir)  # needed to read config
-    if not botsglobal.ini.getboolean('jobqueue', 'enabled', False):
+    if not botsglobal.ini.getboolean('jobqueue', 'enabled', fallback=False):
         print('Error: bots jobqueue cannot start; not enabled in %s/bots.ini' % configdir)
         sys.exit(1)
 

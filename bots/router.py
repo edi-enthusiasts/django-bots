@@ -165,7 +165,7 @@ class new(object):
                         pass_non_zip=True
                     )
                 # run mailbag-module.
-                if botsglobal.ini.getboolean('settings', 'compatibility_mailbag', False):
+                if botsglobal.ini.getboolean('settings', 'compatibility_mailbag', fallback=False):
                     editypes_via_mailbag = ['mailbag']
                 else:
                     editypes_via_mailbag = ['mailbag', 'edifact', 'x12', 'tradacoms']
