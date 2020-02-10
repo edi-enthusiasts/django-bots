@@ -10,7 +10,8 @@ import bots.node as node
 import bots.botsinit as botsinit
 import bots.botsglobal as botsglobal
 
-'''plugin unitnode.zip
+'''
+plugin unitnode.zip
 not an acceptance tst
 does not work with get_checklevel=2
 '''
@@ -20,9 +21,7 @@ collectqueries = {}
 
 
 def fetchqueries(self, level=0):
-    '''for debugging
-        usage: in mapping script:     inn.root.displayqueries()
-    '''
+    ''' for debugging usage in mapping script: inn.root.displayqueries() '''
     if self.record:
         tmp = self.queries
         if tmp:
@@ -32,7 +31,7 @@ def fetchqueries(self, level=0):
 
 
 class Testnode(unittest.TestCase):
-    ''' test node.py and message.py.'''
+    ''' test node.py and message.py. '''
     def testedifact01(self):
         inn = inmessage.parse_edi_file(
             editype='edifact',

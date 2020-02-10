@@ -38,10 +38,10 @@ def scriptwrite(path, content):
 
 def indicate_rereceive():
     count = 0
-    for row in botslib.query('''SELECT idta
-                            FROM    filereport
-                            ORDER BY idta DESC
-                            '''):
+    for row in botslib.query(
+        '''SELECT idta FROM filereport
+           ORDER BY idta DESC'''
+    ):
         count += 1
         botslib.changeq(
             '''UPDATE filereport

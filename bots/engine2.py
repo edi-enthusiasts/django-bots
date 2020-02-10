@@ -435,7 +435,7 @@ def write_outgoing(run):
 
 def filename_formatter(filename_mask, ta_info):
     class infilestr(str):
-        ''' class for the infile-string that handles the specific format-options'''
+        ''' class for the infile-string that handles the specific format-options '''
         def __format__(self, format_spec):
             if not format_spec:
                 return str(self)
@@ -489,7 +489,7 @@ def trace(run):
 
 
 def dict2xml(d):
-    ''' convert python dictionary to xml.'''
+    ''' convert python dictionary to xml. '''
     def makenode(tag, content):
         node = ET.Element(tag)
         if not content:

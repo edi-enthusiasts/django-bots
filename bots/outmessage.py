@@ -741,13 +741,13 @@ class xml(Outmessage):
         For python <2.7: do not generate standalone, DOCTYPE, processing instructions for encoding !=utf-8,ascii OR if elementtree package is installed (version 1.3.0 or bigger)
     '''
     def _write(self, node_instance):
-        ''' write normal XML messages (no envelope)'''
+        ''' write normal XML messages (no envelope) '''
         xmltree = ET.ElementTree(self._node2xml(node_instance))
         root = xmltree.getroot()
         self._xmlcorewrite(xmltree, root)
 
     def envelopewrite(self, node_instance):
-        ''' write envelope for XML messages'''
+        ''' write envelope for XML messages '''
         self._initwrite()
         self.checkmessage(node_instance, self.defmessage)
         self.checkforerrorlist()

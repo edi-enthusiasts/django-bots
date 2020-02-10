@@ -158,7 +158,7 @@ def envelope(ta_info, ta_list):
 
 
 class Envelope(object):
-    ''' Base Class for enveloping; use subclasses.'''
+    ''' Base Class for enveloping; use subclasses. '''
     def __init__(self, ta_info, ta_list, userscript, scriptname):
         self.ta_info = ta_info
         self.ta_list = ta_list
@@ -166,7 +166,7 @@ class Envelope(object):
         self.scriptname = scriptname
 
     def _openoutenvelope(self):
-        ''' make an outmessage object; read the grammar.'''
+        ''' make an outmessage object; read the grammar. '''
         # self.ta_info contains information from ta: editype, messagetype,testindicator,charset,envelope, contenttype
         self.out = outmessage.outmessage_init(**self.ta_info)  # make outmessage object.
         # read grammar for envelopesyntax. Remark: self.ta_info is not updated.
@@ -179,12 +179,12 @@ class Envelope(object):
             fromfile.close()
 
     def filelist2absolutepaths(self):
-        ''' utility function; some classes need absolute filenames eg for xml-including'''
+        ''' utility function; some classes need absolute filenames eg for xml-including '''
         return [botslib.abspathdata(filename) for filename in self.ta_list]
 
 
 class noenvelope(Envelope):
-    ''' Only copies the input files to one output file.'''
+    ''' Only copies the input files to one output file. '''
     def run(self):
         botslib.tryrunscript(self.userscript, self.scriptname, 'ta_infocontent', ta_info=self.ta_info)
         if len(self.ta_list) > 1:
@@ -218,7 +218,7 @@ class csv(noenvelope):
 
 
 class edifact(Envelope):
-    ''' Generate UNB and UNZ segment; fill with data, write to interchange-file.'''
+    ''' Generate UNB and UNZ segment; fill with data, write to interchange-file. '''
     def run(self):
         if not self.ta_info['topartner'] or not self.ta_info['frompartner']:
             raise botslib.OutMessageError(
@@ -305,7 +305,7 @@ class edifact(Envelope):
 
 
 class tradacoms(Envelope):
-    ''' Generate STX and END segment; fill with appropriate data, write to interchange file.'''
+    ''' Generate STX and END segment; fill with appropriate data, write to interchange file. '''
     def run(self):
         if not self.ta_info['topartner'] or not self.ta_info['frompartner']:
             raise botslib.OutMessageError(
@@ -410,7 +410,7 @@ class templatehtml(Envelope):
 
 
 class x12(Envelope):
-    ''' Generate envelope segments; fill with appropriate data, write to interchange-file.'''
+    ''' Generate envelope segments; fill with appropriate data, write to interchange-file. '''
     def run(self):
         if not self.ta_info['topartner'] or not self.ta_info['frompartner']:
             raise botslib.OutMessageError(

@@ -273,7 +273,7 @@ def datetimeuntil():
 
 
 def handlepagination(requestpost, cleaned_data):
-    ''' use requestpost to set criteria for pagination in cleaned_data'''
+    ''' use requestpost to set criteria for pagination in cleaned_data '''
     if "first" in requestpost:
         cleaned_data['page'] = 1
     elif "previous" in requestpost:

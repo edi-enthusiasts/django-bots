@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-''' Base library for bots. Botslib should not import code from other Bots-modules.'''
+''' Base library for bots. Botslib should not import code from other Bots-modules. '''
 import sys
 import os
 import time
@@ -65,7 +65,7 @@ class _Transaction(object):
         )
 
     def delete(self):
-        '''Deletes current transaction '''
+        ''' Deletes current transaction '''
         changeq(
             '''DELETE FROM ta WHERE idta=%(idta)s''',
             {'idta': self.idta}
@@ -87,7 +87,7 @@ class _Transaction(object):
             )
 
     def syn(self, *ta_vars):
-        '''access of attributes of transaction as ta.fromid, ta.filename etc'''
+        ''' access of attributes of transaction as ta.fromid, ta.filename etc '''
         varsstring = ','.join(ta_vars)
         for row in query(
             '''SELECT '''+varsstring+''' FROM ta
@@ -97,7 +97,7 @@ class _Transaction(object):
             self.__dict__.update(dict(row))
 
     def synall(self):
-        '''access of attributes of transaction as ta.fromid, ta.filename etc'''
+        ''' access of attributes of transaction as ta.fromid, ta.filename etc '''
         self.syn(*self.filterlist)
 
     def copyta(self, status, **ta_info):
@@ -238,7 +238,7 @@ def query(querystring, *args):
 
 
 def changeq(querystring, *args):
-    '''general inset/update. no return'''
+    ''' general inset/update. no return '''
     cursor = botsglobal.db.cursor()
     try:
         cursor.execute(querystring, *args)
@@ -267,7 +267,7 @@ def insertta(querystring, *args):
 
 
 def unique_runcounter(domain, updatewith=None):
-    ''' as unique, but per run of bots-engine.'''
+    ''' as unique, but per run of bots-engine. '''
     domain += 'bots_1_8_4_9_6'  # avoid using/mixing other values in botsglobal
     domain = domain.encode('unicode-escape')
     nummer = getattr(botsglobal, domain, 0)
@@ -333,8 +333,8 @@ def sendbotserrorreport(subject, reporttext):
         Email is send to MANAGERS in config/settings.py.
         Email parameters are in config/settings.py (EMAIL_HOST, etc).
     '''
-    if botsglobal.ini.getboolean('settings', 'sendreportiferror', fallback=False) and \
-        not botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
+    if botsglobal.ini.getboolean('settings', 'sendreportiferror', fallback=False) \
+       and not botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
         from django.core.mail import mail_managers
         try:
             mail_managers(subject, reporttext)
@@ -395,7 +395,7 @@ def txtexc(mention_exception_type=True):
 
 
 def safe_str(value):
-    ''' For errors: return best possible unicode...should never lead to errors.'''
+    ''' For errors: return best possible unicode...should never lead to errors. '''
     try:
         if isinstance(value, str):  # is already string, just return
             return value
@@ -466,10 +466,12 @@ def botsimport(*args):
 # *************************File handling os.path etc***********************/**
 # **********************************************************/**
 def join(*paths):
-    '''Does does more as join.....
+    '''
+      Does does more as join.....
         - join the paths (compare os.path.join)
         - if path is not absolute, interpretate this as relative from bots directory.
-        - normalize'''
+        - normalize
+    '''
     return os.path.normpath(os.path.join(botsglobal.ini.get('directories', 'botspath'), *paths))
 
 
@@ -487,7 +489,7 @@ def abspath(soort, filename):
 
 
 def abspathdata(filename):
-    ''' abspathdata if filename incl dir: return absolute path; else (only filename): return absolute path (datadir)'''
+    ''' abspathdata if filename incl dir: return absolute path; else (only filename): return absolute path (datadir) '''
     if '/' in filename:  # if filename already contains path
         return join(filename)
     else:
@@ -499,7 +501,7 @@ def abspathdata(filename):
 
 
 def deldata(filename):
-    ''' delete internal data file.'''
+    ''' delete internal data file. '''
     filename = abspathdata(filename)
     try:
         os.remove(filename)
@@ -509,7 +511,7 @@ def deldata(filename):
 
 
 def opendata(filename, mode, charset=None, errors='strict'):
-    ''' open internal data file. if no encoding specified: read file raw/binary.'''
+    ''' open internal data file. if no encoding specified: read file raw/binary. '''
     filename = abspathdata(filename)
     if 'w' in mode:
         dirshouldbethere(os.path.dirname(filename))
@@ -520,7 +522,7 @@ def opendata(filename, mode, charset=None, errors='strict'):
 
 
 def readdata(filename, charset=None, errors='strict'):
-    ''' read internal data file in memory using the right encoding or no encoding'''
+    ''' read internal data file in memory using the right encoding or no encoding '''
     filehandler = opendata(filename, 'rb', charset, errors)
     content = filehandler.read()
     filehandler.close()
@@ -632,8 +634,7 @@ def set_asked_confirmrules(routedict, rootidta):
 
 
 def globalcheckconfirmrules(confirmtype):
-    ''' global check if confirmrules with this confirmtype is uberhaupt used.
-    '''
+    ''' global check if confirmrules with this confirmtype is uberhaupt used. '''
     for confirmdict in botsglobal.confirmrules:
         if confirmdict['confirmtype'] == confirmtype:
             return True
@@ -747,7 +748,7 @@ def trace_origin(ta, where=None):
 
 
 def countoutfiles(idchannel, rootidta):
-    ''' counts the number of edifiles to be transmitted via outchannel.'''
+    ''' counts the number of edifiles to be transmitted via outchannel. '''
     for row in query(
         '''SELECT COUNT(*) as count FROM ta
            WHERE idta > %(rootidta)s
@@ -843,7 +844,7 @@ def rreplace(org, old, new='', count=1):
 
 
 def get_relevant_text_for_UnicodeError(msg):
-    ''' see python doc for details of UnicodeError'''
+    ''' see python doc for details of UnicodeError '''
     start = msg.start - 10 if msg.start >= 10 else 0
     return msg.object[start:msg.end+35]
 

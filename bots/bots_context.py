@@ -7,7 +7,7 @@ my_context = {}  # save vars initialised at startup
 
 
 def set_context(request):
-    ''' set variables in the context of templates.'''
+    ''' set variables in the context of templates. '''
     global my_context
     if not my_context:
         # most context vars are from bots.ini or database. initialise these at startup

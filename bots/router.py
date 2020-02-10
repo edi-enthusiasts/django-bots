@@ -20,7 +20,7 @@ from .botsconfig import (
 
 @botslib.log_session
 def rundispatcher(command, routestorun):
-    ''' one run for each command'''
+    ''' one run for each command '''
     classtocall = globals()[command]  # get the route class from this module
     botsglobal.currentrun = classtocall(command, routestorun)
     if botsglobal.currentrun.run():
@@ -314,7 +314,7 @@ class new(object):
 
 
 class crashrecovery(new):
-    ''' a crashed run is rerun.'''
+    ''' a crashed run is rerun. '''
     def run(self):
         # get rootidta of crashed run
         for row in botslib.query(
@@ -370,7 +370,7 @@ class crashrecovery(new):
         return super(crashrecovery, self).run()
 
     def get_minta4query(self):
-        ''' get the first idta for queries etc in whole run.'''
+        ''' get the first idta for queries etc in whole run. '''
         return self.minta4query_crash
 
     def get_minta4query_route(self):
@@ -387,14 +387,14 @@ class crashrecovery(new):
             return row['route_idta']
 
     def get_minta4query_routepart(self):
-        ''' as seq is not logged, use start-point for whole route.'''
+        ''' as seq is not logged, use start-point for whole route. '''
         return self.get_minta4query_route()
 
 
 class automaticretrycommunication(new):
 
     def run(self):
-        ''' reinjects files with failed communication.'''
+        ''' reinjects files with failed communication. '''
         # bots keeps track of last time automaticretrycommunication was done; reason: performance
         idta_lastretry = botslib.unique('bots__automaticretrycommunication', updatewith=self.minta4query)
         if idta_lastretry == 1:

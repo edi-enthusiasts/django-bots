@@ -543,7 +543,7 @@ class Grammar(object):
         return not bool(levelcollision)
 
     def extrachecks(self):
-        ''' default function, some subclasses have the actual checks.'''
+        ''' default function, some subclasses have the actual checks. '''
         pass
 
     def display(self, structure, level=0):

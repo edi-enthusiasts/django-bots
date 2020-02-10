@@ -40,7 +40,7 @@ except ImportError:
 # ***These classes are dynamically added to inmessage
 # **************************************************************************************
 class xmlforgrammar(inmessage.Inmessage):
-    ''' class for ediobjects in XML. Uses ElementTree'''
+    ''' class for ediobjects in XML. Uses ElementTree '''
     def initfromfile(self):
         filename = botslib.abspathdata(self.ta_info['filename'])
         self.ta_info['attributemarker'] = '__'
@@ -72,7 +72,7 @@ class xmlforgrammar(inmessage.Inmessage):
         return newnode
 
     def _etreenode2botstreenode(self, xmlnode):
-        ''' build a OrderedDict from xml-node. Add BOTSID, xml-attributes (of 'record'), xmlnode.text as BOTSCONTENT.'''
+        ''' build a OrderedDict from xml-node. Add BOTSID, xml-attributes (of 'record'), xmlnode.text as BOTSCONTENT. '''
         build = OrderedDict((xmlnode.tag + self.ta_info['attributemarker'] + key, value) for key, value in xmlnode.items())  # convert xml attributes to fields.
         build['BOTSID'] = xmlnode.tag
         if self._use_botscontent(xmlnode):
@@ -84,7 +84,7 @@ class xmlforgrammar(inmessage.Inmessage):
 
 
 class xmlforgrammar_allrecords(inmessage.Inmessage):
-    ''' class for ediobjects in XML. Uses ElementTree'''
+    ''' class for ediobjects in XML. Uses ElementTree '''
     def initfromfile(self):
         filename = botslib.abspathdata(self.ta_info['filename'])
         self.ta_info['attributemarker'] = '__'
@@ -100,7 +100,7 @@ class xmlforgrammar_allrecords(inmessage.Inmessage):
         return newnode
 
     def _etreenode2botstreenode(self, xmlnode):
-        ''' build a OrderedDict from xml-node. Add BOTSID, xml-attributes (of 'record'), xmlnode.text as BOTSCONTENT.'''
+        ''' build a OrderedDict from xml-node. Add BOTSID, xml-attributes (of 'record'), xmlnode.text as BOTSCONTENT. '''
         build = OrderedDict((xmlnode.tag + self.ta_info['attributemarker'] + key, value) for key, value in xmlnode.items())  # convert xml attributes to fields.
         build['BOTSID'] = xmlnode.tag
         if not self._is_record(xmlnode):
@@ -114,7 +114,7 @@ class xmlforgrammar_allrecords(inmessage.Inmessage):
 # ******************************************************************
 # ***functions for mapping******************************************
 def map_treewalker(node_instance, mpath):
-    ''' Generator function.'''
+    ''' Generator function. '''
     mpath.append(OrderedDict({'BOTSID': node_instance.record['BOTSID']}))
     for childnode in node_instance.children:
         yield childnode, mpath[:]
@@ -124,7 +124,7 @@ def map_treewalker(node_instance, mpath):
 
 
 def map_writefields(node_out, node_in, mpath):
-    ''' als fields of this level are written to node_out.'''
+    ''' als fields of this level are written to node_out. '''
     mpath_with_all_fields = copy.deepcopy(mpath)  # use a copy of mpath (do not want to change it)
     for key in node_in.record.keys():
         if key in ['BOTSID', 'BOTSIDnr']:  # skip these

@@ -28,7 +28,7 @@ class Message(object):
         self.messagecount = 0     # count messages in edi file; used in reporting errors.
 
     def add2errorlist(self, errortxt):
-        ''' Handle non-fatal parse errors.'''
+        ''' Handle non-fatal parse errors. '''
         # raise botslib.MessageError('For unit format test')  # UNITTEST_CORRECTION
         if len(self.errorlist) < botsglobal.ini.getint('settings', 'max_number_errors', fallback=10):
             self.errorlist.append(self.messagetypetxt + errortxt)
@@ -42,7 +42,7 @@ class Message(object):
             pass
 
     def checkforerrorlist(self):
-        ''' examine the message-object for errors;'''
+        ''' examine the message-object for errors; '''
         if self.errorfatal:  # for fatal errors: (try to) get information like partners for edi file
             self.try_to_retrieve_info()
         if self.errorlist:
@@ -55,7 +55,7 @@ class Message(object):
         pass
 
     def messagegrammarread(self, typeofgrammarfile='grammars'):
-        ''' read grammar for a message/envelope.'''
+        ''' read grammar for a message/envelope. '''
         # read grammar for message.
         # starts with default values from grammar.py; values are overruled by envelope settings; values are overrules by messagetype setting.
         self.defmessage = grammar.grammarread(self.ta_info['editype'], self.ta_info['messagetype'], typeofgrammarfile)
@@ -66,7 +66,7 @@ class Message(object):
 
     @staticmethod
     def display(lex_records):
-        ''' for debugging: display lexed records.'''
+        ''' for debugging: display lexed records. '''
         for lex_record in lex_records:
             counter = 0
             for veld in lex_record:
@@ -195,7 +195,7 @@ class Message(object):
                 del node_instance.record[field]
 
     def _canonicaltree(self, node_instance, structure):
-        ''' For nodes: check min and max occurence; sort the records conform grammar'''
+        ''' For nodes: check min and max occurence; sort the records conform grammar '''
         sortednodelist = []
         self._canonicalfields(node_instance, structure)  # handle fields of this record
         if node_instance.structure is None:
@@ -443,7 +443,7 @@ class Message(object):
         return self.root.getrecord(*mpaths)
 
     def change(self, where, change):
-        ''' query tree (self.root) with where; if found replace with change; return True if change, return False if not changed.'''
+        ''' query tree (self.root) with where; if found replace with change; return True if change, return False if not changed. '''
         if self.root.record is None:
             raise botslib.MappingRootError(
                 _t('change(%(where)s,%(change)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
@@ -452,7 +452,7 @@ class Message(object):
         return self.root.change(where, change)
 
     def delete(self, *mpaths):
-        ''' query tree (self.root) with mpath; delete if found. return True if deleted, return False if not deleted.'''
+        ''' query tree (self.root) with mpath; delete if found. return True if deleted, return False if not deleted. '''
         if self.root.record is None:
             raise botslib.MappingRootError(
                 _t('delete(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
@@ -461,7 +461,7 @@ class Message(object):
         return self.root.delete(*mpaths)
 
     def get(self, *mpaths):
-        ''' query tree (self.root) with mpath; get value (string); get None if not found.'''
+        ''' query tree (self.root) with mpath; get value (string); get None if not found. '''
         if self.root.record is None:
             raise botslib.MappingRootError(
                 _t('get(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
@@ -471,7 +471,7 @@ class Message(object):
 
     def getnozero(self, *mpaths):
         ''' like get, returns None is value is zero (0) or not numeric.
-            Is sometimes usefull in mapping.'''
+            Is sometimes usefull in mapping. '''
         if self.root.record is None:
             raise botslib.MappingRootError(
                 _t('getnozero(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
@@ -481,7 +481,7 @@ class Message(object):
 
     def getdecimal(self, *mpaths):
         ''' like get, returns None is value is zero (0) or not numeric.
-            Is sometimes usefull in mapping.'''
+            Is sometimes usefull in mapping. '''
         if self.root.record is None:
             raise botslib.MappingRootError(
                 _t('getdecimal(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),
@@ -490,15 +490,15 @@ class Message(object):
         return self.root.getdecimal(*mpaths)
 
     def getcount(self):
-        ''' count number of nodes in self.root. Number of nodes is number of records.'''
+        ''' count number of nodes in self.root. Number of nodes is number of records. '''
         return self.root.getcount()
 
     def getcountoccurrences(self, *mpaths):
-        ''' count number of nodes in self.root. Number of nodes is number of records.'''
+        ''' count number of nodes in self.root. Number of nodes is number of records. '''
         return len(list(self.getloop(*mpaths)))
 
     def getcountsum(self, *mpaths):
-        ''' return the sum for all values found in mpath. Eg total number of ordered quantities.'''
+        ''' return the sum for all values found in mpath. Eg total number of ordered quantities. '''
         if self.root.record is None:
             raise botslib.MappingRootError(
                 _t('get(%(mpath)s): "root" of incoming message is empty; either split messages or use inn.getloop'),

@@ -324,7 +324,7 @@ def make_plugin(cleaned_data, filename):
 
 
 def all_database2plug(cleaned_data):
-    ''' get all database objects, serialize these (to dict), adapt.'''
+    ''' get all database objects, serialize these (to dict), adapt. '''
     plugs = []
     if cleaned_data['databaseconfiguration']:
         plugs += \
@@ -429,7 +429,7 @@ def plugout_files(cleaned_data):
 
 
 def plugout_files_bydir(dirname, defaultdirname):
-    ''' gather all files from directory dirname'''
+    ''' gather all files from directory dirname '''
     files2return = []
     for root, _, files in os.walk(dirname):
         # convert for correct environment: replace dirname with the default directory name

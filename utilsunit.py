@@ -81,14 +81,14 @@ def readwrite(filenamein='', filenameout='', **args):
 
 
 def getdirbysize(path):
-    ''' read files in directory path, return as a sorted list.'''
+    ''' read files in directory path, return as a sorted list. '''
     lijst = getdir(path)
     lijst.sort(key=lambda s: os.path.getsize(s))
     return lijst
 
 
 def getdir(path):
-    ''' read files in directory path, return incl length.'''
+    ''' read files in directory path, return incl length. '''
     return [f for f in glob.glob(path) if os.path.isfile(f)]
 
 
@@ -99,19 +99,19 @@ def dummylogger():
 
 
 def getreportlastrun():
-    for row in botslib.query('''SELECT *
-                            FROM    report
-                            ORDER BY idta DESC
-                            '''):
+    for row in botslib.query(
+        '''SELECT * FROM report
+         ORDER BY idta DESC'''
+     ):
         return row
     raise Exception('no report')
 
 
 def geterrorlastrun():
-    for row in botslib.query('''SELECT *
-                            FROM    filereport
-                            ORDER BY idta DESC
-                            '''):
+    for row in botslib.query(
+        '''SELECT * FROM filereport
+           ORDER BY idta DESC'''
+   ):
         return row[str('errortext')]
     raise Exception('no filereport')
 

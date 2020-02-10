@@ -115,14 +115,14 @@ class TestInmessage_xml(unittest.TestCase):
 class Testinisoutxml(unittest.TestCase):
 
     def testxml01a(self):
-        ''' check  xml; new behaviour'''
+        ''' check  xml; new behaviour '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout02.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout01a.xml'
         utilsunit.readwrite(editype='xml', messagetype='xmlorder', filenamein=filenamein, filenameout=filenameout)
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamein))
 
     def testxml02a(self):
-        ''' check xmlnoccheck; new behaviour'''
+        ''' check xmlnoccheck; new behaviour '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout02.xml'
         filenametmp = 'botssys/infile/unitinmessagexml/output/inisout02tmpa.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout02a.xml'
@@ -131,14 +131,14 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamein))
 
     def testxml03(self):
-        ''' check  xml (different grammar)'''
+        ''' check  xml (different grammar) '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/110419.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout03.xml'
         utilsunit.readwrite(editype='xml', messagetype='testxmlflatten', charset='utf-8', filenamein=filenamein, filenameout=filenameout)
         self.assertTrue(filecmp.cmp('bots/' + filenamein, 'bots/' + filenameout))
 
     def testxml04(self):
-        ''' check xmlnoccheck'''
+        ''' check xmlnoccheck '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/110419.xml'
         filenametmp = 'botssys/infile/unitinmessagexml/output/inisout04tmp.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout04.xml'
@@ -147,7 +147,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenamein, 'bots/' + filenameout))
 
     def testxml05(self):
-        ''' test xml;  iso-8859-1'''
+        ''' test xml;  iso-8859-1 '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout03.xml'
         filenamecmp = 'botssys/infile/unitinmessagexml/xml/inisoutcompare05.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout05.xml'
@@ -155,7 +155,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamecmp))
 
     def testxml06(self):
-        ''' test xmlnocheck; iso-8859-1'''
+        ''' test xmlnocheck; iso-8859-1 '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout03.xml'
         filenametmp = 'botssys/infile/unitinmessagexml/output/inisout05tmp.xml'
         filenamecmp = 'botssys/infile/unitinmessagexml/xml/inisoutcompare05.xml'
@@ -165,7 +165,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamecmp))
 
     def testxml09(self):
-        ''' BOM;; BOM is not written....'''
+        ''' BOM;; BOM is not written.... '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout05.xml'
         filenamecmp = 'botssys/infile/unitinmessagexml/xml/inisout04.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout09.xml'
@@ -173,7 +173,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamecmp))
 
     def testxml10(self):
-        ''' BOM;; BOM is not written....'''
+        ''' BOM;; BOM is not written.... '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout05.xml'
         filenametmp = 'botssys/infile/unitinmessagexml/output/inisout10tmp.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout10.xml'
@@ -183,7 +183,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamecmp))
 
     def testxml11(self):
-        ''' check  xml; new behaviour; use standalone parameter'''
+        ''' check  xml; new behaviour; use standalone parameter '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout06.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout11.xml'
         filenamecmp = 'botssys/infile/unitinmessagexml/xml/inisout02.xml'
@@ -191,14 +191,14 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamecmp))
 
     def testxml11a(self):
-        ''' check  xml; new behaviour; use standalone parameter'''
+        ''' check  xml; new behaviour; use standalone parameter '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout06.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout11a.xml'
         utilsunit.readwrite(editype='xml', messagetype='xmlorder', filenamein=filenamein, filenameout=filenameout, standalone='no')
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamein))
 
     def testxml12(self):
-        ''' check xmlnoccheck; new behaviour use standalone parameter'''
+        ''' check xmlnoccheck; new behaviour use standalone parameter '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout06.xml'
         filenametmp = 'botssys/infile/unitinmessagexml/output/inisout12tmp.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout12.xml'
@@ -207,14 +207,14 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamein))
 
     def testxml13(self):
-        ''' check  xml; read doctype&write doctype'''
+        ''' check  xml; read doctype&write doctype '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout13.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout13.xml'
         utilsunit.readwrite(editype='xml', messagetype='xmlorder', filenamein=filenamein, filenameout=filenameout, DOCTYPE='mydoctype SYSTEM "mydoctype.dtd"')
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamein))
 
     def testxml14(self):
-        ''' check xmlnoccheck;  read doctype&write doctype'''
+        ''' check xmlnoccheck;  read doctype&write doctype '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout13.xml'
         filenametmp = 'botssys/infile/unitinmessagexml/output/inisout14tmp.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout14.xml'
@@ -223,7 +223,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamein))
 
     def testxml15(self):
-        ''' check  xml; read processing_instructions&write processing_instructions'''
+        ''' check  xml; read processing_instructions&write processing_instructions '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout15.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout15.xml'
         utilsunit.readwrite(
@@ -239,7 +239,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamein))
 
     def testxml16(self):
-        ''' check xmlnoccheck;  read processing_instructions&write processing_instructions'''
+        ''' check xmlnoccheck;  read processing_instructions&write processing_instructions '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout15.xml'
         filenametmp = 'botssys/infile/unitinmessagexml/output/inisout16tmp.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout16.xml'
@@ -266,7 +266,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamein))
 
     def testxml17(self):
-        ''' check  xml; read processing_instructions&doctype&comments. Do not write these.'''
+        ''' check  xml; read processing_instructions&doctype&comments. Do not write these. '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout17.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout17.xml'
         filenamecmp = 'botssys/infile/unitinmessagexml/xml/inisout02.xml'
@@ -274,7 +274,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamecmp))
 
     def testxml18(self):
-        ''' check  xml; read processing_instructions&doctype&comments. Do not write these.'''
+        ''' check  xml; read processing_instructions&doctype&comments. Do not write these. '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout17.xml'
         filenametmp = 'botssys/infile/unitinmessagexml/output/inisout18tmp.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout18.xml'
@@ -284,7 +284,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamecmp))
 
     def testxml19(self):
-        ''' check  xml; indented; use lot of options.'''
+        ''' check  xml; indented; use lot of options. '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout02.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout19.xml'
         filenamecmp = 'botssys/infile/unitinmessagexml/xml/inisout19.xml'
@@ -304,7 +304,7 @@ class Testinisoutxml(unittest.TestCase):
         self.assertTrue(filecmp.cmp('bots/' + filenameout, 'bots/' + filenamecmp))
 
     def testxml20(self):
-        ''' check  xml; indented; use lot of options.'''
+        ''' check  xml; indented; use lot of options. '''
         filenamein = 'botssys/infile/unitinmessagexml/xml/inisout02.xml'
         filenametmp = 'botssys/infile/unitinmessagexml/output/inisout20tmp.xml'
         filenameout = 'botssys/infile/unitinmessagexml/output/inisout20.xml'
@@ -539,7 +539,7 @@ class InmessageJson(unittest.TestCase):
         # self.assertEqual(jsonobject1,jsonobject2,'CmpJson')
 
     def testinisoutjson03(self):
-        ''' non-ascii-char'''
+        ''' non-ascii-char '''
         filein = 'botssys/infile/unitinmessagejson/org/inisout04.json'
         fileout = 'botssys/infile/unitinmessagejson/output/inisout04.json'
         utilsunit.readwrite(editype='json', messagetype='jsonorder', filenamein=filein, filenameout=fileout)
@@ -557,7 +557,7 @@ class InmessageJson(unittest.TestCase):
 class TestInmessage(unittest.TestCase):
 
     def testEdifact0401(self):
-        ''' 0401	Errors in records'''
+        ''' 0401 Errors in records '''
         self.assertRaises(botslib.MessageError, inmessage.parse_edi_file, editype='edifact', messagetype='edifact', filename='botssys/infile/unitinmessageedifact/0401/040101.edi')
         self.assertRaises(botslib.MessageError, inmessage.parse_edi_file, editype='edifact', messagetype='edifact', filename='botssys/infile/unitinmessageedifact/0401/040102.edi')
         self.assertRaises(botslib.MessageError, inmessage.parse_edi_file, editype='edifact', messagetype='edifact', filename='botssys/infile/unitinmessageedifact/0401/040103.edi')

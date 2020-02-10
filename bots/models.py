@@ -158,9 +158,9 @@ def gettochannels():
 
 # ***Database tables that produced codelists.**********************************************
 class StripCharField(models.CharField):
-    ''' strip values before saving to database. this is not default in django #%^&*'''
+    ''' strip values before saving to database. this is not default in django #%^&* '''
     def get_prep_value(self, value, *args, **kwargs):
-        ''' Convert Python objects (value) to query values (returned)'''
+        ''' Convert Python objects (value) to query values (returned) '''
         if isinstance(value, str):
             return value.strip()
         else:

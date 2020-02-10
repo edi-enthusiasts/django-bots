@@ -52,19 +52,19 @@ def cleanup(do_cleanup_parameter, userscript, scriptname):
 
 
 def _vacuum():
-    ''' Do VACUUM on sqlite database.'''
+    ''' Do VACUUM on sqlite database. '''
     if botsglobal.settings.DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
         botsglobal.db.execute('''VACUUM''')
 
 
 def _cleanupsession():
-    ''' delete all expired sessions. Bots-engine starts up much more often than web-server.'''
+    ''' delete all expired sessions. Bots-engine starts up much more often than web-server. '''
     vanaf = datetime.datetime.today()
     botslib.changeq('''DELETE FROM django_session WHERE expire_date < %(vanaf)s''', {'vanaf': vanaf})
 
 
 def _cleanarchive():
-    ''' delete all archive directories older than maxdaysarchive days. Errors are ignored.'''
+    ''' delete all archive directories older than maxdaysarchive days. Errors are ignored. '''
     vanaf_default = (datetime.date.today()-datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdaysarchive', fallback=180))).strftime('%Y%m%d')
     for row in botslib.query('''SELECT archivepath,rsrv3 FROM channel WHERE archivepath != '' '''):
         if row['rsrv3']:
@@ -84,7 +84,7 @@ def _cleanarchive():
 
 
 def _cleandatafile():
-    ''' delete all data files older than xx days.'''
+    ''' delete all data files older than xx days. '''
     vanaf = time.time() - (botsglobal.ini.getint('settings', 'maxdays', fallback=30) * 3600 * 24)
     frompath = botslib.join(botsglobal.ini.get('directories', 'data', fallback='botssys/data'), '*')
     for filename in glob.iglob(frompath):
@@ -116,7 +116,7 @@ def _cleandatafile():
 
 
 def _cleanpersist():
-    '''delete all persist older than xx days.'''
+    ''' delete all persist older than xx days. '''
     vanaf = datetime.datetime.today() - datetime.timedelta(days=botsglobal.ini.getint('settings', 'maxdayspersist', fallback=30))
     botslib.changeq('''DELETE FROM persist WHERE ts < %(vanaf)s''', {'vanaf': vanaf})
 

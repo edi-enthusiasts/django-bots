@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-''' Start bots-engine.'''
+''' Start bots-engine. '''
 
 import sys
 import os

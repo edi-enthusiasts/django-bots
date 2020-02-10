@@ -14,7 +14,7 @@ from . import node
 
 
 class BotsConfig(RawConfigParser):
-    ''' As ConfigParser, but raises BotsError.'''
+    ''' As ConfigParser, but raises BotsError instead. '''
     def get(self, section, option, *, raw=False, vars=None, fallback=_UNSET):  # @ReservedAssignment
         try:
             return RawConfigParser.get(self, section, option, raw=raw, vars=vars, fallback=fallback)
@@ -111,7 +111,7 @@ def generalinit(configdir):
 # **********************************************************************************
 # *** bots specific handling of character-sets (eg UNOA charset) *******************
 def initbotscharsets():
-    '''set up right charset handling for specific charsets (UNOA, UNOB, UNOC, etc).'''
+    ''' set up right charset handling for specific charsets (UNOA, UNOB, UNOC, etc). '''
     # tell python how to search a codec defined by bots. Bots searches for this in usersys/charset
     codecs.register(codec_search_function)
     # syntax has parameters checkcharsetin or checkcharsetout. These can have value 'botsreplace'
@@ -137,7 +137,7 @@ def codec_search_function(encoding):
 
 
 def botsreplacechar_handler(info):
-    '''replaces an char outside a charset by a user defined char. Useful eg for fixed records: recordlength does not change.'''
+    ''' replaces an char outside a charset by a user defined char. Useful eg for fixed records: recordlength does not change. '''
     return (botsglobal.botsreplacechar, info.start+1)
 # *** end of bots specific handling of character-sets ******************************
 # **********************************************************************************

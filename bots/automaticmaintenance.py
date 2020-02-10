@@ -190,7 +190,7 @@ class Trace(object):
         self._collectdataforfilereport()
 
     def display(self, currentta, level=0):
-        ''' method for debugging.'''
+        ''' method for debugging. '''
         print(level*'    ', currentta['idta'], currentta['statust'], currentta['talijst'])
         for ta_child in currentta['talijst']:
             self.display(ta_child, level+1)

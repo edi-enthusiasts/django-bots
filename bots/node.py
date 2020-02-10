@@ -14,7 +14,7 @@ from .botsconfig import (
 
 
 class Node(object):
-    ''' Node class for building trees in inmessage and outmessage'''
+    ''' Node class for building trees in inmessage and outmessage '''
     # slots: python optimalisation to preserve memory. Disadv.: no dynamic attr in this class
     # in tests: for normal translations less memory and faster; no effect for one-on-one translations.
     __slots__ = ('record', 'children', '_queries', 'linpos_info', 'structure')
@@ -35,7 +35,7 @@ class Node(object):
             return ''
 
     def append(self, childnode):
-        '''append child to node'''
+        ''' append child to node '''
         self.children.append(childnode)
 
     # ********************************************************
@@ -62,7 +62,8 @@ class Node(object):
     def processqueries(self, queries, maxlevel):
         ''' copies values for queries 'down the tree' untill right level.
             So when edi file is split up in messages,
-            querie-info from higher levels is copied to message.'''
+            querie-info from higher levels is copied to message.
+        '''
         self.queries = queries
         if self.record and not maxlevel:
             return
@@ -70,7 +71,7 @@ class Node(object):
             childnode.processqueries(self.queries, maxlevel-1)
 
     def displayqueries(self, level=0):
-        '''for debugging
+        ''' for debugging
             usage: in mappingscript: inn.root.displayqueries()
         '''
         if level == 0:
@@ -210,7 +211,7 @@ class Node(object):
                     return False
 
     def delete(self, *mpaths):
-        ''' delete the last record of mpath if found (first: find/identify record, than delete).'''
+        ''' delete the last record of mpath if found (first: find/identify record, than delete). '''
         self._mpath_sanity_check(mpaths)
         if len(mpaths) == 1:
             raise botslib.MappingFormatError(_t('Only one dict: not allowed. Use different solution: delete(%(mpath)s)'), {'mpath': mpaths})
@@ -297,7 +298,7 @@ class Node(object):
                 return terug  # either the remembered value is returned or 1 (as a boolean, indicated 'found)
 
     def getcount(self):
-        '''count the number of nodes/records under the node/in whole tree'''
+        ''' count the number of nodes/records under the node/in whole tree '''
         count = 0
         if self.record:
             count += 1  # count itself
@@ -306,11 +307,11 @@ class Node(object):
         return count
 
     def getcountoccurrences(self, *mpaths):
-        ''' count number of occurences of mpath. Eg count nr of LIN's'''
+        ''' count number of occurences of mpath. Eg count nr of LIN's '''
         return len(list(self.getloop(*mpaths)))
 
     def getcountsum(self, *mpaths):
-        ''' return the sum for all values found in mpath. Eg total number of ordered quantities.'''
+        ''' return the sum for all values found in mpath. Eg total number of ordered quantities. '''
         mpath_for_found_node = mpaths[-1].copy()
         for key, value in mpaths[-1].items():
             if value is None:
@@ -321,7 +322,7 @@ class Node(object):
         return str(count)
 
     def getloop(self, *mpaths):
-        ''' generator. Returns one by one the nodes as indicated in mpath'''
+        ''' generator. Returns one by one the nodes as indicated in mpath '''
         if Node.checklevel:
             self._mpath_sanity_check(mpaths)
         for part in mpaths:
@@ -334,7 +335,7 @@ class Node(object):
             yield terug
 
     def _getloopcore(self, mpaths):
-        ''' recursive part of getloop()'''
+        ''' recursive part of getloop() '''
         for key, value in mpaths[0].items():
             if key not in self.record or value != self.record[key]:
                 return
@@ -559,9 +560,7 @@ class Node(object):
             raise botslib.MappingFormatError(_t('Parameter mpath is not valid according to grammar: %(mpaths)s'), {'mpaths': mpaths})
 
     def display(self, level=0):
-        '''for debugging
-            usage eg in mappingscript: inn.root.display()
-        '''
+        ''' for debugging usage eg in mappingscript: inn.root.display() '''
         if level == 0:
             print('displaying all nodes in node tree:')
         print('    ' * level, self.record)
@@ -580,7 +579,7 @@ class Node(object):
             child.stripnode()
 
     def collectlines(self, print_as_row):
-        ''' for new edifax routine: collect same nodes in Node.children in a list; for table-row printing.'''
+        ''' for new edifax routine: collect same nodes in Node.children in a list; for table-row printing. '''
         new = []  # new list
         for childnode in self.children:
             if childnode.structure[MPATH] in print_as_row:

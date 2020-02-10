@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-''' Reading/lexing/parsing/splitting an edifile.'''
+''' Reading/lexing/parsing/splitting an edifile. '''
 import time
 import pickle
 try:
@@ -537,7 +537,7 @@ class Inmessage(message.Message):
 
 
 class fixed(Inmessage):
-    ''' class for record of fixed length.'''
+    ''' class for record of fixed length. '''
     def _readcontent_edifile(self):
         ''' open the edi file.
         '''
@@ -550,7 +550,7 @@ class fixed(Inmessage):
         )
 
     def _lex(self):
-        ''' edi file->self.lex_records.'''
+        ''' edi file->self.lex_records. '''
         try:
             # there is a problem with the way python reads line by line: file/line offset is not correctly reported.
             # so the error is catched here to give correct/reasonable result.
@@ -792,9 +792,9 @@ class idoc(fixed):
 
 
 class var(Inmessage):
-    ''' abstract class for edi-objects with records of variabele length.'''
+    ''' abstract class for edi-objects with records of variabele length. '''
     def _lex(self):
-        ''' lexes file with variable records to list of lex_records, fields and subfields (build self.lex_records).'''
+        ''' lexes file with variable records to list of lex_records, fields and subfields (build self.lex_records). '''
         record_sep  = self.ta_info['record_sep']
         mode_inrecord = 0  # 1 indicates: lexing in record, 0 is lexing 'between records'.
         field_sep   = self.ta_info['field_sep'] + self.ta_info['record_tag_sep']  # for tradacoms; field_sep and record_tag_sep have same function.
@@ -1050,7 +1050,7 @@ class var(Inmessage):
 
 
 class csv(var):
-    ''' class for ediobjects with Comma Separated Values'''
+    ''' class for ediobjects with Comma Separated Values '''
     def _lex(self):
         super(csv, self)._lex()
         if self.ta_info['skip_firstline']:
@@ -1169,7 +1169,7 @@ class excel(csv):
 
 
 class edifact(var):
-    ''' class for edifact inmessage objects.'''
+    ''' class for edifact inmessage objects. '''
     @staticmethod
     def _manipulatemessagetype(messagetype, inode):  # @UnusedVariable
         ''' default: just return messagetype. '''
@@ -1506,7 +1506,7 @@ class edifact(var):
 
 
 class x12(var):
-    ''' class for x12 inmessage objects.'''
+    ''' class for x12 inmessage objects. '''
     @staticmethod
     def _manipulatemessagetype(messagetype, inode):
         ''' x12 also needs field from GS record to identify correct messagetype '''
@@ -1824,7 +1824,7 @@ class tradacoms(var):
 
 
 class xml(Inmessage):
-    ''' class for ediobjects in XML. Uses ElementTree'''
+    ''' class for ediobjects in XML. Uses ElementTree '''
     def initfromfile(self):
         botsglobal.logger.debug('Read edi file "%(filename)s".', self.ta_info)
         filename = botslib.abspathdata(self.ta_info['filename'])
@@ -1914,7 +1914,7 @@ class xml(Inmessage):
         return newnode  # return the new node
 
     def _etreenode2botstreenode(self, xmlnode):
-        ''' build a basic dict from xml-node. Add BOTSID, xml-attributes (of 'record'), xmlnode.text as BOTSCONTENT.'''
+        ''' build a basic dict from xml-node. Add BOTSID, xml-attributes (of 'record'), xmlnode.text as BOTSCONTENT. '''
         build = dict((xmlnode.tag + self.ta_info['attributemarker'] + key, value) for key, value in xmlnode.items() if value)  # convert xml attributes to fields.
         build['BOTSID'] = xmlnode.tag
         if xmlnode.text:
@@ -1922,7 +1922,7 @@ class xml(Inmessage):
         return build
 
     def _entitytype(self, xmlchildnode):
-        ''' check if xmlchildnode is field (or record)'''
+        ''' check if xmlchildnode is field (or record) '''
         structure_level = self.stack[-1]
         if LEVEL in structure_level:
             for structure_record in structure_level[LEVEL]:  # find xmlchildnode in structure
@@ -1939,7 +1939,7 @@ class xml(Inmessage):
 
 
 class xmlnocheck(xml):
-    ''' class for ediobjects in XML. Uses ElementTree'''
+    ''' class for ediobjects in XML. Uses ElementTree '''
     def checkmessage(self, node_instance, defmessage, subtranslation=False):
         pass
 

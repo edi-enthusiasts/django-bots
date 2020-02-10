@@ -43,7 +43,7 @@ except ImportError:
 
 @botslib.log_session
 def run(idchannel, command, idroute, rootidta=None):
-    '''run a communication session (dispatcher for communication functions).'''
+    ''' run a communication session (dispatcher for communication functions). '''
     if rootidta is None:
         rootidta = botsglobal.currentrun.get_minta4query()
     for row in botslib.query(
@@ -635,7 +635,7 @@ class _comsession(object):
 
     @staticmethod
     def checkheaderforcharset(org_header):
-        ''' correct handling of charset for email headers that are saved in database.'''
+        ''' correct handling of charset for email headers that are saved in database. '''
         header, encoding = email.header.decode_header(org_header)[0]  # for subjects with non-ascii content special notation exists in MIME-standard
         try:
             if encoding is not None:
@@ -756,7 +756,7 @@ class _comsession(object):
             Note1: {botskey} can only be used if merge is False for that messagetype
         '''
         class infilestr(str):
-            ''' class for the infile-string that handles the specific format-options'''
+            ''' class for the infile-string that handles the specific format-options '''
             def __format__(self, format_spec):
                 if not format_spec:
                     return str(self)
@@ -2131,7 +2131,7 @@ class trash(_comsession):
 
     @botslib.log_session
     def outcommunicate(self):
-        ''' does output of files to 'nothing' (trash it).'''
+        ''' does output of files to 'nothing' (trash it). '''
         # select the db-ta's for this channel
         for row in botslib.query(
             '''SELECT idta, filename, numberofresends FROM ta
@@ -2231,7 +2231,8 @@ class http(_comsession):
 
     @botslib.log_session
     def outcommunicate(self):
-        '''not used now:
+        '''
+          not used now:
             if send as 'body':
                 outResponse = requests.post(url, ..., data = filedata)
             elif send as 'multipart':

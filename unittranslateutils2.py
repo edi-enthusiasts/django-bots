@@ -6,7 +6,8 @@ import bots.botslib as botslib
 import bots.botsinit as botsinit
 import bots.transform as transform
 
-'''plugin unittranslateutils.zip
+'''
+plugin unittranslateutils.zip
 in bots.ini:  runacceptancetest = False
 '''
 

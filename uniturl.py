@@ -3,7 +3,7 @@
 import unittest
 from bots.botslib import Uri
 
-'''no plugin'''
+''' no plugin '''
 
 
 class TestTranslate(unittest.TestCase):

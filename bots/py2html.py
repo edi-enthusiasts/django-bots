@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # {{{ http://code.activestate.com/recipes/578178/ (r20)
-'''Add syntax highlighting to Python source code'''
+''' Add syntax highlighting to Python source code '''
 __author__ = 'Raymond Hettinger'
 
 # Mike Griffin 3/05/2013
@@ -35,7 +35,7 @@ def combine_range(lines, start, end):
 
 
 def analyze_python(source):
-    '''Generate and classify chunks of Python for syntax highlighting.
+    ''' Generate and classify chunks of Python for syntax highlighting.
        Yields tuples in the form: (category, categorized_text).
     '''
     lines = source.splitlines(True)

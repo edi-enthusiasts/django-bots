@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-''' Bots configuration for django's admin site.'''
+''' Bots configuration for django's admin site. '''
 from django import forms
 from django.utils.translation import ugettext as _t
 from django.contrib import admin
@@ -26,7 +26,7 @@ class BotsAdmin(admin.ModelAdmin):
     save_as = True
 
     def activate(self, request, queryset):  # @UnusedVariable
-        ''' handles the admin 'activate' action.'''
+        ''' handles the admin 'activate' action. '''
         # much faster: queryset.update(active=not F('active')) but negation of F() object is not yet supported in django (20140307)
         for obj in queryset:
             obj.active = not obj.active
@@ -127,7 +127,7 @@ admin.site.register(models.channel, ChannelAdmin)
 
 
 class MyConfirmruleAdminForm(forms.ModelForm):
-    ''' customs form for route for additional checks'''
+    ''' customs form for route for additional checks '''
     class Meta:
         model = models.confirmrule
         widgets = {'idroute': forms.Select()}
@@ -169,7 +169,7 @@ class ConfirmruleAdmin(BotsAdmin):
         )
 
     def formfield_for_dbfield(self, db_field, **kwargs):
-        ''' make dynamic choice list for field idroute. not a foreign key, gave to much trouble.'''
+        ''' make dynamic choice list for field idroute. not a foreign key, gave to much trouble. '''
         if db_field.name == "idroute":
             kwargs['widget'].choices = models.getroutelist()
         return super(ConfirmruleAdmin, self).formfield_for_dbfield(db_field, **kwargs)
@@ -267,7 +267,7 @@ admin.site.register(models.partnergroep, PartnerGroepAdmin)
 
 
 class MyRouteAdminForm(forms.ModelForm):
-    ''' customs form for route for additional checks'''
+    ''' customs form for route for additional checks '''
     class Meta:
         model = models.routes
 
@@ -333,7 +333,7 @@ admin.site.register(models.routes, RoutesAdmin)
 
 
 class MyTranslateAdminForm(forms.ModelForm):
-    ''' customs form for translations to check if entry exists (unique_together not validated right (because of null values in partner fields))'''
+    ''' customs form for translations to check if entry exists (unique_together not validated right (because of null values in partner fields)) '''
     class Meta:
         model = models.translate
 

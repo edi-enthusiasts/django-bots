@@ -268,7 +268,7 @@ def handle_out_message(out_translated, ta_translated):
 # when unpickling, have to encode again of course.
 # this is upward compatible; if stored as in bots <= 3.1 is OK.
 def persist_add(domein, botskey, value):
-    ''' store persistent values in db.'''
+    ''' store persistent values in db. '''
     content = pickle.dumps(value).decode('iso-8859-1')
     try:
         botslib.changeq(
@@ -305,7 +305,7 @@ def persist_add_update(domein, botskey, value):
 
 
 def persist_delete(domein, botskey):
-    ''' store persistent values in db.'''
+    ''' store persistent values in db. '''
     botslib.changeq(
         '''DELETE FROM persist
             WHERE domein = %(domein)s
@@ -315,7 +315,7 @@ def persist_delete(domein, botskey):
 
 
 def persist_lookup(domein, botskey):
-    ''' lookup persistent values in db.'''
+    ''' lookup persistent values in db. '''
     for row in botslib.query(
         '''SELECT content FROM persist
             WHERE domein = %(domein)s
@@ -361,7 +361,7 @@ def safe_ccode(ccodeid, leftcode, field='rightcode'):  # depreciated, use ccode 
 
 
 def reverse_ccode(ccodeid, rightcode, field='leftcode', safe=False):
-    ''' as ccode but reversed lookup.'''
+    ''' as ccode but reversed lookup. '''
     for row in botslib.query(
         '''SELECT '''+field+''' FROM ccode
             WHERE ccodeid_id = %(ccodeid)s
@@ -382,7 +382,7 @@ def reverse_ccode(ccodeid, rightcode, field='leftcode', safe=False):
 
 
 def safe_reverse_ccode(ccodeid, rightcode, field='leftcode'):  # depreciated, use reverse_ccode with safe=True
-    ''' as safe_ccode but reversed lookup.'''
+    ''' as safe_ccode but reversed lookup. '''
     return reverse_ccode(ccodeid, rightcode, field, safe=True)
 
 
@@ -394,7 +394,7 @@ safercodetconversion = safe_reverse_ccode
 
 
 def getcodeset(ccodeid, leftcode, field='rightcode'):
-    ''' Returns a list of all 'field' values in ccode with right ccodeid and leftcode.'''
+    ''' Returns a list of all 'field' values in ccode with right ccodeid and leftcode. '''
     terug = []
     for row in botslib.query(
         '''SELECT '''+field+''' FROM ccode
@@ -411,7 +411,7 @@ def getcodeset(ccodeid, leftcode, field='rightcode'):
 # *** utily functions for calculating/generating/checking EAN/GTIN/GLN
 # *********************************************************************
 def calceancheckdigit(ean):
-    ''' input: EAN without checkdigit; returns the checkdigit'''
+    ''' input: EAN without checkdigit; returns the checkdigit '''
     try:
         if not ean.isdigit():
             raise botslib.EanError(_t('GTIN "%(ean)s" should be string with only numericals.'), {'ean': ean})
@@ -422,7 +422,7 @@ def calceancheckdigit(ean):
 
 
 def calceancheckdigit2(ean):
-    ''' just for fun: slightly different algoritm for calculating the ean checkdigit. same results; is 10% faster.'''
+    ''' just for fun: slightly different algoritm for calculating the ean checkdigit. same results; is 10% faster. '''
     sum1 = 0
     factor = 3
     for i in ean[-1::-1]:
@@ -432,12 +432,12 @@ def calceancheckdigit2(ean):
 
 
 def checkean(ean):
-    ''' input: EAN; returns: True (valid EAN) of False (EAN not valid)'''
+    ''' input: EAN; returns: True (valid EAN) of False (EAN not valid) '''
     return (ean[-1] == calceancheckdigit(ean[:-1]))
 
 
 def addeancheckdigit(ean):
-    ''' input: EAN without checkdigit; returns EAN with checkdigit'''
+    ''' input: EAN without checkdigit; returns EAN with checkdigit '''
     return ean + calceancheckdigit(ean)
 
 
@@ -452,7 +452,7 @@ def unique(domein, updatewith=None):
 
 
 def unique_runcounter(domein, updatewith=None):
-    ''' as unique, but per run of bots-engine.'''
+    ''' as unique, but per run of bots-engine. '''
     return str(botslib.unique_runcounter(domein, updatewith))
 
 

@@ -389,7 +389,7 @@ def confirm(request, *kw, **kwargs):  # @UnusedVariable
 
 
 def filer(request, *kw, **kwargs):  # @UnusedVariable
-    ''' handles bots file viewer. Only files in data dir of Bots are displayed.'''
+    ''' handles bots file viewer. Only files in data dir of Bots are displayed. '''
     if request.method == 'GET':
         try:
             idta = request.GET['idta']
@@ -455,7 +455,7 @@ def filer(request, *kw, **kwargs):  # @UnusedVariable
 
 
 def srcfiler(request, *kw, **kwargs):  # @UnusedVariable
-    ''' handles bots source file viewer. display grammar, mapping, userscript etc.'''
+    ''' handles bots source file viewer. display grammar, mapping, userscript etc. '''
     if request.method == 'GET':
         try:
             src = request.GET['src']

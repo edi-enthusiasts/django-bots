@@ -10,7 +10,8 @@ import bots.botsinit as botsinit
 import bots.transform as transform
 import bots.validate_email as validate_email
 
-'''plugin unittranslateutils.zip
+'''
+plugin unittranslateutils.zip
 in bots.ini:  runacceptancetest = False
 '''
 
