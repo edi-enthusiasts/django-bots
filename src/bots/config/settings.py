@@ -22,7 +22,7 @@ EMAIL_HOST_PASSWORD = ''  # Default: ''. PASSWORD to use for the SMTP server def
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_PATH, 'botssys/sqlitedb/botsdb'),
+        'NAME': os.path.join(PROJECT_PATH, 'botssys', 'sqlitedb', 'botsdb'),
         'USER': '',      # not needed for SQLite
         'PASSWORD': '',  # not needed for SQLite
         'HOST': '',      # not needed for SQLite
