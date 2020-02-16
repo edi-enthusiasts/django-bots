@@ -1,0 +1,17 @@
+# Mandatory packages for minimal functionality. 
+django ~=1.8.8
+cherrypy >3.1.0,<9.0
+pywin32; sys_platform=='win32'
+pyinotify; sys_platform=='linux'
+
+# Optional packages that allow extra features.
+ecdsa
+Genshi
+paramiko
+pdfminer
+pycrypto
+xlrd
+
+# Optional packages for doc building.
+sphinx
+sphinx_rtd_theme
