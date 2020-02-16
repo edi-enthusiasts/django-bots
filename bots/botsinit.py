@@ -15,14 +15,18 @@ from . import node
 
 class BotsConfig(RawConfigParser):
     ''' As ConfigParser, but raises BotsError instead. '''
-    def get(self, section, option, *, raw=False, vars=None, fallback=_UNSET):  # @ReservedAssignment
+    def _get_conv(self, section, option, conv, *, raw=False, vars=None,  # @ReservedAssignment
+                  fallback=_UNSET, **kwargs):
         try:
-            return RawConfigParser.get(self, section, option, raw=raw, vars=vars, fallback=fallback)
-        except (NoOptionError, NoSectionError):
-            raise botslib.BotsError(
-                'No entry "%(option)s" in section "%(section)s" in "bots.ini".',
-                {'option': option, 'section': section}
-            ) from None
+            return self._get(section, conv, option, raw=raw, vars=vars,
+                             **kwargs)
+        except (NoSectionError, NoOptionError):
+            if fallback is _UNSET:
+                raise botslib.BotsError(
+                    'No entry "%(option)s" in section "%(section)s" in "bots.ini".',
+                    {'option': option, 'section': section}
+                ) from None
+            return fallback
 
 
 def generalinit(configdir):

@@ -23,7 +23,7 @@ from . import botsglobal
 # ******************************************
 # * read a plugin **************************
 # ******************************************
-@db.transaction.commit_on_success  # if no exception raised: commit, else rollback.
+@db.transaction.atomic  # if no exception raised: commit, else rollback.
 def read_index(filename):  # @UnusedVariable
     ''' process index file in default location. '''
     try:
@@ -48,7 +48,7 @@ def read_index(filename):  # @UnusedVariable
         botsglobal.logger.info(_t('Writing to database is OK.'))
 
 
-@db.transaction.commit_on_success  # if no exception raised: commit, else rollback.
+@db.transaction.atomic  # if no exception raised: commit, else rollback.
 def read_plugin(pathzipfile):
     ''' process uploaded plugin. '''
     # test if valid zipfile

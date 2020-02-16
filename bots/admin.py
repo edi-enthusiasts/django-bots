@@ -131,6 +131,11 @@ class MyConfirmruleAdminForm(forms.ModelForm):
     class Meta:
         model = models.confirmrule
         widgets = {'idroute': forms.Select()}
+        fields = [
+            'active', 'confirmtype', 'ruletype', 'negativerule', 'frompartner',
+            'topartner', 'idroute', 'idchannel', 'editype', 'messagetype',
+            'rsrv1', 'rsrv2'
+        ]
 
     def clean(self):
         super(MyConfirmruleAdminForm, self).clean()
@@ -270,6 +275,14 @@ class MyRouteAdminForm(forms.ModelForm):
     ''' customs form for route for additional checks '''
     class Meta:
         model = models.routes
+        fields = [
+            'idroute', 'seq', 'active', 'fromchannel', 'fromeditype',
+            'frommessagetype', 'tochannel', 'toeditype', 'tomessagetype',
+            'alt', 'frompartner', 'topartner', 'frompartner_tochannel',
+            'topartner_tochannel', 'testindicator', 'translateind',
+            'notindefaultrun', 'desc', 'rsrv1', 'rsrv2', 'defer',
+            'zip_incoming', 'zip_outgoing'
+        ]
 
     def clean(self):
         super(MyRouteAdminForm, self).clean()
@@ -336,6 +349,11 @@ class MyTranslateAdminForm(forms.ModelForm):
     ''' customs form for translations to check if entry exists (unique_together not validated right (because of null values in partner fields)) '''
     class Meta:
         model = models.translate
+        fields = [
+            'active', 'fromeditype', 'frommessagetype', 'alt', 'frompartner',
+            'topartner', 'tscript', 'toeditype', 'tomessagetype', 'desc',
+            'rsrv1', 'rsrv2'
+        ]
 
     def clean(self):
         super(MyTranslateAdminForm, self).clean()

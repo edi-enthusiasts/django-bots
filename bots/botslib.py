@@ -384,7 +384,7 @@ def txtexc(mention_exception_type=True):
     ''' Process last exception, get an errortext.
         Errortext should be valid unicode.
     '''
-    if botsglobal.ini and botsglobal.ini.getboolean('settings', 'debug', False):
+    if botsglobal.ini and botsglobal.ini.getboolean('settings', 'debug', fallback=False):
         return safe_str(traceback.format_exc(limit=None))
     else:
         terug = safe_str(traceback.format_exc(limit=0))
