@@ -435,7 +435,7 @@ def botsbaseimport(modulename):
     ''' Do a dynamic import.
         Errors/exceptions are handled in calling functions.
     '''
-    return importlib.import_module(modulename.encode(sys.getfilesystemencoding()))
+    return importlib.import_module(modulename)
 
 
 def botsimport(*args):

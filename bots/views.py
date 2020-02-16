@@ -36,7 +36,7 @@ def server_error(request, template_name='500.html'):  # @UnusedVariable
         Context: None
         str().decode(): bytes->unicode
     '''
-    exc_info = traceback.format_exc(None).decode('utf-8', 'ignore')
+    exc_info = traceback.format_exc(None)
     botsglobal.logger.info(_t('Ran into server error: "%(error)s"'), {'error': exc_info})
     temp = loader.get_template(template_name)  # You need to create a 500.html template.
     return http.HttpResponseServerError(temp.render(context.Context({'exc_info': exc_info})))
