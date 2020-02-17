@@ -1,7 +1,16 @@
-recursive-include bots *
-recursive-exclude bots *.pyc
-prune bots/botssys/logging
-prune bots/botssys/infile
-prune bots/botssys/outfile
-prune bots/botssys/archive
-prune bots/botssys/data
+include *.txt
+include *.rst
+
+recursive-include src/bots *
+recursive-include docs *.rst conf.py *.jpg *.png *.gif
+recursive-include scripts *
+recursive-include tests *
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+
+# prune src/bots/botssys/logging
+# prune src/bots/botssys/infile
+# prune src/bots/botssys/outfile
+# prune src/bots/botssys/archive
+# prune src/bots/botssys/data

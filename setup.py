@@ -51,6 +51,7 @@ classifiers = [
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3.5',
+    'Framework :: Django :: 1.8',
     'License :: OSI Approved :: GNU General Public License (GPL)',
     'Topic :: Office/Business',
     'Topic :: Office/Business :: Financial',

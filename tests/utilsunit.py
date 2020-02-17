@@ -111,7 +111,7 @@ def geterrorlastrun():
     for row in botslib.query(
         '''SELECT * FROM filereport
            ORDER BY idta DESC'''
-   ):
+    ):
         return row[str('errortext')]
     raise Exception('no filereport')
 
