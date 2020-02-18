@@ -394,25 +394,40 @@ def txtexc(mention_exception_type=True):
         return terug
 
 
+UTF_BOMS = collections.OrderedDict((
+    ('BOM_UTF32',    'utf_32'),
+    ('BOM_UTF32_LE', 'utf_32_le'),
+    ('BOM_UTF32_BE', 'utf_32_be'),
+    ('BOM_UTF16',    'utf_16'),
+    ('BOM_UTF16_LE', 'utf_16_le'),
+    ('BOM_UTF16_BE', 'utf_16_be'),
+    ('BOM_UTF8',     'utf_8')
+))
+
+
 def safe_str(value):
     ''' For errors: return best possible unicode...should never lead to errors. '''
     try:
         if isinstance(value, str):  # is already string, just return
             return value
         elif isinstance(value, bytes):  # string/bytecode, encoding unknown.
-            for charset in ['utf_8', 'latin_1']:
-                try:
-                    return value.decode(charset, 'strict')  # decode strict
-                except Exception:
-                    continue
+            for bom_name, charset in UTF_BOMS.items():
+                if value.startswith(getattr(codecs, bom_name)):
+                    try:
+                        return value.decode(charset, 'strict')  # decode strict
+                    except UnicodeDecodeError:
+                        continue
+            else:
+                for charset in ('utf_8', 'latin_1'):
+                    try:
+                        return value.decode(charset, 'strict')  # decode strict
+                    except UnicodeDecodeError:
+                        continue
             return value.decode('utf_8', 'ignore')  # decode as if it is utf-8, ignore errors.
         else:
             return str(value)
     except Exception:
-        try:
-            return str(repr(value))
-        except Exception:
-            return 'Error while displaying error'
+        return str(repr(value))
 
 
 class ErrorProcess(NewTransaction):
@@ -920,6 +935,7 @@ class BotsError(Exception):
                 xxx = {}
         else:
             xxx = kwargs
+
         self.xxx = collections.defaultdict(str)  # catch-all if var in string is not there
         for key, value in xxx.items():
             self.xxx[safe_str(key)] = safe_str(value)
