@@ -126,7 +126,7 @@ def start():
         botslib.tryrunscript(userscript, scriptname, 'pre')
         errorinrun = engine2_run()
     except Exception as msg:
-        botsglobal.logger.exception(_t('Severe error in bots system:\n%(msg)s'), {'msg': str(msg)})  # of course this 'should' not happen.
+        botsglobal.logger.exception(_t('Severe error in bots system:\n%(msg)s'), {'msg': msg})  # of course this 'should' not happen.
         sys.exit(1)
     else:
         if errorinrun:

@@ -49,9 +49,9 @@ class TestMain(unittest.TestCase):
             }
         ):
             nr_rows += 1
-            print(row[str('idta')], row[str('confirmed')], row[str('confirmidta')])
-            self.assertTrue(row[str('confirmed')])
-            self.assertTrue(row[str('confirmidta')] != 0)
+            print(row['idta'], row['confirmed'], row['confirmidta'])
+            self.assertTrue(row['confirmed'])
+            self.assertTrue(row['confirmidta'] != 0)
         else:
             self.assertTrue(nr_rows == 1)
 
@@ -74,8 +74,8 @@ class TestMain(unittest.TestCase):
             }
         ):
             nr_rows += 1
-            self.assertTrue(row[str('confirmed')])
-            self.assertTrue(row[str('confirmidta')] != 0)
+            self.assertTrue(row['confirmed'])
+            self.assertTrue(row['confirmidta'] != 0)
         else:
             self.assertTrue(nr_rows == 1)
 
@@ -101,8 +101,8 @@ class TestMain(unittest.TestCase):
             }
         ):
             nr_rows += 1
-            self.assertTrue(not row[str('confirmed')])
-            self.assertTrue(row[str('confirmidta')] == 0)
+            self.assertTrue(not row['confirmed'])
+            self.assertTrue(row['confirmidta'] == 0)
         else:
             self.assertTrue(nr_rows == 1)
 
@@ -144,11 +144,11 @@ class TestMain(unittest.TestCase):
         ):
             counter += 1
             if counter == 1:
-                self.assertTrue(not row[str('confirmed')])
-                self.assertTrue(row[str('confirmidta')] == 0)
+                self.assertTrue(not row['confirmed'])
+                self.assertTrue(row['confirmidta'] == 0)
             elif counter == 2:
-                self.assertTrue(row[str('confirmed')])
-                self.assertTrue(row[str('confirmidta')] != 0)
+                self.assertTrue(row['confirmed'])
+                self.assertTrue(row['confirmidta'] != 0)
             else:
                 break
         else:
@@ -171,8 +171,8 @@ class TestMain(unittest.TestCase):
         ):
             counter += 1
             if counter <= 2:
-                self.assertTrue(row[str('confirmed')])
-                self.assertTrue(row[str('confirmidta')] != 0)
+                self.assertTrue(row['confirmed'])
+                self.assertTrue(row['confirmidta'] != 0)
             else:
                 break
         else:
@@ -212,11 +212,11 @@ class TestMain(unittest.TestCase):
         ):
             counter += 1
             if counter == 1:
-                self.assertTrue(not row[str('confirmed')])
-                self.assertTrue(row[str('confirmidta')] == 0)
+                self.assertTrue(not row['confirmed'])
+                self.assertTrue(row['confirmidta'] == 0)
             elif counter == 2:
-                self.assertTrue(row[str('confirmed')])
-                self.assertTrue(row[str('confirmidta')] != 0)
+                self.assertTrue(row['confirmed'])
+                self.assertTrue(row['confirmidta'] != 0)
             else:
                 break
         else:
@@ -239,8 +239,8 @@ class TestMain(unittest.TestCase):
         ):
             counter += 1
             if counter <= 2:
-                self.assertTrue(row[str('confirmed')])
-                self.assertTrue(row[str('confirmidta')] != 0)
+                self.assertTrue(row['confirmed'])
+                self.assertTrue(row['confirmidta'] != 0)
             else:
                 break
         else:

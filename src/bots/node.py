@@ -270,7 +270,7 @@ class Node(object):
         if Node.checklevel == 2:
             self._mpath_grammar_check(mpaths)
         terug = self._getcore(mpaths)
-        botsglobal.logmap.debug('"%(terug)s" for get%(mpaths)s', {'terug': terug, 'mpaths': str(mpaths)})
+        botsglobal.logmap.debug('"%(terug)s" for get%(mpaths)s', {'terug': terug, 'mpaths': mpaths})
         return terug
 
     def _getcore(self, mpaths):
@@ -384,14 +384,14 @@ class Node(object):
                 raise botslib.MappingFormatError(_t('Section without "BOTSID": put(%(mpath)s)'), {'mpath': mpaths})
             for key, value in part.items():
                 if value is None:
-                    botsglobal.logmap.debug('"None" in put %(mpaths)s.', {'mpaths': str(mpaths)})
+                    botsglobal.logmap.debug('"None" in put %(mpaths)s.', {'mpaths': mpaths})
                     return False
                 if not isinstance(key, str):
                     raise botslib.MappingFormatError(_t('Keys must be strings: put(%(mpath)s)'), {'mpath': mpaths})
                 if isinstance(value, list):
                     # empty is not useful, drop it (like None)
                     if not value:
-                        botsglobal.logmap.debug('Empty list in put %(mpaths)s.', {'mpaths': str(mpaths)})
+                        botsglobal.logmap.debug('Empty list in put %(mpaths)s.', {'mpaths': mpaths})
                         return False
                 else:
                     if kwargs.get('strip', True):
@@ -405,7 +405,7 @@ class Node(object):
             self._putcore(mpaths[1:])
         else:
             raise botslib.MappingRootError(_t('Error in root put "%(mpath)s".'), {'mpath': mpaths[0]})
-        botsglobal.logmap.debug('"True" for put %(mpaths)s', {'mpaths': str(mpaths)})
+        botsglobal.logmap.debug('"True" for put %(mpaths)s', {'mpaths': mpaths})
         return True
 
     def _putcore(self, mpaths):

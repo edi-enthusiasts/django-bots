@@ -45,7 +45,7 @@ class TestMain(unittest.TestCase):
         ):
             count += 1
             sub_unique = botslib.unique('dutchic_desadv_out')
-            ta = botslib.OldTransaction(row[str('idta')])
+            ta = botslib.OldTransaction(row['idta'])
 
             self.assertEqual(comclass.filename_formatter('*.edi', ta), str(sub_unique+1) + '.edi', '')
             self.assertEqual(comclass.filename_formatter('*.edi', ta), str(sub_unique+2) + '.edi', '')

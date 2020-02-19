@@ -26,7 +26,7 @@ def test_plugin():
             WHERE isgroup = %(isgroup)s''',
         {'isgroup': False}
     ):
-        if row[str('count')] != 5:
+        if row['count'] != 5:
             raise Exception('error partner count')
         break
     else:
@@ -37,7 +37,7 @@ def test_plugin():
             WHERE isgroup = %(isgroup)s''',
         {'isgroup': True}
     ):
-        if row[str('count')] != 3:
+        if row['count'] != 3:
             raise Exception('error partner count')
         break
     else:
@@ -48,7 +48,7 @@ def test_plugin():
             WHERE from_partner_id=%(from_partner_id)s''',
         {'from_partner_id': 'plugintest1'}
     ):
-        if row[str('count')] != 3:
+        if row['count'] != 3:
             raise Exception('error partner count')
         break
     else:
@@ -59,7 +59,7 @@ def test_plugin():
             WHERE from_partner_id=%(from_partner_id)s''',
         {'from_partner_id': 'plugintest2'}
     ):
-        if row[str('to_partner_id')] != 'plugingroup2':
+        if row['to_partner_id'] != 'plugingroup2':
             raise Exception('error partner count')
 
     for row in botslib.query(
@@ -67,7 +67,7 @@ def test_plugin():
             WHERE to_partner_id=%(to_partner_id)s  ''',
         {'to_partner_id': 'plugingroup2'}
     ):
-        if row[str('count')] != 2:
+        if row['count'] != 2:
             raise Exception('error partner count')
         break
     else:
@@ -119,8 +119,8 @@ def test_ccode_with_unicode():
                     AND leftcode = %(leftcode)s''',
                 {'ccodeid': domein, 'leftcode': key}
             ):
-                print('    ', key, type(row[str('rightcode')]), type(value))
-                if row[str('rightcode')] != value:
+                print('    ', key, type(row['rightcode']), type(value))
+                if row['rightcode'] != value:
                     print('failure in test "%s": result "%s" is not equal to "%s"' % (key, row['rightcode'], value))
                 else:
                     print('    OK')
@@ -146,7 +146,7 @@ def test_unique_in_run_counter():
 
 
 def test_partner_lookup():
-    for s in [str('attr1'), str('attr2'), str('attr3'), str('attr4'), str('attr5')]:
+    for s in ['attr1', 'attr2', 'attr3', 'attr4', 'attr5']:
         if transform.partnerlookup('test', s) != s:
             raise Exception('test_partner_lookup')
     # test lookup for not existing partner
@@ -162,10 +162,10 @@ def test_partner_lookup():
 
     # test lookup where no value is in the database
     idpartner = 'test2'
-    if transform.partnerlookup(idpartner, str('attr1')) != 'attr1':
+    if transform.partnerlookup(idpartner, 'attr1') != 'attr1':
         raise Exception('test_partner_lookup')
     try:
-        transform.partnerlookup(idpartner, str('attr2'))
+        transform.partnerlookup(idpartner, 'attr2')
     except botslib.CodeConversionError:
         pass
     else:
@@ -205,20 +205,20 @@ if __name__ == '__main__':
         }
     )
     ta_externout = utilsunit.getlastta(EXTERNOUT)
-    if ta_externout[str('botskey')] != 'BOTSKEY01':
+    if ta_externout['botskey'] != 'BOTSKEY01':
         raise Exception('testreference: botskey not OK')
     ta_externout = utilsunit.getlastta(PARSED)
-    if ta_externout[str('reference')] != 'UNBREF01':
+    if ta_externout['reference'] != 'UNBREF01':
         raise Exception('testreference: unb ref not OK')
     ta_externout = utilsunit.getlastta(SPLITUP)
-    if ta_externout[str('reference')] != 'BOTSKEY01':
+    if ta_externout['reference'] != 'BOTSKEY01':
         raise Exception('testreference: botskey not OK')
-    if ta_externout[str('botskey')] != 'BOTSKEY01':
+    if ta_externout['botskey'] != 'BOTSKEY01':
         raise Exception('testreference: botskey not OK')
     ta_externout = utilsunit.getlastta(TRANSLATED)
-    if ta_externout[str('reference')] != 'BOTSKEY01':
+    if ta_externout['reference'] != 'BOTSKEY01':
         raise Exception('testreference: botskey not OK')
-    if ta_externout[str('botskey')] != 'BOTSKEY01':
+    if ta_externout['botskey'] != 'BOTSKEY01':
         raise Exception('testreference: botskey not OK')
     # test KECA charset **********************************************************************************************************************
     utilsunit.RunTestCompareResults(

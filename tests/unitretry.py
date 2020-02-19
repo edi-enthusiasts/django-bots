@@ -47,7 +47,7 @@ def indicate_rereceive():
             '''UPDATE filereport
                 SET retransmit = 1
                 WHERE idta=%(idta)s''',
-            {'idta': row[str('idta')]}
+            {'idta': row['idta']}
         )
         if count >= 2:
             break
@@ -68,7 +68,7 @@ def indicate_send():
                 WHERE idta=%(idta)s''',
             {
                 'retransmit': True,
-                'idta': row[str('idta')]
+                'idta': row['idta']
             }
         )
         if count >= 2:
@@ -100,7 +100,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 1482:
+    if row['filesize'] != 1482:
         raise Exception('1 filesize not OK: %s' % row['filesize'])
 
     # change channel type to ftp: errors (run twice)
@@ -189,7 +189,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 1482:
+    if row['filesize'] != 1482:
         raise Exception('2 filesize not OK: %s' % row['filesize'])
 
     # rereceive last 2 files
@@ -210,7 +210,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 1482:
+    if row['filesize'] != 1482:
         raise Exception('3 filesize not OK: %s' % row['filesize'])
 
     # resend last 2 files
@@ -268,7 +268,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 1482:
+    if row['filesize'] != 1482:
         raise Exception('4 filesize not OK: %s' % row['filesize'])
 
     # change channel type to ftp: errors
@@ -307,7 +307,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 1482:
+    if row['filesize'] != 1482:
         raise Exception('5 filesize not OK: %s' % row['filesize'])
 
     # change channel type to file and do automaticretrycommunication: OK
@@ -364,7 +364,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 1482:
+    if row['filesize'] != 1482:
         raise Exception('6 filesize not OK: %s' % row['filesize'])
 
     # change channel type to file and do automaticretrycommunication: OK
@@ -403,7 +403,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 741:
+    if row['filesize'] != 741:
         raise Exception('7 filesize not OK: %s' % row['filesize'])
 
     # change channel type to ftp: errors (run twice)
@@ -440,7 +440,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 741:
+    if row['filesize'] != 741:
         raise Exception('8 filesize not OK: %s' % row['filesize'])
 
     # change channel type to mimefile and do automaticretrycommunication: OK
@@ -496,7 +496,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 741:
+    if row['filesize'] != 741:
         raise Exception('9 filesize not OK: %s' % row['filesize'])
 
     # ***run with communciation errors, run OK, communciation errors, run OK, run automaticretry
@@ -536,7 +536,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 741:
+    if row['filesize'] != 741:
         raise Exception('10 filesize not OK: %s' % row['filesize'])
 
     # change channel type to ftp: errors
@@ -575,7 +575,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 741:
+    if row['filesize'] != 741:
         raise Exception('11 filesize not OK: %s' % row['filesize'])
 
     # change channel type to file and do automaticretrycommunication: OK
@@ -632,7 +632,7 @@ if __name__ == '__main__':
         utilsunit.getreportlastrun()
     )  # check report
     row = utilsunit.getreportlastrun()
-    if row[str('filesize')] != 741:
+    if row['filesize'] != 741:
         raise Exception('12 filesize not OK: %s' % row['filesize'])
 
     # change channel type to file and do automaticretrycommunication: OK

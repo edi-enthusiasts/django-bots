@@ -40,7 +40,7 @@ def persist_lookup_ts(domein, botskey):
            AND botskey=%(botskey)s''',
         {'domein': domein, 'botskey': botskey}
     ):
-        return row[str('ts')]
+        return row['ts']
     return None
 
 

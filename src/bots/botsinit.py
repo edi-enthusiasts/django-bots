@@ -121,7 +121,7 @@ def initbotscharsets():
     # syntax has parameters checkcharsetin or checkcharsetout. These can have value 'botsreplace'
     # eg: 'checkcharsetin':'botsreplace',  #strict, ignore or botsreplace
     # in case of errors: the 'wrong' character is replaced with char as set in bots.ini. Default value in bots.ini is ' ' (space)
-    botsglobal.botsreplacechar = str(botsglobal.ini.get('settings', 'botsreplacechar', fallback=' '))
+    botsglobal.botsreplacechar = botsglobal.ini.get('settings', 'botsreplacechar', fallback=' ')
     codecs.register_error('botsreplace', botsreplacechar_handler)  # need to register the handler for botsreplacechar
     # set aliases for the charsets in bots.ini
     for key, value in botsglobal.ini.items('charsets'):

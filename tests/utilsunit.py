@@ -112,7 +112,7 @@ def geterrorlastrun():
         '''SELECT * FROM filereport
            ORDER BY idta DESC'''
     ):
-        return row[str('errortext')]
+        return row['errortext']
     raise Exception('no filereport')
 
 
