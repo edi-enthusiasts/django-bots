@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import shutil
 import os
-import subprocess
 import pytest
 import utilsunit
 import bots.botslib as botslib
@@ -19,15 +17,7 @@ tested is:
 - seperate unit-tests to check confirm-rules
 '''
 
-botssys = os.path.join('bots', 'botssys')
-pytestmark = pytest.mark.usefixtures('run_engine', 'engine_logging', 'bots_db', 'confirm_rules')
-
-
-@pytest.fixture(scope='module')
-def run_engine():
-    newcommand = ['python', '-m', 'bots-engine']
-    shutil.rmtree(os.path.join(botssys, 'outfile'), ignore_errors=True)  # remove whole output directory
-    assert not subprocess.call(newcommand)
+pytestmark = pytest.mark.usefixtures('clean_output', 'run_engine', 'engine_logging', 'bots_db', 'confirm_rules')
 
 
 @pytest.fixture(scope='module')
@@ -36,7 +26,7 @@ def confirm_rules():
 
 
 @pytest.mark.plugin_test
-def test_routetestmdn():
+def test_routetestmdn(botssys):
     lijst = utilsunit.getdir(os.path.join(botssys, 'outfile', 'confirm', 'mdn', '*'))
     assert len(lijst) == 0
 
@@ -91,7 +81,7 @@ def test_routetestmdn():
 
 
 @pytest.mark.plugin_test
-def testroutetestmdn2():
+def testroutetestmdn2(botssys):
     lijst = utilsunit.getdir(os.path.join(botssys, 'outfile', 'confirm', 'mdn2', '*'))
     assert len(lijst) == 0
 
@@ -121,13 +111,13 @@ def testroutetestmdn2():
 
 
 @pytest.mark.plugin_test
-def testrouteotherx12():
+def testrouteotherx12(botssys):
     lijst = utilsunit.getdir(os.path.join(botssys, 'outfile', 'confirm', 'otherx12', '*'))
     assert len(lijst) == 15
 
 
 @pytest.mark.plugin_test
-def testroutetest997():
+def testroutetest997(botssys):
     '''
     test997 1:  pickup 850*1    ask confirm 850*2   gen & send 850*2
                                 send confirm 850*1  gen & send 997*1
@@ -200,7 +190,7 @@ def testroutetest997():
 
 
 @pytest.mark.plugin_test
-def testroutetestcontrl():
+def testroutetestcontrl(botssys):
     '''
     test997 1:  pickup ORDERS*1   ask confirm ORDERS*2   gen & send ORDERS*2
                                   send confirm ORDERS*1  gen & send CONTRL*1

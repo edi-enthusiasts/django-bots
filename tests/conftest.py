@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 
+import os
 import pytest
+import shutil
+import subprocess
 import bots.botsglobal as botsglobal_module
 import bots.botsinit as botsinit_module
+
+
+@pytest.fixture(scope='session')
+def botssys():
+    return os.path.join('bots', 'botssys')
 
 
 # Make sure botsinit is only initialized once when starting up the library.
@@ -16,6 +24,13 @@ def init_charsets():
     botsinit_module.initbotscharsets()
 
 
+@pytest.fixture(scope='session')
+def bots_db(general_init):
+    botsinit_module.connect()
+    yield botsglobal_module.db
+    botsglobal_module.db.close
+
+
 @pytest.fixture(scope='module')
 def engine_logging(general_init):
     botsglobal_module.logger = botsinit_module.initenginelogging('engine')
@@ -25,8 +40,11 @@ def engine_logging(general_init):
     botsglobal_module.logger.handlers.clear()
 
 
-@pytest.fixture(scope='session')
-def bots_db(general_init):
-    botsinit_module.connect()
-    yield botsglobal_module.db
-    botsglobal_module.db.close
+@pytest.fixture(scope='module')
+def clean_output():
+    shutil.rmtree(os.path.join(botssys, 'outfile'), ignore_errors=True)  # remove whole output directory
+
+
+@pytest.fixture(scope='module')
+def run_engine(botssys):
+    assert not subprocess.call(['python', '-m', 'bots-engine'])
