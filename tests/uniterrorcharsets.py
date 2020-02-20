@@ -13,15 +13,9 @@ utf-16 etc are reported.
 
 
 @pytest.fixture(params=['False', 'True'])
-def botsglobal(request, botsinit):
+def init_global(request, engine_logging):  # @UnusedVariable
     import bots.botsglobal as botsglobal_module
-
-    botsglobal_module.logger = botsinit.initenginelogging('engine')
     botsglobal_module.ini.set('settings', 'debug', request.param)
-    yield
-
-    # GC the handlers so their file handles close, and the log file can properly rotate.
-    botsglobal_module.logger.handlers.clear()
 
 
 def check_encoding(expect, msg, *args, **kwargs):
@@ -41,7 +35,7 @@ def check_encoding(expect, msg, *args, **kwargs):
 # .encode(): unicode -> bytes
 
 
-@pytest.mark.usefixtures('botsglobal')
+@pytest.mark.usefixtures('init_global')
 @pytest.mark.unit_test
 def test_BotsError_safestr():
     # normal, valid handling

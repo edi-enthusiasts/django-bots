@@ -17,6 +17,8 @@ enable routes
 not an acceptance test.
 '''
 
+pytestmark = pytest.mark.usefixtures('general_init', 'utils_logger', 'bots_db')
+
 
 @pytest.fixture(scope='module')
 def utils_logger():
@@ -31,7 +33,6 @@ def grammartest(l, expect_error=True):
         assert not subprocess.call(l), 'grammartest: expected no error, but received an error'
 
 
-@pytest.mark.usefixtures('bots_db', 'utils_logger')
 @pytest.mark.plugin_test
 def test_references():
     utilsunit.RunTestCompareResults(
@@ -63,7 +64,6 @@ def test_references():
     assert ta_externout['botskey'] == 'BOTSKEY01', 'testreference: botskey not OK'
 
 
-@pytest.mark.usefixtures('utils_logger')
 @pytest.mark.plugin_test
 def test_KECA_charset():
     utilsunit.RunTestCompareResults(
@@ -96,7 +96,6 @@ def test_KECA_charset():
     )
 
 
-@pytest.mark.usefixtures('utils_logger')
 @pytest.mark.plugin_test
 def test_mailbag():
     utilsunit.RunTestCompareResults(
@@ -115,7 +114,6 @@ def test_mailbag():
     )
 
 
-@pytest.mark.usefixtures('utils_logger')
 @pytest.mark.plugin_test
 def test_passthrough():
     utilsunit.RunTestCompareResults(
@@ -134,7 +132,6 @@ def test_passthrough():
     )
 
 
-@pytest.mark.usefixtures('botsinit', 'utils_logger')
 @pytest.mark.plugin_test
 def test_botsidnr():
     botssys = botsglobal.ini.get('directories', 'botssys')
@@ -160,7 +157,6 @@ def test_botsidnr():
     assert filecmp.cmp(os.path.join(botssys, infile2), os.path.join(botssys, outfile2)), 'error in file2 compare'
 
 
-@pytest.mark.usefixtures('botsinit')
 @pytest.mark.plugin_test
 def test_ccode_with_unicode():
     domein = 'test'
@@ -204,7 +200,6 @@ def test_ccode_with_unicode():
             pytest.fail('??can not find testentry %s %s in db' % (key, value))
 
 
-@pytest.mark.usefixtures('botsinit')
 @pytest.mark.plugin_test
 def test_unique_in_run_counter():
     assert 1 == int(transform.unique_runcounter('test')),  'test_unique_in_run_counter'
@@ -214,7 +209,6 @@ def test_unique_in_run_counter():
     assert 2 == int(transform.unique_runcounter('test2')), 'test_unique_in_run_counter'
 
 
-@pytest.mark.usefixtures('botsinit')
 @pytest.mark.plugin_test
 def test_partner_lookup():
     for s in ['attr1', 'attr2', 'attr3', 'attr4', 'attr5']:
@@ -235,7 +229,6 @@ def test_partner_lookup():
 
 # Test tricky grammars and messages (collision tests).
 #  these test should run OK (no grammar-errors, reading & writing OK, extra checks in mappings scripts have to be OK)
-@pytest.mark.usefixtures('utils_logger')
 @pytest.mark.plugin_test
 def test_grammar():
     utilsunit.RunTestCompareResults(
@@ -278,7 +271,6 @@ def test_grammar_collision():
 
 
 # Check if right entries have been read (partners/patnergroups).
-@pytest.mark.usefixtures('botsinit')
 @pytest.mark.plugin_test
 def test_plugin():
     for row in botslib.query(
@@ -330,7 +322,6 @@ def test_plugin():
 
 
 # Test csv with records too big/small/not correct ending etc.
-@pytest.mark.usefixtures('utils_logger')
 @pytest.mark.plugin_test
 def test_csv_orders_input():
     utilsunit.RunTestCompareResults(
@@ -349,7 +340,6 @@ def test_csv_orders_input():
     )
 
 
-@pytest.mark.usefixtures('utils_logger')
 @pytest.mark.plugin_test
 def test_extended_alt_func():
     utilsunit.RunTestCompareResults(
@@ -368,7 +358,6 @@ def test_extended_alt_func():
     )
 
 
-@pytest.mark.usefixtures('utils_logger')
 @pytest.mark.plugin_test
 def test_incoming_mime():
     utilsunit.RunTestCompareResults(
@@ -387,7 +376,6 @@ def test_incoming_mime():
     )
 
 
-@pytest.mark.usefixtures('botsinit', 'utils_logger')
 @pytest.mark.plugin_test
 def test_xml_out_specials():
     botssys = botsglobal.ini.get('directories', 'botssys')
@@ -411,7 +399,6 @@ def test_xml_out_specials():
         assert filecmp.cmp(os.path.join(botssys, cmpfile), filename), 'error in file compare'
 
 
-@pytest.mark.usefixtures('utils_logger')
 @pytest.mark.plugin_test
 def test_max_file_size():
     utilsunit.RunTestCompareResults(
