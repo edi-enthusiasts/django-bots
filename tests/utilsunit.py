@@ -129,8 +129,7 @@ def getlastta(status):
 
 def comparedicts(dict1, dict2):
     for key, value in dict1.items():
-        if value != dict2[str(key)]:
-            raise Exception('error comparing "%s": should be %s but is %s (in db),' % (key, value, dict2[key]))
+        assert value == dict2[str(key)], 'error comparing "%s": should be %s but is %s (in db),' % (key, value, dict2[key])
 
 
 def removeWS(string):
@@ -139,13 +138,15 @@ def removeWS(string):
 
 def cleanoutputdir():
     botssys = botsglobal.ini.get('directories', 'botssys')
+
     # remove whole output directory
     shutil.rmtree(os.path.join(botssys, 'outfile'), ignore_errors=True)
 
 
 def RunTestCompareResults(command, comparedict):
     # run bots
-    subprocess.call(command)
+    assert not subprocess.call(command), 'error running command: "%s"' % ' '.join(map(str, command))
     botsglobal.db.commit()
+
     # check report
     comparedicts(comparedict, getreportlastrun())

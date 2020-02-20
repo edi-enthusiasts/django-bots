@@ -12,13 +12,13 @@ utf-16 etc are reported.
 '''
 
 
-@pytest.fixture(params=('False', 'True'))
+@pytest.fixture(params=['False', 'True'])
 def botsglobal(request, botsinit):
     import bots.botsglobal as botsglobal_module
 
     botsglobal_module.logger = botsinit.initenginelogging('engine')
     botsglobal_module.ini.set('settings', 'debug', request.param)
-    yield botsglobal_module
+    yield
 
     # GC the handlers so their file handles close, and the log file can properly rotate.
     botsglobal_module.logger.handlers.clear()
@@ -27,23 +27,23 @@ def botsglobal(request, botsinit):
 def check_encoding(expect, msg, *args, **kwargs):
     try:
         raise botslib.BotsError(msg, *args, **kwargs)
-    except Exception as err:
+    except botslib.BotsError as err:
         if not isinstance(err, str):
             err = str(err)
 
         if expect:
-            if str(expect) != err.strip():
-                raise Exception('Expected("%s") | Received("%s")' % (expect, err)) from None
+            assert str(expect) == err.strip(), 'Expected("%s") | Received("%s")' % (expect, err)
 
         txt = botslib.txtexc()
-        if not isinstance(txt, str):
-            raise Exception('Error txt "%s"' % txt) from None
+        assert isinstance(txt, str), 'Error txt "%s"' % txt
 
 # .decode(): bytes->unicode
 # .encode(): unicode -> bytes
 
 
-def test_except_safestr(botsglobal):
+@pytest.mark.usefixtures('botsglobal')
+@pytest.mark.unit_test
+def test_BotsError_safestr():
     # normal, valid handling
     check_encoding('', '', {'test1': 'test1', 'test2': 'test2', 'test3': 'test3'})
     check_encoding('0test', '0test', {'test1': 'test1', 'test2': 'test2', 'test3': 'test3'})
