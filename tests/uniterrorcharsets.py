@@ -13,7 +13,7 @@ utf-16 etc are reported.
 
 
 @pytest.fixture(params=['False', 'True'])
-def init_global(request, engine_logging):  # @UnusedVariable
+def init_global(request, init_charsets, engine_logging):  # @UnusedVariable
     import bots.botsglobal as botsglobal_module
     botsglobal_module.ini.set('settings', 'debug', request.param)
 

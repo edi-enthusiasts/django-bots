@@ -11,7 +11,6 @@ from bots.botsconfig import MPATH
 ''' plugin unitformats
     set bots.ini: max_number_errors = 1
 '''
-# python 2.6 treats -0 different. in outmessage this is adapted, for inmessage: python 2.6 does this correct
 
 pytestmark = pytest.mark.usefixtures('engine_logging')
 testdummy = {MPATH: 'dummy for tests'}
