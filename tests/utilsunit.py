@@ -74,8 +74,12 @@ def readfile(bestand):
 
 def readwrite(filenamein='', filenameout='', **args):
     inn = inmessage.parse_edi_file(filename=filenamein, **args)
+    inn.checkforerrorlist()
     # make outmessage object
     out = outmessage.outmessage_init(filename=filenameout, divtext='', topartner='', **args)
+    out.checkforerrorlist()
+    assert hasattr(inn, 'root')
+    assert hasattr(out, 'root')
     out.root = inn.root
     out.writeall()
 

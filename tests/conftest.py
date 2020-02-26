@@ -8,15 +8,15 @@ import bots.botsglobal as botsglobal_module
 import bots.botsinit as botsinit_module
 
 
-@pytest.fixture(scope='session')
-def botssys():
-    return os.path.join('bots', 'botssys')
-
-
 # Make sure botsinit is only initialized once when starting up the library.
 @pytest.fixture(scope='session')
 def general_init():
     botsinit_module.generalinit('config')
+
+
+@pytest.fixture(scope='session')
+def botssys(general_init):
+    return botsglobal_module.ini.get('directories', 'botssys')
 
 
 @pytest.fixture(scope='session')

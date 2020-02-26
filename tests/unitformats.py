@@ -17,6 +17,7 @@ testdummy = {MPATH: 'dummy for tests'}
 nodedummy = node.Node()
 
 
+# Helper function to trigger botslib.MessageError because errors are "buffered" in InMessage/OutMessage classes.
 def format_field(edi, *args):
     __tracebackhide__ = True
     field_value = edi._formatfield(*args)
