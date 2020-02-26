@@ -47,20 +47,25 @@ def unit_inmessage_edifact(botssys):
 
 @pytest.fixture(scope='module')
 def inisout_init(general_init, unit_inisout, unit_inmessage_json, unit_inmessage_xml):  # @UnusedVariable
-    shutil.rmtree(path_join(unit_inisout, 'output'), ignore_errors=True)  # remove whole output directory
-    os.makedirs(path_join(unit_inisout, 'output'), exist_ok=True)
-    shutil.rmtree(path_join(unit_inmessage_json, 'output'), ignore_errors=True)  # remove whole output directory
-    os.makedirs(path_join(unit_inmessage_json, 'output'), exist_ok=True)
-    shutil.rmtree(path_join(unit_inmessage_xml, 'output'), ignore_errors=True)  # remove whole output directory
-    os.makedirs(path_join(unit_inmessage_xml, 'output'), exist_ok=True)
+    inisout_output = path_join(unit_inisout, 'output')
+    inmessagejson_output = path_join(unit_inmessage_json, 'output')
+    inmessagexml_output = path_join(unit_inmessage_xml, 'output')
+
+    shutil.rmtree(inisout_output, ignore_errors=True)  # remove whole output directory
+    shutil.rmtree(inmessagejson_output, ignore_errors=True)  # remove whole output directory
+    shutil.rmtree(inmessagexml_output, ignore_errors=True)  # remove whole output directory
+
+    os.makedirs(inisout_output, exist_ok=True)
+    os.makedirs(inmessagejson_output, exist_ok=True)
+    os.makedirs(inmessagexml_output, exist_ok=True)
 
 
 # Helper function to trigger botslib.MessageError because errors are "buffered" in InMessage classes. (parse_edi_file)
 def parse_edi_file(*args, **kwargs):
     __tracebackhide__ = True
+
     edi = inmessage.parse_edi_file(*args, **kwargs)
     edi.checkforerrorlist()
-
     return edi
 
 
