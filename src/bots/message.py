@@ -29,7 +29,6 @@ class Message(object):
 
     def add2errorlist(self, errortxt):
         ''' Handle non-fatal parse errors. '''
-        # raise botslib.MessageError('For unit format test')  # UNITTEST_CORRECTION
         if len(self.errorlist) < botsglobal.ini.getint('settings', 'max_number_errors', fallback=10):
             self.errorlist.append(self.messagetypetxt + errortxt)
         elif len(self.errorlist) == botsglobal.ini.getint('settings', 'max_number_errors', fallback=10):

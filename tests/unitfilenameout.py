@@ -15,6 +15,7 @@ no acceptance-test!
 pytestmark = pytest.mark.usefixtures('run_engine', 'engine_logging', 'bots_db')
 
 
+@pytest.mark.plugin_test
 def test_route_test_mdn():
     comclass = communication._comsession(
         channeldict={'idchannel': 'dutchic_desadv_out'},
