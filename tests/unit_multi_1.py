@@ -5,10 +5,11 @@ import os
 import subprocess
 import glob
 import pytest
-import utilsunit
 import bots.botslib as botslib
 import bots.botsglobal as botsglobal
 import bots.transform as transform
+
+from . import utilsunit
 from bots.botsconfig import EXTERNOUT, PARSED, SPLITUP, TRANSLATED
 
 '''

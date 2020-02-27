@@ -2,8 +2,9 @@
 
 import os
 import pytest
-import utilsunit
 import bots.botslib as botslib
+
+from . import utilsunit
 from bots.botsconfig import DONE
 
 '''

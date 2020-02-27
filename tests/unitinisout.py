@@ -4,15 +4,15 @@ import os
 import shutil
 import filecmp
 import pytest
-import utilsunit
-import bots.botslib as botslib
-import bots.inmessage as inmessage
-import bots.outmessage as outmessage
 try:
     import json as simplejson
 except ImportError:
     import simplejson  # @UnusedImport
 
+from . import utilsunit
+from bots import botslib
+from bots import inmessage
+from bots import outmessage
 from os.path import join as path_join
 
 '''

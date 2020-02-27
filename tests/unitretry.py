@@ -2,10 +2,11 @@
 
 import subprocess
 import logging
-import utilsunit
-import bots.botslib as botslib
-import bots.botsinit as botsinit
-import bots.botsglobal as botsglobal
+
+from . import utilsunit
+from bots import botslib
+from bots import botsinit
+from bots import botsglobal
 from bots.botsconfig import EXTERNOUT
 
 # plugin unitretry.zip
