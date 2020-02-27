@@ -22,37 +22,37 @@ def delete_ccode(ccodeid_id, leftcode, rightcode=None):
     if rightcode is not None:
         where_data['rightcode'] = rightcode
 
-    where_clause = ' AND '.join('%s=%%(%s)s' % (key, key) for key in where_data)
+    where_clause = ' AND '.join(key+'=%('+key+')s' for key in where_data)
     botslib.changeq('''DELETE FROM ccode WHERE ''' + where_clause, where_data)
 
 
-@pytest.fixture
+def insert_ccode(ccodeid_id, leftcode, rightcode='', **kwargs):
+    ccode = {
+        'ccodeid_id': ccodeid_id,
+        'leftcode': leftcode,
+        'rightcode': rightcode
+    }
+    ccode.update(('attr'+i, kwargs.get('attr'+i, '')) for i in map(str, range(1, 9)))
+    botslib.changeq(
+        'INSERT INTO ccode (' + ','.join(ccode) + ') VALUES (' + ','.join('%('+key+')s' for key in ccode) + ')',
+        ccode
+    )
+
+
+@pytest.fixture(scope='module')
 def test_ccodes():
     delete_ccode('artikel', 'TESTIN')
+    delete_ccode('artikel', 'TESTOUT')
     delete_ccode('list', 'list')
 
-    botslib.changeq(
-        '''INSERT INTO ccode (ccodeid_id,leftcode,rightcode,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8)
-            VALUES (%(ccodeid)s,%(leftcode)s,%(rightcode)s,'','','','','','','','')''',
-        {
-            'ccodeid': 'artikel',
-            'leftcode': 'TESTIN',
-            'rightcode': 'TESTOUT'
-        }
-    )
+    insert_ccode('artikel', 'TESTIN', 'TESTOUT', attr1='TESTATTR1')
+    insert_ccode('artikel', 'TESTOUT', 'TESTIN')
     for i in ['1', '2', '4', '5']:
-        botslib.changeq(
-            '''INSERT INTO ccode (ccodeid_id,leftcode,rightcode,attr1,attr2,attr3,attr4,attr5,attr6,attr7,attr8)
-                VALUES (%(ccodeid)s,%(leftcode)s,%(rightcode)s,'','','','','','','','')''',
-            {
-                'ccodeid': 'list',
-                'leftcode': 'list',
-                'rightcode': i
-            }
-        )
+        insert_ccode('list', 'list', i)
     yield
 
     delete_ccode('artikel', 'TESTIN')
+    delete_ccode('artikel', 'TESTOUT')
     delete_ccode('list', 'list')
 
 
@@ -192,9 +192,44 @@ class TestTranslate:
 
     @pytest.mark.usefixtures('test_ccodes')
     def test_getcodeset(self):
-        assert ['TESTOUT'] == transform.getcodeset('artikel', 'TESTIN'), 'test getcodeset'
-        assert ['1', '2', '4', '5'] == transform.getcodeset('list', 'list'), 'test getcodeset'
+        assert transform.getcodeset('artikel', 'TESTIN') == ['TESTOUT'], 'test getcodeset'
+        assert transform.getcodeset('list', 'list') == ['1', '2', '4', '5'], 'test getcodeset'
         print(transform.getcodeset('list', 'list'))
+
+    # Checks if backwards compatible function names still works
+    @pytest.mark.usefixtures('test_ccodes')
+    def test_code_conversion(self):
+        # codeconversion via tabel ccode OLD functionnames:
+        assert transform.codetconversion('artikel', 'TESTIN') == 'TESTOUT', 'basis'
+        assert transform.safecodetconversion('artikel', 'TESTIN') == 'TESTOUT', 'basis'
+        assert transform.safecodetconversion('artikel', 'TESTINNOT') == 'TESTINNOT', 'basis'
+        with pytest.raises(botslib.CodeConversionError):
+            transform.codetconversion('artikel', 'TESTINNOT')
+        assert transform.rcodetconversion('artikel', 'TESTOUT') == 'TESTIN', 'basis'
+        assert transform.safercodetconversion('artikel', 'TESTOUT') == 'TESTIN', 'basis'
+        assert transform.safercodetconversion('artikel', 'TESTINNOT') == 'TESTINNOT', 'basis'
+        with pytest.raises(botslib.CodeConversionError):
+            transform.rcodetconversion('artikel', 'TESTINNOT')
+
+        # attributes
+        assert transform.codetconversion('artikel', 'TESTIN', 'attr1') == 'TESTATTR1', 'basis'
+        assert transform.safecodetconversion('artikel', 'TESTIN', 'attr1') == 'TESTATTR1', 'basis'
+
+        # codeconversion via tabel ccode:
+        assert transform.ccode('artikel', 'TESTIN') == 'TESTOUT', 'basis'
+        assert transform.safe_ccode('artikel', 'TESTIN') == 'TESTOUT', 'basis'
+        assert transform.safe_ccode('artikel', 'TESTINNOT') == 'TESTINNOT', 'basis'
+        with pytest.raises(botslib.CodeConversionError):
+            transform.ccode('artikel', 'TESTINNOT')
+        assert transform.reverse_ccode('artikel', 'TESTOUT') == 'TESTIN', 'basis'
+        assert transform.safe_reverse_ccode('artikel', 'TESTOUT') == 'TESTIN', 'basis'
+        assert transform.safe_reverse_ccode('artikel', 'TESTINNOT') == 'TESTINNOT', 'basis'
+        with pytest.raises(botslib.CodeConversionError):
+            transform.reverse_ccode('artikel', 'TESTINNOT')
+
+        # attributes
+        assert transform.ccode('artikel', 'TESTIN', 'attr1') == 'TESTATTR1', 'basis'
+        assert transform.safe_ccode('artikel', 'TESTIN', 'attr1') == 'TESTATTR1', 'basis'
 
     def test_datemask(self):
         assert transform.datemask('12/31/2012', 'MM/DD/YYYY', 'YYYYMMDD') == '20121231', 'test datemask'
