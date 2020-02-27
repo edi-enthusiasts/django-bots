@@ -908,11 +908,19 @@ class Uri(object):
         port     = ':' + str(self._uri['port']) if self._uri['port'] else ''
         fullhost = self._uri['hostname'] + port if self._uri['hostname'] else ''
         authority = '//' + userinfo + fullhost if fullhost else ''
-        if self._uri['path'] or self._uri['filename']:
-            terug = os.path.join(authority, self._uri['path'], self._uri['filename'])
-        else:
-            terug = authority
-        return scheme + terug
+
+        terug = scheme + authority
+        if self._uri['path']:
+            if authority and not self._uri['path'][:1] == '/':
+                terug += '/'
+            terug += self._uri['path'] + '/'
+
+        if self._uri['filename']:
+            if authority and not self._uri['path']:
+                terug += '/'
+            terug += self._uri['filename']
+
+        return terug
 
 
 # **********************************************************/**
