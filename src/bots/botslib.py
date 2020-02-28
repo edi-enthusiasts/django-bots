@@ -238,7 +238,7 @@ def query(querystring, *args):
 
 
 def changeq(querystring, *args):
-    ''' general inset/update. no return '''
+    ''' general insert/update. no return '''
     cursor = botsglobal.db.cursor()
     try:
         cursor.execute(querystring, *args)
@@ -269,7 +269,6 @@ def insertta(querystring, *args):
 def unique_runcounter(domain, updatewith=None):
     ''' as unique, but per run of bots-engine. '''
     domain += 'bots_1_8_4_9_6'  # avoid using/mixing other values in botsglobal
-    domain = domain.encode('unicode-escape')
     nummer = getattr(botsglobal, domain, 0)
     if updatewith is None:
         nummer += 1

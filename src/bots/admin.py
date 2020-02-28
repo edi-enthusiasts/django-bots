@@ -7,22 +7,16 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 try:
-    from django.forms import util as django_forms_util  # @UnusedImport
-except Exception:
-    from django.forms import utils as django_forms_util  # @Reimport
-# ***********
+    from django.forms import utils as django_forms_util
+except ImportError:
+    from django.forms import util as django_forms_util
+
 from . import models
-from . import botsglobal
 
 
 class BotsAdmin(admin.ModelAdmin):
     ''' all classes in this module are sub-classed from BotsAdmin.
     '''
-    list_per_page = botsglobal.ini.getint(
-        'settings',
-        'adminlimit',
-        fallback=botsglobal.ini.getint('settings', 'limit', fallback=30)
-    )
     save_as = True
 
     def activate(self, request, queryset):  # @UnusedVariable
