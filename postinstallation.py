@@ -41,7 +41,7 @@ def start():
 # ******************************************************************************
     sqlitedir = join(botsdir, 'botssys', 'sqlitedb')
     if os.path.exists(join(sqlitedir, 'botsdb')):  # use this to see if this is an existing installation
-        print('    Found existing database file botssys/sqlitedb/botsdb')
+        print('    Found existing database file botssys{0}sqlitedb{0}botsdb'.format(os.sep))
         print('        Manual action is needed to convert the database to new bots 3.0 format.')
         print('        There is a script to update the database.')
         print('        See bots wiki for more info: http://code.google.com/p/bots/wiki/Migrate.')

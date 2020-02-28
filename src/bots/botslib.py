@@ -504,7 +504,7 @@ def abspath(soort, filename):
 
 def abspathdata(filename):
     ''' abspathdata if filename incl dir: return absolute path; else (only filename): return absolute path (datadir) '''
-    if '/' in filename:  # if filename already contains path
+    if os.sep in filename:  # if filename already contains path
         return join(filename)
     else:
         directory = botsglobal.ini.get('directories', 'data')

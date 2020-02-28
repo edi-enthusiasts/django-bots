@@ -84,7 +84,7 @@ def generalinit(configdir):
     botsglobal.ini.set('directories', 'usersysabs', os.path.abspath(os.path.dirname(importedusersys.__file__)))  # ???Find pathname usersys using imported usersys
     # botsglobal.usersysimportpath: used for imports from usersys
     botsglobal.usersysimportpath = importnameforusersys
-    botsglobal.ini.set('directories', 'templatehtml', botslib.join(botsglobal.ini.get('directories', 'usersysabs'), 'grammars/templatehtml/templates'))
+    botsglobal.ini.set('directories', 'templatehtml', botslib.join(botsglobal.ini.get('directories', 'usersysabs'), os.path.join('grammars','templatehtml','templates')))
     # ###########################################################################
     # Botssys####################################################################
     # 'directories','botssys': absolute path for config botssys

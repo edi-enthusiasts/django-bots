@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import filecmp
-import os
 import subprocess
 import glob
 import pytest
@@ -11,6 +10,7 @@ import bots.transform as transform
 
 from . import utilsunit
 from bots.botsconfig import EXTERNOUT, PARSED, SPLITUP, TRANSLATED
+from os.path import join as path_join
 
 '''
 plugin 'unit_multi_1'
@@ -144,12 +144,12 @@ def test_botsidnr():
             'filesize': 5813
         }
     )
-    infile = 'infile/test_botsidnr/compare/unitnodebotsidnr1.edi'
-    outfile = 'outfile/test_botsidnr/unitnodebotsidnr1.edi'
-    infile2 = 'infile/test_botsidnr/compare/unitnodebotsidnr2.edi'
-    outfile2 = 'outfile/test_botsidnr/unitnodebotsidnr2.edi'
-    assert filecmp.cmp(os.path.join(botssys, infile), os.path.join(botssys, outfile)), 'error in file compare'
-    assert filecmp.cmp(os.path.join(botssys, infile2), os.path.join(botssys, outfile2)), 'error in file2 compare'
+    infile = path_join(botssys, 'infile','test_botsidnr','compare','unitnodebotsidnr1.edi')
+    outfile = path_join(botssys, 'outfile','test_botsidnr','unitnodebotsidnr1.edi')
+    infile2 = path_join(botssys, 'infile','test_botsidnr','compare','unitnodebotsidnr2.edi')
+    outfile2 = path_join(botssys, 'outfile','test_botsidnr','unitnodebotsidnr2.edi')
+    assert filecmp.cmp(infile, outfile), 'error in file compare'
+    assert filecmp.cmp(infile2, outfile2), 'error in file2 compare'
 
 
 @pytest.mark.plugin_test
@@ -388,10 +388,10 @@ def test_xml_out_specials():
             'filesize': 1337
         }
     )
-    cmpfile = 'infile/testxml_outspecials/compare/01xml02OK.xml'
-    outfilepath = 'outfile/testxml_outspecials/*'
-    for filename in glob.glob(os.path.join(botssys, outfilepath)):
-        assert filecmp.cmp(os.path.join(botssys, cmpfile), filename), 'error in file compare'
+    cmpfile = path_join(botssys, 'infile','testxml_outspecials','compare','01xml02OK.xml')
+    outfilepath = path_join(botssys, 'outfile','testxml_outspecials','*')
+    for filename in glob.glob(outfilepath):
+        assert filecmp.cmp(cmpfile, filename), 'error in file compare'
 
 
 @pytest.mark.plugin_test
