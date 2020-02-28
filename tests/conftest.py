@@ -22,7 +22,7 @@ def botssys(general_init):
 
 
 @pytest.fixture(scope='session')
-def init_charsets():
+def init_charsets(general_init):
     botsinit_module.initbotscharsets()
 
 
