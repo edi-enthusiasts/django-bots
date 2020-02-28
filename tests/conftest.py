@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import os
 import pytest
 import shutil
 import subprocess
+import sys
 import bots.botsglobal as botsglobal_module
 import bots.botsinit as botsinit_module
 
@@ -41,7 +43,18 @@ def engine_logging(general_init):
 
 
 @pytest.fixture(scope='module')
-def clean_output():
+def dummy_logging(botssys):
+    botsglobal_module.logger = logging.getLogger('dummy')
+    botsglobal_module.logger.setLevel(logging.ERROR)
+    botsglobal_module.logger.addHandler(logging.StreamHandler(sys.stdout))
+    yield botsglobal_module.logger
+
+    # GC the handlers so their file handles close, and the log file can properly rotate.
+    botsglobal_module.logger.handlers.clear()
+
+
+@pytest.fixture(scope='module')
+def clean_output(botssys):
     shutil.rmtree(os.path.join(botssys, 'outfile'), ignore_errors=True)  # remove whole output directory
 
 

@@ -18,13 +18,7 @@ enable routes
 not an acceptance test.
 '''
 
-pytestmark = pytest.mark.usefixtures('general_init', 'utils_logger', 'bots_db')
-
-
-@pytest.fixture(scope='module')
-def utils_logger():
-    utilsunit.dummylogger()
-    utilsunit.cleanoutputdir()
+pytestmark = pytest.mark.usefixtures('general_init', 'dummy_logging', 'clean_output', 'bots_db')
 
 
 def grammartest(l, expect_error=True):

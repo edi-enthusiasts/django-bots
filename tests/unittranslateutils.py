@@ -22,8 +22,8 @@ def delete_ccode(ccodeid_id, leftcode, rightcode=None):
     if rightcode is not None:
         where_data['rightcode'] = rightcode
 
-    where_clause = ' AND '.join(key+'=%('+key+')s' for key in where_data)
-    botslib.changeq('''DELETE FROM ccode WHERE ''' + where_clause, where_data)
+    where_clause = ' AND '.join(map('{0}=%({0})s'.format, where_data))
+    botslib.changeq('DELETE FROM ccode WHERE ' + where_clause, where_data)
 
 
 def insert_ccode(ccodeid_id, leftcode, rightcode='', **kwargs):
@@ -34,7 +34,7 @@ def insert_ccode(ccodeid_id, leftcode, rightcode='', **kwargs):
     }
     ccode.update(('attr'+i, kwargs.get('attr'+i, '')) for i in map(str, range(1, 9)))
     botslib.changeq(
-        'INSERT INTO ccode (' + ','.join(ccode) + ') VALUES (' + ','.join('%('+key+')s' for key in ccode) + ')',
+        'INSERT INTO ccode (' + ','.join(ccode) + ') VALUES (' + ','.join(map('%({0})s'.format, ccode)) + ')',
         ccode
     )
 

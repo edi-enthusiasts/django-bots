@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import copy
-import sys
 import os
 import glob
-import logging
 import subprocess
-import shutil
 import bots.botslib as botslib
 import bots.botsglobal as botsglobal
 import bots.inmessage as inmessage
@@ -96,12 +93,6 @@ def getdir(path):
     return [f for f in glob.glob(path) if os.path.isfile(f)]
 
 
-def dummylogger():
-    botsglobal.logger = logging.getLogger('dummy')
-    botsglobal.logger.setLevel(logging.ERROR)
-    botsglobal.logger.addHandler(logging.StreamHandler(sys.stdout))
-
-
 def getreportlastrun():
     for row in botslib.query(
         '''SELECT * FROM report
@@ -138,13 +129,6 @@ def comparedicts(dict1, dict2):
 
 def removeWS(string):
     return ' '.join(string.split())
-
-
-def cleanoutputdir():
-    botssys = botsglobal.ini.get('directories', 'botssys')
-
-    # remove whole output directory
-    shutil.rmtree(os.path.join(botssys, 'outfile'), ignore_errors=True)
 
 
 def RunTestCompareResults(command, comparedict):
