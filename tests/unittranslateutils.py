@@ -356,7 +356,7 @@ class TestTranslate:
 
         assert not validate_email.validate_email_address('test.gmail.com')
         assert not validate_email.validate_email_address('test@test@gmail.com')
-        assert not validate_email.validate_email_address('a"b(c)d,e:f;g<h>i[j\k]l@example.com')
+        assert not validate_email.validate_email_address('a"b(c)d,e:f;g<h>i[j\\k]l@example.com')
         assert not validate_email.validate_email_address('just"not"right@example.com')
         assert not validate_email.validate_email_address('this is"not\allowed@example.com')
         assert not validate_email.validate_email_address('this is"not\allowed@example.com')
