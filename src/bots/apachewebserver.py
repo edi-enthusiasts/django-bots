@@ -12,7 +12,7 @@ import django.core.handlers.wsgi
 import mod_wsgi
 
 #Set PYTHONPATH. This is not needed if bots is already on PYTHONPATH
-#sys.path.append('/usr/local/lib/python2.7/dist-packages')
+#sys.path.append('/usr/local/lib/python/dist-packages')
 from bots import apachewebserver
 
 config = mod_wsgi.process_group

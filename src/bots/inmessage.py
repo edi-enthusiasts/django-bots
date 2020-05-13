@@ -57,7 +57,6 @@ def parse_edi_file(**ta_info):
     try:
         ediobject.initfromfile()
     except UnicodeError as msg:
-        # raise botslib.MessageError('')  # UNITTEST_CORRECTION
         content = botslib.get_relevant_text_for_UnicodeError(msg)
         # msg.encoding should contain encoding, but does not (think this is not OK for UNOA, etc)
         ediobject.errorlist.append(str(
@@ -67,7 +66,6 @@ def parse_edi_file(**ta_info):
             )
         ))
     except Exception as msg:
-        # raise botslib.MessageError('')  # UNITTEST_CORRECTION
         txt = botslib.txtexc(mention_exception_type=False)
         ediobject.errorlist.append(txt)
     else:
@@ -153,6 +151,7 @@ class Inmessage(message.Message):
                         'min': field_definition[MINLENGTH]
                     }
                 )
+            value = value.strip()
         elif field_definition[BFORMAT] in 'DT':
             lenght = len(value)
             if field_definition[BFORMAT] == 'D':
@@ -226,8 +225,8 @@ class Inmessage(message.Message):
                         'min': field_definition[MINLENGTH]
                     }
                 )
-            if value[-1] == '-':  # if minus-sign at the end, put it in front.
-                value = value[-1] + value[:-1]
+            if value[-1:] == '-':  # if minus-sign at the end, put it in front.
+                value = value[-1:] + value[:-1]
             value = value.replace(self.ta_info['triad'], '')  # strip triad-separators
             value = value.replace(self.ta_info['decimaal'], '.', 1)  # replace decimal sign by canonical decimal sign
             if 'E' in value or 'e' in value:
@@ -241,7 +240,9 @@ class Inmessage(message.Message):
                     }
                 )
             if field_definition[BFORMAT] == 'R':
-                lendecimal = lendecimal = len(value.partition('.')[2])
+                if value == '':
+                    value = '0.'
+                lendecimal = len(value.partition('.')[2])
                 try:  # convert to decimal in order to check validity
                     valuedecimal = float(value)
                     value = '%.*F' % (lendecimal, valuedecimal)
@@ -256,6 +257,8 @@ class Inmessage(message.Message):
                         }
                     )
             elif field_definition[BFORMAT] == 'N':
+                if value == '':
+                    value = '0.'
                 lendecimal = len(value.partition('.')[2])
                 if lendecimal != field_definition[DECIMALS]:
                     self.add2errorlist(
@@ -292,6 +295,8 @@ class Inmessage(message.Message):
                         }
                     )
                 else:
+                    if value == '':
+                        value = '0'
                     try:  # convert to decimal in order to check validity
                         valuedecimal = float(value)
                         valuedecimal = valuedecimal / 10**field_definition[DECIMALS]
@@ -657,7 +662,7 @@ class fixed(Inmessage):
             for fixed field: same handling; length is not checked.
         '''
         if field_definition[BFORMAT] == 'A':
-            pass
+            value = value.strip()
         elif field_definition[BFORMAT] in 'DT':
             lenght = len(value)
             if field_definition[BFORMAT] == 'D':
@@ -701,8 +706,8 @@ class fixed(Inmessage):
                         }
                     )
         else:  # elif field_definition[BFORMAT] in 'RNI':   #numerics (R, N, I)
-            if value[-1] == '-':  # if minus-sign at the end, put it in front.
-                value = value[-1] + value[:-1]
+            if value[-1:] == '-':  # if minus-sign at the end, put it in front.
+                value = value[-1:] + value[:-1]
             value = value.replace(self.ta_info['triad'], '')  # strip triad-separators
             value = value.replace(self.ta_info['decimaal'], '.', 1)  # replace decimal sign by canonical decimal sign
             if 'E' in value or 'e' in value:
@@ -716,6 +721,8 @@ class fixed(Inmessage):
                     }
                 )
             if field_definition[BFORMAT] == 'R':
+                if value == '':
+                    value = '0.'
                 lendecimal = len(value.partition('.')[2])
                 try:  # convert to decimal in order to check validity
                     valuedecimal = float(value)
@@ -731,6 +738,8 @@ class fixed(Inmessage):
                         }
                     )
             elif field_definition[BFORMAT] == 'N':
+                if value == '':
+                    value = '0.'
                 lendecimal = len(value.partition('.')[2])
                 if lendecimal != field_definition[DECIMALS]:
                     self.add2errorlist(
@@ -766,6 +775,8 @@ class fixed(Inmessage):
                         }
                     )
                 else:
+                    if value == '':
+                        value = '0'
                     try:  # convert to decimal in order to check validity
                         valuedecimal = float(value)
                         valuedecimal = valuedecimal / 10**field_definition[DECIMALS]

@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import copy
-import sys
 import os
 import glob
-import logging
 import subprocess
-import shutil
 import bots.botslib as botslib
 import bots.botsglobal as botsglobal
 import bots.inmessage as inmessage
@@ -74,8 +71,12 @@ def readfile(bestand):
 
 def readwrite(filenamein='', filenameout='', **args):
     inn = inmessage.parse_edi_file(filename=filenamein, **args)
+    inn.checkforerrorlist()
     # make outmessage object
     out = outmessage.outmessage_init(filename=filenameout, divtext='', topartner='', **args)
+    out.checkforerrorlist()
+    assert hasattr(inn, 'root')
+    assert hasattr(out, 'root')
     out.root = inn.root
     out.writeall()
 
@@ -92,12 +93,6 @@ def getdir(path):
     return [f for f in glob.glob(path) if os.path.isfile(f)]
 
 
-def dummylogger():
-    botsglobal.logger = logging.getLogger('dummy')
-    botsglobal.logger.setLevel(logging.ERROR)
-    botsglobal.logger.addHandler(logging.StreamHandler(sys.stdout))
-
-
 def getreportlastrun():
     for row in botslib.query(
         '''SELECT * FROM report
@@ -112,7 +107,7 @@ def geterrorlastrun():
         '''SELECT * FROM filereport
            ORDER BY idta DESC'''
     ):
-        return row[str('errortext')]
+        return row['errortext']
     raise Exception('no filereport')
 
 
@@ -129,23 +124,17 @@ def getlastta(status):
 
 def comparedicts(dict1, dict2):
     for key, value in dict1.items():
-        if value != dict2[str(key)]:
-            raise Exception('error comparing "%s": should be %s but is %s (in db),' % (key, value, dict2[key]))
+        assert value == dict2[str(key)], 'error comparing "%s": should be %s but is %s (in db),' % (key, value, dict2[key])
 
 
 def removeWS(string):
     return ' '.join(string.split())
 
 
-def cleanoutputdir():
-    botssys = botsglobal.ini.get('directories', 'botssys')
-    # remove whole output directory
-    shutil.rmtree(os.path.join(botssys, 'outfile'), ignore_errors=True)
-
-
 def RunTestCompareResults(command, comparedict):
     # run bots
-    subprocess.call(command)
+    assert not subprocess.call(command), 'error running command: "%s"' % ' '.join(map(str, command))
     botsglobal.db.commit()
+
     # check report
     comparedicts(comparedict, getreportlastrun())

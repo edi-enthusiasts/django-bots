@@ -418,14 +418,9 @@ class Outmessage(message.Message):
                         }
                     )
         else:  # numerics
-            if value[0] == '-':
-                minussign = '-'
-                absvalue = value[1:]
-            else:
-                minussign = ''
-                absvalue = value
-            digits, decimalsign, decimals = absvalue.partition('.')
-            if not digits and not decimals:  # and decimalsign:
+            try:
+                dec_value = decimal.Decimal(value).normalize()
+            except Exception:
                 self.add2errorlist(
                     _t('[F24]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
                     {
@@ -434,27 +429,28 @@ class Outmessage(message.Message):
                         'record': self.mpathformat(structure_record[MPATH])
                     }
                 )
-            if not digits:
-                digits = '0'
-
+                return value
+            sign, digits, _ = dec_value.as_tuple()
             lengthcorrection = 0  # for some formats (if self.ta_info['lengthnumericbare']=True; eg edifact) length is calculated without decimal sing and/or minus sign.
             if field_definition[BFORMAT] == 'R':  # floating point: use all decimals received
+                precision = max(len(value.partition('.')[2]), len(digits) - dec_value.adjusted()-1)
                 if self.ta_info['lengthnumericbare']:
-                    if minussign:
+                    if sign:
                         lengthcorrection += 1
-                    if decimalsign:
+                    if precision:
                         lengthcorrection += 1
                 try:
-                    value = str(decimal.Decimal(minussign + digits + decimalsign + decimals).quantize(decimal.Decimal(10) ** -len(decimals)))
+                    value = '%.*F' % (precision, dec_value)
                 except Exception:
                     self.add2errorlist(
-                        _t('[F25]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                        _t('[F25]: Record "%(record)s" field "%(field)s" error formating value: "%(content)s".\n') %
                         {
                             'field': field_definition[ID],
                             'content': value,
                             'record': self.mpathformat(structure_record[MPATH])
                         }
                     )
+
                 if field_definition[FORMAT] == 'RL':  # if field format is numeric right aligned
                     value = value.ljust(field_definition[MINLENGTH] + lengthcorrection)
                 elif field_definition[FORMAT] == 'RR':  # if field format is numeric right aligned
@@ -462,23 +458,25 @@ class Outmessage(message.Message):
                 else:
                     value = value.zfill(field_definition[MINLENGTH] + lengthcorrection)
                 value = value.replace('.', self.ta_info['decimaal'], 1)  # replace '.' by required decimal sep.
+
             elif field_definition[BFORMAT] == 'N':  # fixed decimals; round
                 if self.ta_info['lengthnumericbare']:
-                    if minussign:
+                    if sign:
                         lengthcorrection += 1
                     if field_definition[DECIMALS]:
                         lengthcorrection += 1
                 try:
-                    value = str(decimal.Decimal(minussign + digits + decimalsign + decimals).quantize(decimal.Decimal(10) ** -field_definition[DECIMALS]))
+                    value = str(dec_value.quantize(decimal.Decimal(10) ** -field_definition[DECIMALS]))
                 except Exception:
                     self.add2errorlist(
-                        _t('[F26]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                        _t('[F26]: Record "%(record)s" field "%(field)s" error formating value: "%(content)s".\n') %
                         {
                             'field': field_definition[ID],
                             'content': value,
                             'record': self.mpathformat(structure_record[MPATH])
                         }
                     )
+
                 if field_definition[FORMAT] == 'NL':  # if field format is numeric right aligned
                     value = value.ljust(field_definition[MINLENGTH] + lengthcorrection)
                 elif field_definition[FORMAT] == 'NR':  # if field format is numeric right aligned
@@ -486,16 +484,17 @@ class Outmessage(message.Message):
                 else:
                     value = value.zfill(field_definition[MINLENGTH] + lengthcorrection)
                 value = value.replace('.', self.ta_info['decimaal'], 1)  # replace '.' by required decimal sep.
+
             elif field_definition[BFORMAT] == 'I':  # implicit decimals
                 if self.ta_info['lengthnumericbare']:
-                    if minussign:
+                    if sign:
                         lengthcorrection += 1
                 try:
-                    dec_value = decimal.Decimal(minussign + digits + decimalsign + decimals) * 10**field_definition[DECIMALS]
+                    dec_value *= 10 ** field_definition[DECIMALS]
                     value = str(dec_value.quantize(NODECIMAL))
                 except Exception:
                     self.add2errorlist(
-                        _t('[F27]: Record "%(record)s" field "%(field)s" numerical format not valid: "%(content)s".\n') %
+                        _t('[F27]: Record "%(record)s" field "%(field)s" error formating value: "%(content)s".\n') %
                         {
                             'field': field_definition[ID],
                             'content': value,

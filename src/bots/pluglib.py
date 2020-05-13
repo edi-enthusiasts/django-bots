@@ -397,8 +397,8 @@ def plug2string(plugdict):
 def plugout_files(cleaned_data):
     ''' gather list of files for the plugin that is generated. '''
     files2return = []
-    usersys = str(botsglobal.ini.get('directories', 'usersysabs'))
-    botssys = str(botsglobal.ini.get('directories', 'botssys'))
+    usersys = botsglobal.ini.get('directories', 'usersysabs')
+    botssys = botsglobal.ini.get('directories', 'botssys')
     if cleaned_data['fileconfiguration']:  # gather from usersys
         files2return.extend(plugout_files_bydir(usersys, 'usersys'))
         if not cleaned_data['charset']:  # if edifact charsets are not needed: remove them (are included in default bots installation).

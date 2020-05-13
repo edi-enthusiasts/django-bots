@@ -238,7 +238,7 @@ def query(querystring, *args):
 
 
 def changeq(querystring, *args):
-    ''' general inset/update. no return '''
+    ''' general insert/update. no return '''
     cursor = botsglobal.db.cursor()
     try:
         cursor.execute(querystring, *args)
@@ -269,7 +269,6 @@ def insertta(querystring, *args):
 def unique_runcounter(domain, updatewith=None):
     ''' as unique, but per run of bots-engine. '''
     domain += 'bots_1_8_4_9_6'  # avoid using/mixing other values in botsglobal
-    domain = domain.encode('unicode-escape')
     nummer = getattr(botsglobal, domain, 0)
     if updatewith is None:
         nummer += 1
@@ -394,25 +393,40 @@ def txtexc(mention_exception_type=True):
         return terug
 
 
+UTF_BOMS = collections.OrderedDict((
+    ('BOM_UTF32',    'utf_32'),
+    ('BOM_UTF32_LE', 'utf_32_le'),
+    ('BOM_UTF32_BE', 'utf_32_be'),
+    ('BOM_UTF16',    'utf_16'),
+    ('BOM_UTF16_LE', 'utf_16_le'),
+    ('BOM_UTF16_BE', 'utf_16_be'),
+    ('BOM_UTF8',     'utf_8')
+))
+
+
 def safe_str(value):
     ''' For errors: return best possible unicode...should never lead to errors. '''
     try:
         if isinstance(value, str):  # is already string, just return
             return value
         elif isinstance(value, bytes):  # string/bytecode, encoding unknown.
-            for charset in ['utf_8', 'latin_1']:
-                try:
-                    return value.decode(charset, 'strict')  # decode strict
-                except Exception:
-                    continue
+            for bom_name, charset in UTF_BOMS.items():
+                if value.startswith(getattr(codecs, bom_name)):
+                    try:
+                        return value.decode(charset, 'strict')  # decode strict
+                    except UnicodeDecodeError:
+                        continue
+            else:
+                for charset in ('utf_8', 'latin_1'):
+                    try:
+                        return value.decode(charset, 'strict')  # decode strict
+                    except UnicodeDecodeError:
+                        continue
             return value.decode('utf_8', 'ignore')  # decode as if it is utf-8, ignore errors.
         else:
             return str(value)
     except Exception:
-        try:
-            return str(repr(value))
-        except Exception:
-            return 'Error while displaying error'
+        return str(repr(value))
 
 
 class ErrorProcess(NewTransaction):
@@ -490,7 +504,7 @@ def abspath(soort, filename):
 
 def abspathdata(filename):
     ''' abspathdata if filename incl dir: return absolute path; else (only filename): return absolute path (datadir) '''
-    if '/' in filename:  # if filename already contains path
+    if os.sep in filename:  # if filename already contains path
         return join(filename)
     else:
         directory = botsglobal.ini.get('directories', 'data')
@@ -893,11 +907,19 @@ class Uri(object):
         port     = ':' + str(self._uri['port']) if self._uri['port'] else ''
         fullhost = self._uri['hostname'] + port if self._uri['hostname'] else ''
         authority = '//' + userinfo + fullhost if fullhost else ''
-        if self._uri['path'] or self._uri['filename']:
-            terug = os.path.join(authority, self._uri['path'], self._uri['filename'])
-        else:
-            terug = authority
-        return scheme + terug
+
+        terug = scheme + authority
+        if self._uri['path']:
+            if authority and not self._uri['path'][:1] == '/':
+                terug += '/'
+            terug += self._uri['path'] + '/'
+
+        if self._uri['filename']:
+            if authority and not self._uri['path']:
+                terug += '/'
+            terug += self._uri['filename']
+
+        return terug
 
 
 # **********************************************************/**
@@ -920,6 +942,7 @@ class BotsError(Exception):
                 xxx = {}
         else:
             xxx = kwargs
+
         self.xxx = collections.defaultdict(str)  # catch-all if var in string is not there
         for key, value in xxx.items():
             self.xxx[safe_str(key)] = safe_str(value)

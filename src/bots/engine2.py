@@ -15,6 +15,7 @@ import glob
 import shutil
 import datetime
 from django.utils.translation import ugettext as _t
+from os.path import join as path_join
 
 try:
     import cElementTree as ET
@@ -42,7 +43,7 @@ def abspathdata(filename):
     ''' abspathdata if filename incl dir: return absolute path; else (only filename): return absolute path (datadir).
         for engine2 the current abspathdata is overwritten, as this uses subdirectories.
     '''
-    if '/' in filename:  # if filename already contains path
+    if os.sep in filename:  # if filename already contains path
         return botslib.join(filename)
     else:
         return botslib.join(data_storage, filename)
@@ -126,7 +127,7 @@ def start():
         botslib.tryrunscript(userscript, scriptname, 'pre')
         errorinrun = engine2_run()
     except Exception as msg:
-        botsglobal.logger.exception(_t('Severe error in bots system:\n%(msg)s'), {'msg': str(msg)})  # of course this 'should' not happen.
+        botsglobal.logger.exception(_t('Severe error in bots system:\n%(msg)s'), {'msg': msg})  # of course this 'should' not happen.
         sys.exit(1)
     else:
         if errorinrun:
@@ -171,9 +172,9 @@ def get_control_information():
         For the moment: hard-coded
     '''
     run = Run()
-    run.inpath = 'botssys/infile/edifact_xml/edifact'
+    run.inpath = path_join('botssys', 'infile', 'edifact_xml', 'edifact')
     run.infilename = '*'
-    run.outpath = 'botssys/outfile'
+    run.outpath = path_join('botssys', 'outfile')
     run.outfilename = '{messagetype}_{infile:name}_{datetime:%Y%m%d}_*.{editype}'
     run.translation = dict(editype='edifact', messagetype='edifact')  # no tscript etc: will do lookup in translate-table
     # run.translation = dict(
