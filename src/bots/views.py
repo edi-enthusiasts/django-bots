@@ -714,9 +714,9 @@ def runengine(request, *kw, **kwargs):  # @UnusedVariable
         #  3. environment (config). OK
         #  4. commandstorun (eg --new) and routes. OK
         python_executable_path = botsglobal.ini.get('settings', 'python_executable_path', fallback=sys.executable)
-        botsengine_path = botsglobal.ini.get('settings', 'botsengine_path', fallback=os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), 'bots-engine.py'))
+        botsengine_path = botsglobal.ini.get('settings', 'botsengine_path', fallback='bots-engine')
         environment = '-c' + botsglobal.ini.get('directories', 'config_org')
-        lijst = [python_executable_path, botsengine_path, environment]
+        lijst = [botsengine_path, environment]
         # get 4. commandstorun (eg --new) and routes via request
         if 'clparameter' in request.GET:
             lijst.append(request.GET['clparameter'])

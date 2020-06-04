@@ -231,13 +231,13 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
     except botslib.FileTooLargeError as msg:
         ta_parsed.update(statust=ERROR, errortext=str(msg))
         ta_parsed.deletechildren()
-        botsglobal.logger.debug('Error in translating input file "%(filename)s":\n%(msg)s', {'filename': row['filename'], 'msg': msg})
-    except Exception:
+        botsglobal.logger.debug('Error(FileTooLargeError) in translating input file "%(filename)s":\n%(msg)s', {'filename': row['filename'], 'msg': msg})
+    except Exception as err:
         txt = botslib.txtexc()
         ta_parsed.update(statust=ERROR, errortext=txt, **edifile.ta_info)
         ta_parsed.deletechildren()
         edifile.handleconfirm(ta_fromfile, error=True)
-        botsglobal.logger.debug('Error in translating input file "%(filename)s":\n%(msg)s', {'filename': row['filename'], 'msg': txt})
+        botsglobal.logger.debug('Error(%(error)s) in translating input file "%(filename)s":\n%(msg)s', {'error': type(err).__name__, 'filename': row['filename'], 'msg': txt})
     else:
         edifile.handleconfirm(ta_fromfile, error=False)
         ta_parsed.update(statust=DONE, filesize=row['filesize'], **edifile.ta_info)
