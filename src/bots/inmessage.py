@@ -1191,7 +1191,7 @@ class edifact(var):
             is read as binary. In _sniff determine charset; then decode according to charset
         '''
         botsglobal.logger.debug('Read edi file "%(filename)s".', self.ta_info)
-        self.rawinput = botslib.readdata(filename=self.ta_info['filename'])  # read as binary
+        self.rawinput = botslib.readdata(filename=self.ta_info['filename'])
 
     def _sniff(self):
         ''' examine a read edifact file for syntax parameters and correctness: eg parse UNA, find UNB, get charset and version

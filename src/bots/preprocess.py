@@ -326,7 +326,7 @@ def mailbag(ta_from, endstatus, frommessagetype, **argv):  # @UnusedVariable
         ta_to = ta_from.copyta(status=endstatus)  # make transaction for translated message; gets ta_info of ta_frommes
         tofilename = str(ta_to.idta)
         filesize = len(edifile[headpos:endpos])
-        tofile = botslib.opendata(tofilename, 'wb')
+        tofile = botslib.opendata(tofilename, 'w')
         tofile.write(edifile[headpos:endpos])
         tofile.close()
         # editype is now either edifact, x12 or tradacoms

@@ -405,7 +405,7 @@ def filer(request, *kw, **kwargs):  # @UnusedVariable
                     dispositiontype = 'attachment'
                 response['Content-Disposition'] = dispositiontype + '; filename=' + currentta.filename + '.txt'
                 # response['Content-Length'] = os.path.getsize(absfilename)
-                response.write(botslib.readdata(currentta.filename))
+                response.write(botslib.readdata(currentta.filename, mode='rb'))
                 return response
             elif request.GET['action'] == 'previous':
                 if currentta.parent:  # has a explicit parent

@@ -536,11 +536,13 @@ def opendata(filename, mode, charset=None, errors='strict'):
         return open(filename, mode)
 
 
-def readdata(filename, charset=None, errors='strict'):
+def readdata(filename, mode='r', charset=None, errors='strict'):
     ''' read internal data file in memory using the right encoding or no encoding '''
-    filehandler = opendata(filename, 'rb', charset, errors)
-    content = filehandler.read()
-    filehandler.close()
+    filehandler = opendata(filename, mode, charset, errors)
+    try:
+        content = filehandler.read()
+    finally:
+        filehandler.close()
     return content
 
 

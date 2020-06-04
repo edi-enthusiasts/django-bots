@@ -320,7 +320,7 @@ class _comsession(object):
                         subject = '12345678'
                     else:
                         subject = str(row['idta'])
-                    content = botslib.readdata(row['filename'])  # get attachment from data file
+                    content = botslib.readdata(row['filename'], mode='rb')  # get attachment from data file
                     if self.userscript and hasattr(self.userscript, 'subject'):  # u ser exit to determine subject
                         subject = botslib.runscript(
                             self.userscript,
