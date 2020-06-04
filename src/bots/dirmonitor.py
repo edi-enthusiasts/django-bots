@@ -68,7 +68,7 @@ if os.name == 'nt':
                 for action, filename in results:
                     logger.debug('Event: %(action)s %(filename)s', {'action': ACTIONS.get(action, 'Unknown'), 'filename': filename})
                 for action, filename in results:
-                    if action in [1, 3, 5] and fnmatch.fnmatch(filename, dir_watch['filemask']):
+                    if action in (1, 3, 5) and fnmatch.fnmatch(filename, dir_watch['filemask']):
                         # if dir_watch['rec'] and os.sep in filename:
                         #     continue
                         # full_filename = os.path.join (path_to_watch, file)

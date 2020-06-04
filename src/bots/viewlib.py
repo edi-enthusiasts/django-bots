@@ -38,14 +38,14 @@ def preparereport2view(post, runidta):
 def changepostparameters(post, soort):
     terugpost = post.copy()
     if soort == 'confirm2in':
-        for key in ['confirmtype', 'confirmed', 'fromchannel', 'tochannel']:
+        for key in ('confirmtype', 'confirmed', 'fromchannel', 'tochannel'):
             terugpost.pop(key)
         terugpost['ineditype'] = terugpost.pop('editype')[0]
         terugpost['inmessagetype'] = terugpost.pop('messagetype')[0]
         # terugpost['outeditype'] = ''
         # terugpost['outmessagetype'] = ''
     elif soort == 'confirm2out':
-        for key in ['confirmtype', 'confirmed', 'fromchannel', 'tochannel']:
+        for key in ('confirmtype', 'confirmed', 'fromchannel', 'tochannel'):
             terugpost.pop(key)
     elif soort == 'out2in':
         terugpost['outeditype'] = terugpost.pop('editype')[0]
@@ -53,22 +53,22 @@ def changepostparameters(post, soort):
         # terugpost['ineditype'] = ''
         # terugpost['inmessagetype'] = ''
     elif soort == 'out2confirm':
-        for key in ['lastrun']:
+        for key in ('lastrun', ):
             terugpost.pop(key)
     elif soort == 'in2out':
         terugpost['editype'] = terugpost.pop('outeditype')[0]
         terugpost['messagetype'] = terugpost.pop('outmessagetype')[0]
-        for key in ['ineditype', 'inmessagetype']:
+        for key in ('ineditype', 'inmessagetype'):
             terugpost.pop(key)
     elif soort == 'in2confirm':
         terugpost['editype'] = terugpost.pop('outeditype')[0]
         terugpost['messagetype'] = terugpost.pop('outmessagetype')[0]
-        for key in ['lastrun', 'statust', 'ineditype', 'inmessagetype']:
+        for key in ('lastrun', 'statust', 'ineditype', 'inmessagetype'):
             terugpost.pop(key)
     elif soort == '2process':
         # when going to process, most parameters are deleted.
         for key in terugpost.keys():
-            if key not in ['datefrom', 'dateuntil', 'lastrun', 'idroute']:  # keep these
+            if key not in ('datefrom', 'dateuntil', 'lastrun', 'idroute'):  # keep these
                 terugpost.pop(key)
     elif soort == 'fromprocess':
         pass  # is OK, all values are used

@@ -59,11 +59,11 @@ def run(idchannel, command, idroute, rootidta=None):
             if channeldict['testpath']:
                 channeldict['path'] = channeldict['testpath']  # use the testpath to specify where to find acceptance  tests.
                 channeldict['remove'] = False  # never remove during acceptance testing
-                if channeldict['type'] in ['file', 'mimefile', 'trash']:
+                if channeldict['type'] in ('file', 'mimefile', 'trash'):
                     pass  # do nothing, same type
-                elif channeldict['type'] in ['smtp', 'smtps', 'smtpstarttls', 'pop3', 'pop3s', 'pop3apop', 'imap4', 'imap4s']:
+                elif channeldict['type'] in ('smtp', 'smtps', 'smtpstarttls', 'pop3', 'pop3s', 'pop3apop', 'imap4', 'imap4s'):
                     channeldict['type'] = 'mimefile'
-                else:  # channeldict['type'] in ['ftp','ftps','ftpis','sftp','xmlrpc','ftp','ftp','communicationscript','db']
+                else:  # channeldict['type'] in ('ftp','ftps','ftpis','sftp','xmlrpc','ftp','ftp','communicationscript','db')
                     channeldict['type'] = 'file'
             botsglobal.logger.debug('Channel "%(idchannel)s" adapted for acceptance test: type "%(type)s", testpath "%(testpath)s".', channeldict)
 
@@ -118,7 +118,7 @@ class _comsession(object):
         else:  # incommunication
             if self.command == 'new':  # only in-communicate for new run
                 # handle maxsecondsperchannel: use global value from bots.ini unless specified in channel. (In database this is field 'rsrv2'.)
-                self.maxsecondsperchannel = botsglobal.ini.getint('settings', 'maxsecondsperchannel', fallback=sys.maxsize) if self.channeldict['rsrv2'] <= 0 else self.channeldict['rsrv2']
+                self.maxsecondsperchannel = botsglobal.ini.getint('settings', 'maxsecondsperchannel', fallback=sys.maxsize) if (self.channeldict['rsrv2'] or 0) <= 0 else self.channeldict['rsrv2']
                 try:
                     self.connect()
                 except Exception:  # in-connection failed. note that no files are received yet. useful if scheduled quite often, and you do nto want error-report eg when server is down.
@@ -581,7 +581,7 @@ class _comsession(object):
                 # topartner, cc (incl autorization)
                 list_to_address = [self.checkheaderforcharset(address) for _, address in email.utils.getaddresses(msg.get_all('to', []))]
                 list_cc_address = [self.checkheaderforcharset(address) for _, address in email.utils.getaddresses(msg.get_all('cc', []))]
-                cc_content      = ','.join([address for address in (list_to_address + list_cc_address)])
+                cc_content      = ','.join(address for address in (list_to_address + list_cc_address))
                 topartner = ''  # initialise topartner
                 tomail = ''     # initialise tomail
                 if not self.channeldict['apop']:  # apop in channeldict is: 'no check on "to:" email adress'
@@ -820,8 +820,7 @@ class file(_comsession):
         ''' gets files from filesystem.
         '''
         frompath = botslib.join(self.channeldict['path'], self.channeldict['filename'])
-        filelist = [_ for _ in glob.iglob(frompath) if os.path.isfile(_)]
-        filelist.sort()
+        filelist = sorted(_ for _ in glob.iglob(frompath) if os.path.isfile(_))
         startdatetime = datetime.datetime.now()
         remove_ta = False
         for fromfilename in filelist:
@@ -1300,7 +1299,7 @@ class ftp(_comsession):
         try:  # some ftp servers give errors when directory is empty; catch these errors here
             files = self.session.nlst()
         except (ftplib.error_perm, ftplib.error_temp) as msg:
-            if str(msg)[:3] not in ['550', '450']:
+            if str(msg)[:3] not in ('550', '450'):
                 raise
 
         lijst = fnmatch.filter(files, self.channeldict['filename'])
@@ -1323,7 +1322,7 @@ class ftp(_comsession):
                     else:
                         self.session.retrlines("RETR " + fromfilename, lambda s, w=tofile.write: w(s+"\n"))
                 except ftplib.error_perm as msg:
-                    if str(msg)[:3] in ['550']:  # we are trying to download a directory...
+                    if str(msg)[:3] in ('550',):  # we are trying to download a directory...
                         raise botslib.BotsError('To be catched')
                     else:
                         raise
@@ -2019,8 +2018,7 @@ class communicationscript(_comsession):
                         break
         else:  # all files have been set ready by external communicationscript using 'connect'.
             frompath = botslib.join(self.channeldict['path'], self.channeldict['filename'])
-            filelist = [_ for _ in glob.iglob(frompath) if os.path.isfile(_)]
-            filelist.sort()
+            filelist = sorted(_ for _ in glob.iglob(frompath) if os.path.isfile(_))
             remove_ta = False
             for fromfilename in filelist:
                 try:

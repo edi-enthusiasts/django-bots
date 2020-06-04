@@ -87,8 +87,8 @@ def read_plugin(pathzipfile):
         if (orgtargetpath[-1:] in (os.path.sep, os.path.altsep) and len(os.path.splitdrive(orgtargetpath)[1]) > 1):
             orgtargetpath = orgtargetpath[:-1]
         for zipfileobject in myzip.infolist():
-            if zipfileobject.filename not in ['botsindex.py', 'README', 'botssys/sqlitedb/botsdb', 'config/bots.ini'] and \
-               os.path.splitext(zipfileobject.filename)[1] not in ['.pyo', '.pyc']:
+            if zipfileobject.filename not in ('botsindex.py', 'README', 'botssys/sqlitedb/botsdb', 'config/bots.ini') and \
+               os.path.splitext(zipfileobject.filename)[1] not in ('.pyo', '.pyc'):
                 # botsglobal.logger.info('Filename in zip "%s".',zipfileobject.filename)
                 if zipfileobject.filename[0] == '/':
                     targetpath = zipfileobject.filename[1:]
@@ -374,7 +374,7 @@ def database2plug(db_table):
 def make_plugs2string(plugs):
     ''' return plugs (serialized objects) as strings. '''
     lijst = ['# -*- coding: utf-8 -*-', 'import datetime', "version = '%s'" % (botsglobal.version), 'plugins = [']
-    lijst.extend([plug2string(plug['fields']) for plug in plugs])
+    lijst.extend(plug2string(plug['fields']) for plug in plugs)
     lijst.append(']\n')
     return '\n'.join(lijst)
 
@@ -436,7 +436,7 @@ def plugout_files_bydir(dirname, defaultdirname):
         rootinplugin = root.replace(dirname, defaultdirname, 1)
         for bestand in files:
             ext = os.path.splitext(bestand)[1]
-            if ext and (ext in ['.pyc', '.pyo'] or bestand in ['__init__.py']):
+            if ext and (ext in ('.pyc', '.pyo') or bestand in ('__init__.py',)):
                 continue
             files2return.append([os.path.join(root, bestand), os.path.join(rootinplugin, bestand)])
     return files2return

@@ -127,7 +127,7 @@ def map_writefields(node_out, node_in, mpath):
     ''' als fields of this level are written to node_out. '''
     mpath_with_all_fields = copy.deepcopy(mpath)  # use a copy of mpath (do not want to change it)
     for key in node_in.record.keys():
-        if key in ['BOTSID', 'BOTSIDnr']:  # skip these
+        if key in ('BOTSID', 'BOTSIDnr'):  # skip these
             continue
         mpath_with_all_fields[-1][key] = 'dummy'  # add key to the mpath
     node_out.put(*mpath_with_all_fields)  # write all fields.
@@ -168,14 +168,14 @@ def recorddefs2string(recorddefs, targetNamespace):
     for tag in sorted(recorddefs):
         result += "'%s%s':\n    [\n" % (targetNamespace, tag)
         for field in recorddefs[tag]:
-            if field[0] in ['BOTSID', 'BOTSCONTENT']:
+            if field[0] in ('BOTSID', 'BOTSCONTENT'):
                 field[1] = 'M'
                 result += "    ['%s', '%s', %s, '%s'],\n" % (field[0], field[1], field[2], field[3])
         for field in recorddefs[tag]:
             if field[0].startswith(tag + '__'):
                 result += "    ['%s', '%s', %s, '%s'],\n" % (field[0], field[1], field[2], field[3])
         for field in recorddefs[tag]:
-            if field[0] not in ['BOTSID', 'BOTSIDnr', 'BOTSCONTENT'] and not field[0].startswith(tag + '__'):
+            if field[0] not in ('BOTSID', 'BOTSIDnr', 'BOTSCONTENT') and not field[0].startswith(tag + '__'):
                 result += "    ['%s%s', '%s', %s, '%s'],\n" % (targetNamespace, field[0], field[1], field[2], field[3])
         result += "    ],\n"
     return result
@@ -242,7 +242,7 @@ def start():
                 sys.exit(1)
         elif arg.startswith('-a'):
             allrecords = True
-        elif arg in ["?", "/?", '-h', '--help'] or arg.startswith('-'):
+        elif arg in ("?", "/?", '-h', '--help') or arg.startswith('-'):
             print(usage)
             sys.exit(0)
         else:

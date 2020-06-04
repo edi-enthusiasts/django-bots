@@ -160,7 +160,7 @@ def mailbag(ta_from, endstatus, frommessagetype, **argv):  # @UnusedVariable
     edifile = botslib.readdata(filename=ta_from.filename)
     startpos = 0
     nr_interchanges = 0
-    while (1):
+    while True:
         found = HEADER.match(edifile[startpos:])
         if found is None:
             if edifile[startpos:].strip(string.whitespace+'\x1A\x00'):  # there is content...but not valid
@@ -199,7 +199,7 @@ def mailbag(ta_from, endstatus, frommessagetype, **argv):  # @UnusedVariable
                 count += 1
                 if count == 4:
                     field_sep = char
-                elif count in [7, 18, 21, 32, 35, 51, 54, 70]:  # extra checks for fixed ISA.
+                elif count in (7, 18, 21, 32, 35, 51, 54, 70):  # extra checks for fixed ISA.
                     if char != field_sep:
                         raise botslib.InMessageError(
                             _t('[M53]: Non-valid ISA header at position %(pos)s; position %(pos_element)s of ISA is "%(foundchar)s", expect here element separator "%(field_sep)s".'),
@@ -415,7 +415,7 @@ def extractpdf(ta_from, endstatus, **argv):
     '''
     from pdfminer.pdfinterp import PDFResourceManager, process_pdf
     from pdfminer.converter import TextConverter
-    from pdfminer.layout import LAParams, LTContainer, LTText, LTTextBox
+    from pdfminer.layout import LTContainer, LTText
     import csv
 
     class CsvConverter(TextConverter):

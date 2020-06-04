@@ -47,7 +47,7 @@ def test_ccodes():
 
     insert_ccode('artikel', 'TESTIN', 'TESTOUT', attr1='TESTATTR1')
     insert_ccode('artikel', 'TESTOUT', 'TESTIN')
-    for i in ['1', '2', '4', '5']:
+    for i in ('1', '2', '4', '5'):
         insert_ccode('list', 'list', i)
     yield
 

@@ -64,13 +64,13 @@ classifiers = [
 install_requires = [
     'Django~=1.8.8',
     'Cherrypy>3.1.0,<9.0',
-    'setuptools'
+    'setuptools',
 ]
 
 extras_require = {
     'docs': [
         'sphinx',
-        'sphinx_rtd_theme'
+        'sphinx_rtd_theme',
     ],
     'tools': [
         'ecdsa',     # dep of paramiko
@@ -78,7 +78,7 @@ extras_require = {
         'paramiko',  # SFTP
         'pdfminer',  # parse pdf-files
         'pycrypto',  # SFTP
-        'xlrd'       # parse excel-files
+        'xlrd',      # parse excel-files
     ]
 }
 
@@ -91,7 +91,7 @@ scripts = [
     'scripts/bots-plugoutindex.py',
     'scripts/bots-updatedb.py',
     'scripts/bots-webserver.py',
-    'scripts/bots-xml2botsgrammar.py'
+    'scripts/bots-xml2botsgrammar.py',
 ]
 
 # Add OS-specific dependencies.
@@ -120,7 +120,7 @@ kwargs = {
     'classifiers':          classifiers,
     'install_requires':     install_requires,
     'extras_require':       extras_require,
-    'scripts':              scripts
+    'scripts':              scripts,
 }
 
 setuptools.setup(**kwargs)

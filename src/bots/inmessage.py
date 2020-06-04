@@ -330,7 +330,7 @@ class Inmessage(message.Message):
         structure_end = len(structure_level)
         get_next_lex_record = True  # indicate if the next record should be fetched, or if the current_lex_record is still being parsed.
         # it might seem logical to test here 'current_lex_record is None', but this is already used to indicate 'no more records'.
-        while 1:
+        while True:
             if get_next_lex_record:
                 try:
                     current_lex_record = next(self.iternext_lex_record)
@@ -1212,7 +1212,7 @@ class edifact(var):
                 has_una_string = True
                 # extra check: UNA length. So: find UNB, calculate UNA-length. But: further on the UNB is already checked; this error is not too good...
                 count += 3
-                for field in ['sfield_sep', 'field_sep', 'decimaal', 'escape', 'reserve', 'record_sep']:
+                for field in ('sfield_sep', 'field_sep', 'decimaal', 'escape', 'reserve', 'record_sep'):
                     self.ta_info[field] = self.rawinput[count]
                     count += 1
                 # UNA-string is done; loop untill next not-space char
@@ -1403,7 +1403,7 @@ class edifact(var):
             for nodeunh in nodeunb.getloop({'BOTSID': 'UNB'}, {'BOTSID': 'UNH'}):
                 messagetype = nodeunh.queries['messagetype']
                 # no CONTRL for CONTRL or APERAK message; check if CONTRL should be send via confirmrules
-                if messagetype[:6] in ['CONTRL', 'APERAK'] or\
+                if messagetype[:6] in ('CONTRL', 'APERAK') or\
                     not botslib.checkconfirmrules(
                         confirmtype,
                         idroute=self.ta_info['idroute'],
@@ -1544,7 +1544,7 @@ class x12(var):
                         _t('[A60]: Expect "ISA", found "%(content)s". Probably no x12?'),
                         {'content': self.rawinput[:7]}
                     )  # not with mailbag
-            elif count in [7, 18, 21, 32, 35, 51, 54, 70]:  # extra checks for fixed ISA.
+            elif count in (7, 18, 21, 32, 35, 51, 54, 70):  # extra checks for fixed ISA.
                 if char != self.ta_info['field_sep']:
                     raise botslib.InMessageError(
                         _t('[A63]: Non-valid ISA header; position %(pos)s of ISA is "%(foundchar)s", expect here element separator "%(field_sep)s".'),

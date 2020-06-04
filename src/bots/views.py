@@ -445,7 +445,7 @@ def filer(request, *kw, **kwargs):  # @UnusedVariable
                 else:
                     ta_object.has_previous = False
                 # determine: has next:
-                if ta_object.status == EXTERNOUT or ta_object.statust in [OPEN, ERROR]:
+                if ta_object.status == EXTERNOUT or ta_object.statust in (OPEN, ERROR):
                     ta_object.has_next = False
                 else:
                     ta_object.has_next = True

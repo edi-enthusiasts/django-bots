@@ -178,10 +178,10 @@ class new(object):
                     )
 
         # translate, merge, pass through: INFILE->MERGED
-        if int(routedict['translateind']) in [1, 3]:
+        if int(routedict['translateind']) in (1, 3):
             # translate: for files in route
             botslib.tryrunscript(self.userscript, self.scriptname, 'pretranslation', routedict=routedict)
-            if routedict['command'] in ['rereceive']:
+            if routedict['command'] in ('rereceive',):
                 rootidta = self.get_minta4query()
             else:
                 rootidta = self.get_minta4query_route()
@@ -221,7 +221,7 @@ class new(object):
                 'testindicator': routedict['testindicator'],
             }
             towhere = dict((key, value) for key, value in towhere.items() if value)  # remove nul-values from dict
-            wherestring = ' AND '.join([key+'=%('+key+')s ' for key in towhere])
+            wherestring = ' AND '.join(key+'=%('+key+')s ' for key in towhere)
             if routedict['frompartner_tochannel_id']:  # use frompartner_tochannel in where-clause of query (partner/group dependent outchannel
                 towhere['frompartner_tochannel_id'] = routedict['frompartner_tochannel_id']
                 wherestring += '''
@@ -262,7 +262,7 @@ class new(object):
             # for all files in run that are for this channel (including the deferred ones from other routes)
             if not routedict['defer']:
                 # determine range of idta to query: if channel was not deferred earlier in run: query only for route part else query for whole run
-                if self.keep_track_if_outchannel_deferred.get(routedict['tochannel'], False) or routedict['command'] in ['resend', 'automaticretrycommunication']:
+                if self.keep_track_if_outchannel_deferred.get(routedict['tochannel'], False) or routedict['command'] in ('resend', 'automaticretrycommunication'):
                     rootidta = self.get_minta4query()
                 else:
                     rootidta = self.get_minta4query_routepart()

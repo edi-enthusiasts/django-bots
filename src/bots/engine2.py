@@ -78,7 +78,7 @@ def start():
             if not configdir:
                 print('Error: configuration directory indicated, but no directory name.')
                 sys.exit(1)
-        elif arg in ['?', '/?', '-h', '--help'] or arg.startswith('-'):
+        elif arg in ('?', '/?', '-h', '--help') or arg.startswith('-'):
             print(usage)
             sys.exit(0)
     # ***********end handling command line arguments**************************
@@ -238,7 +238,7 @@ def translate(run):
                 try:
                     # inn_splitup.ta_info: parameters from inmessage.parse_edi_file(), syntax-information and parse-information
                     number_of_loops_with_same_alt = 0
-                    while 1:  # continue as long as there are (alt-)translations
+                    while True:  # continue as long as there are (alt-)translations
                         # lookup the translation************************
                         tscript, toeditype, tomessagetype = 'orders_edifact2xml', 'xml', 'orders'
                         if 'tscript' in run.translation:

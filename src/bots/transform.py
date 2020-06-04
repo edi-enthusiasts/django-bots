@@ -92,7 +92,7 @@ def _translate_one_file(row, routedict, endstatus, userscript, scriptname):
                 inn_splitup.ta_info['idta_fromfile'] = ta_fromfile.idta  # for confirmations in userscript; used to give idta of 'confirming message'
                 inn_splitup.ta_info['idta'] = ta_splitup.idta  # for confirmations in userscript; used to give idta of 'confirming message'
                 number_of_loops_with_same_alt = 0
-                while 1:  # continue as long as there are (alt-)translations
+                while True:  # continue as long as there are (alt-)translations
                     # lookup the translation************************
                     tscript, toeditype, tomessagetype = botslib.lookup_translation(
                         fromeditype=inn_splitup.ta_info['editype'],
@@ -417,7 +417,7 @@ def calceancheckdigit(ean):
             raise botslib.EanError(_t('GTIN "%(ean)s" should be string with only numericals.'), {'ean': ean})
     except AttributeError:
         raise botslib.EanError(_t('GTIN "%(ean)s" should be string, but is a "%(type)s".'), {'ean': ean, 'type': type(ean)})
-    sum1 = sum([int(x)*3 for x in ean[-1::-2]]) + sum([int(x) for x in ean[-2::-2]])
+    sum1 = sum(map(int, ean[-1::-2]))*3 + sum(map(int, ean[-2::-2]))
     return str((1000-sum1) % 10)
 
 

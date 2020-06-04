@@ -52,7 +52,7 @@ class Jobqueue(object):
         return 0
 
     def clearjobq(self):
-        self.jobqueue = []
+        self.jobqueue.clear()
         self.logger.info('Job queue cleared.')
         return 0
 

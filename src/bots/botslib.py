@@ -136,8 +136,8 @@ class NewTransaction(_Transaction):
     def __init__(self, **ta_info):
         updatedict = dict((key, value) for key, value in ta_info.items() if key in self.filterlist)  # filter ta_info
         updatedict['script'] = self.processlist[-1]
-        namesstring = ','.join([key for key in updatedict])
-        varsstring = ','.join(['%('+key+')s' for key in updatedict])
+        namesstring = ','.join(updatedict.keys())
+        varsstring = ','.join('%('+key+')s' for key in updatedict.keys())
         self.idta = insertta(
             '''INSERT INTO ta (''' + namesstring + ''')
                 VALUES (''' + varsstring + ''')''',
@@ -203,7 +203,7 @@ def updateinfocore(change, where, wherestring=''):
     if not change2:
         return
     changestring = ','.join([key+'=%(change_'+key+')s' for key, value in change2])
-    where.update([('change_'+key, value) for key, value in change2])
+    where.update(('change_'+key, value) for key, value in change2)
     return changeq('''UPDATE ta SET ''' + changestring + wherestring, where)
 
 
@@ -219,7 +219,7 @@ def updateinfo(change, where):
         where['statust'] = OK
     if 'statust' not in change:  # by default: new ta is OK
         change['statust'] = OK
-    wherestring = ' AND '.join([key+'=%('+key+')s ' for key in where if key != 'rootidta'])  # wherestring for copy & done
+    wherestring = ' AND '.join(key+'=%('+key+')s ' for key in where if key != 'rootidta')  # wherestring for copy & done
     return updateinfocore(change=change, where=where, wherestring=wherestring)
 
 
@@ -230,11 +230,12 @@ def changestatustinfo(change, where):
 def query(querystring, *args):
     ''' general query. yields rows from query '''
     cursor = botsglobal.db.cursor()
-    cursor.execute(querystring, *args)
-    results = cursor.fetchall()
-    cursor.close()
-    for result in results:
-        yield result
+    try:
+        cursor.execute(querystring, *args)
+        results = cursor.fetchall()
+    finally:
+        cursor.close()
+    yield from results
 
 
 def changeq(querystring, *args):
@@ -572,8 +573,7 @@ def runscriptyield(module, modulefile, functioninscript, **argv):
                             {'functioninscript': functioninscript, 'modulefile': modulefile})
     functiontorun = getattr(module, functioninscript)
     try:
-        for result in functiontorun(**argv):
-            yield result
+        yield from functiontorun(**argv)
     except Exception:
         txt = txtexc()
         raise ScriptError(_t('Script file "%(modulefile)s": "%(txt)s".'), {'modulefile': modulefile, 'txt': txt})
@@ -618,11 +618,11 @@ def set_asked_confirmrules(routedict, rootidta):
         {'status': FILEOUT, 'statust': OK, 'rootidta': rootidta}
     ):
         if row['editype'] == 'x12':
-            if row['messagetype'][:3] in ['997', '999']:
+            if row['messagetype'][:3] in ('997', '999'):
                 continue
             confirmtype = 'ask-x12-997'
         else:
-            if row['messagetype'][:6] in ['CONTRL', 'APERAK']:
+            if row['messagetype'][:6] in ('CONTRL', 'APERAK'):
                 continue
             confirmtype = 'ask-edifact-CONTRL'
         if not checkconfirmrules(

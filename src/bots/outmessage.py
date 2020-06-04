@@ -576,7 +576,7 @@ class Outmessage(message.Message):
                 if quote_char:  # quote char only used for csv
                     start_to__quote = False
                     if forcequote == 2:
-                        if field[FORMATFROMGRAMMAR] in ['AN', 'A', 'AR']:
+                        if field[FORMATFROMGRAMMAR] in ('AN', 'A', 'AR'):
                             start_to__quote = True
                     elif forcequote:  # always quote; this catches values 1, '1', '0'
                         start_to__quote = True
@@ -762,7 +762,7 @@ class xml(Outmessage):
                 ET.register_namespace(eachns[0], eachns[1])
         # xml prolog: always use.*********************************
         # standalone, DOCTYPE, processing instructions: only possible if encoding is utf-8/ascii
-        if self.ta_info['charset'] in ['us-ascii', 'utf-8'] or ET.VERSION >= '1.3.0':
+        if self.ta_info['charset'] in ('us-ascii', 'utf-8') or ET.VERSION >= '1.3.0':
             if self.ta_info['indented']:
                 indentstring = '\n'
             else:

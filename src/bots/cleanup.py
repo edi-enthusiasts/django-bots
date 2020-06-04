@@ -23,7 +23,7 @@ def cleanup(do_cleanup_parameter, userscript, scriptname):
     whencleanup = botsglobal.ini.get('settings', 'whencleanup', fallback='daily')
     if do_cleanup_parameter:  # if explicit indicated via commandline parameter
         do_full_cleanup = True
-    elif whencleanup in ['always', 'daily']:
+    elif whencleanup in ('always', 'daily'):
         # perform full cleanup only first run of the day.
         cur_day = int(time.strftime('%Y%m%d'))  # get current date, convert to int
         if cur_day != botslib.unique('bots_cleanup_day', updatewith=cur_day):

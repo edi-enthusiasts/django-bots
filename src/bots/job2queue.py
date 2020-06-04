@@ -70,7 +70,7 @@ def start():
             except Exception:
                 print('Error: priority should be numeric (1=highest, 9=lowest).')
                 sys.exit(1)
-        elif arg in ["?", "/?", '-h', '--help']:
+        elif arg in ("?", "/?", '-h', '--help'):
             print(usage)
             sys.exit(0)
         else:

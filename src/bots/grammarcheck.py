@@ -26,7 +26,7 @@ def startmulti(grammardir, editype):
 
     for filename in glob.iglob(grammardir):
         filename_basename = os.path.basename(filename)
-        if filename_basename in ['__init__.py', 'envelope.py']:
+        if filename_basename in ('__init__.py', 'envelope.py'):
             continue
         if filename_basename.startswith('edifact') or filename_basename.startswith('records') or filename_basename.endswith('records.py'):
             continue
@@ -68,7 +68,7 @@ def start():
             if not configdir:
                 print('Error: configuration directory indicated, but no directory name.')
                 sys.exit(1)
-        elif arg in ["?", "/?", '-h', '--help'] or arg.startswith('-'):
+        elif arg in ("?", "/?", '-h', '--help') or arg.startswith('-'):
             print(usage)
             sys.exit(0)
         else:

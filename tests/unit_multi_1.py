@@ -206,7 +206,7 @@ def test_unique_in_run_counter():
 
 @pytest.mark.plugin_test
 def test_partner_lookup():
-    for s in ['attr1', 'attr2', 'attr3', 'attr4', 'attr5']:
+    for s in ('attr1', 'attr2', 'attr3', 'attr4', 'attr5'):
         assert transform.partnerlookup('test', s) == s, 'test_partner_lookup'
 
     # test lookup for non existing partner
