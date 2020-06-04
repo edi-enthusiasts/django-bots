@@ -94,6 +94,20 @@ scripts = [
     'scripts/bots-xml2botsgrammar.py',
 ]
 
+entry_points = {
+    'console_scripts': [
+        'bots-dirmonitor = bots.dirmonitor:start',
+        'bots-engine = bots.engine:start',
+        'bots-grammarcheck = bots.grammarcheck:start',
+        'bots-job2queue = bots.job2queue:start',
+        'bots-jobqueueserver = bots.jobqueueserver:start',
+        'bots-plugoutindex = bots.plugoutindex:start',
+        'bots-updatedb = bots.updatedb:start',
+        'bots-webserver = bots.webserver:start',
+        'bots-xml2botsgrammar = bots.xml2botsgrammar:start',
+    ]
+}
+
 # Add OS-specific dependencies.
 if sys.platform == 'win32':
     install_requires.append('pywin32')
@@ -121,6 +135,7 @@ kwargs = {
     'install_requires':     install_requires,
     'extras_require':       extras_require,
     'scripts':              scripts,
+    'entry_points':         entry_points,
 }
 
 setuptools.setup(**kwargs)
