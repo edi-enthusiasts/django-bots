@@ -161,7 +161,7 @@ class Message(object):
         ''' checks for every field in record if field exists in record_definition (from grammar).
             for inmessage of type (var,fixed,??) this is not needed
         '''
-        for field in node_instance.record.keys():  # check every field in the record
+        for field in list(node_instance.record.keys()):  # check every field in the record
             if field == 'BOTSIDnr':  # BOTSIDnr is not in grammar, so skip check
                 continue
             for field_definition in record_definition[FIELDS]:

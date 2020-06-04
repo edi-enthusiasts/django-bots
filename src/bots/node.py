@@ -313,7 +313,7 @@ class Node(object):
     def getcountsum(self, *mpaths):
         ''' return the sum for all values found in mpath. Eg total number of ordered quantities. '''
         mpath_for_found_node = mpaths[-1].copy()
-        for key, value in mpaths[-1].items():
+        for key, value in list(mpaths[-1].items()):
             if value is None:
                 del mpaths[-1][key]
         count = decimal.Decimal(0)

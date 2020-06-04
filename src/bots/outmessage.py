@@ -809,7 +809,7 @@ class xml(Outmessage):
         # pick out the attributes for the xml-record-entity (if fieldnames start with attribute-marker these are xml-attribute for the xml-'record'; store these in attributedict)
         keyattributemarker = recordtag + self.ta_info['attributemarker']  # attributemarker is a marker in the fieldname used to find out if field is an attribute of either record or field
         attributedict = {}
-        for key, value in noderecord.items():
+        for key, value in list(noderecord.items()):
             if key.startswith(keyattributemarker):
                 attributedict[key[len(keyattributemarker):]] = value
                 del noderecord[key]
@@ -825,7 +825,7 @@ class xml(Outmessage):
             text = noderecord.get(field_def[ID], None)
             keyattributemarker = field_def[ID] + self.ta_info['attributemarker']
             attributedict = {}
-            for key, value in noderecord.items():
+            for key, value in list(noderecord.items()):
                 if key.startswith(keyattributemarker):
                     attributedict[key[len(keyattributemarker):]] = value
                     del noderecord[key]
@@ -855,7 +855,7 @@ class xmlnocheck(xml):
         attributemarker = self.ta_info['attributemarker']
         keyattributemarker = recordtag + attributemarker
         attributedict = {}
-        for key, value in noderecord.items():  # find the attributes for the xml-record, put these in attributedict
+        for key, value in list(noderecord.items()):  # find the attributes for the xml-record, put these in attributedict
             if key.startswith(keyattributemarker):
                 attributedict[key[len(keyattributemarker):]] = value
                 del noderecord[key]
@@ -869,7 +869,7 @@ class xmlnocheck(xml):
                 continue
             keyattributemarker = key + attributemarker
             attributedict = {}
-            for key2, value2 in noderecord.items():
+            for key2, value2 in list(noderecord.items()):
                 if key2.startswith(keyattributemarker):
                     attributedict[key2[len(keyattributemarker):]] = value2
                     del noderecord[key2]

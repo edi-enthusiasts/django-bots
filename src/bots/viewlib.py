@@ -67,7 +67,7 @@ def changepostparameters(post, soort):
             terugpost.pop(key)
     elif soort == '2process':
         # when going to process, most parameters are deleted.
-        for key in terugpost.keys():
+        for key in list(terugpost.keys()):
             if key not in ('datefrom', 'dateuntil', 'lastrun', 'idroute'):  # keep these
                 terugpost.pop(key)
     elif soort == 'fromprocess':
@@ -330,7 +330,7 @@ def filterquery(query, org_cleaned_data, incoming=False, paginate=True):
     if 'filename' in cleaned_data and cleaned_data['filename']:
         query = query.filter(filename__contains=cleaned_data.pop('filename'))
 
-    for key, value in cleaned_data.items():
+    for key, value in list(cleaned_data.items()):
         if not value:
             del cleaned_data[key]
     query = query.filter(**cleaned_data)

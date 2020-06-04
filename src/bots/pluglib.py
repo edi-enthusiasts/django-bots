@@ -213,8 +213,7 @@ def read_index2database(orgpluglist):
         table = apps.get_model('bots', plugintype)
 
         # delete fields not in model for compatibility; note that 'plugintype' is also removed.
-        loopdictionary = plug.keys()
-        for key in loopdictionary:
+        for key in list(plug.keys()):
             try:
                 table._meta.get_field(key)
             except FieldDoesNotExist:
@@ -239,8 +238,7 @@ def read_index2database(orgpluglist):
         # for sleutel and plug: convert names to real database names
 
         # get real column names for fields in plug
-        loopdictionary = plug.keys()
-        for fieldname in loopdictionary:
+        for fieldname in list(plug.keys()):
             fieldobject = table._meta.get_field_by_name(fieldname)[0]
             try:
                 if fieldobject.column != fieldname:  # if name in plug is not the real field name (in database)
@@ -249,8 +247,7 @@ def read_index2database(orgpluglist):
             except Exception:
                 raise botslib.PluginError(_t('No field column for: "%(fieldname)s".'), {'fieldname': fieldname})
         # get real column names for fields in sleutel; basically the same loop but now for sleutel
-        loopdictionary = sleutel.keys()
-        for fieldname in loopdictionary:
+        for fieldname in list(sleutel.keys()):
             fieldobject = table._meta.get_field_by_name(fieldname)[0]
             try:
                 if fieldobject.column != fieldname:
