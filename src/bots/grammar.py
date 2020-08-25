@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from contextlib import suppress
 from django.utils.translation import ugettext as _t
 
 # bots-modules
@@ -34,11 +35,9 @@ def grammarread(editype, grammarname, typeofgrammarfile='grammars'):
         syntax = classtocall.defaultsyntax.copy()
         envelope = messagegrammar.syntax.get('envelope') or classtocall.defaultsyntax['envelope']
         if envelope and envelope != grammarname:
-            try:
+            with suppress(Exception):
                 envelopegrammar = classtocall(typeofgrammarfile='grammars', editype=editype, grammarname=envelope)
                 syntax.update(envelopegrammar.syntax)
-            except Exception:
-                pass
         syntax.update(messagegrammar.syntax)
         messagegrammar.syntax = syntax
         return messagegrammar

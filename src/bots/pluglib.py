@@ -8,6 +8,7 @@ import sys
 import zipfile
 import zipimport
 import codecs
+from contextlib import suppress
 from django import db
 from django.apps.registry import apps
 from django.db.models.fields import FieldDoesNotExist
@@ -110,10 +111,7 @@ def read_plugin(pathzipfile):
                 if zipfileobject.filename[-1] == '/':  # check if this is a dir; if so continue
                     continue
                 if os.path.isfile(targetpath):  # check if file already exists
-                    try:  # this ***sometimes*** fails. (python25, for static/help/home.html...only there...)
-                        warnrenamed = True
-                    except Exception:
-                        pass
+                    warnrenamed = True
                 source = myzip.read(zipfileobject.filename)
                 target = open(targetpath, "wb")
                 target.write(source)
@@ -396,16 +394,15 @@ def plugout_files(cleaned_data):
     files2return = []
     usersys = botsglobal.ini.get('directories', 'usersysabs')
     botssys = botsglobal.ini.get('directories', 'botssys')
+    mask_valueerror = suppress(ValueError)
     if cleaned_data['fileconfiguration']:  # gather from usersys
         files2return.extend(plugout_files_bydir(usersys, 'usersys'))
         if not cleaned_data['charset']:  # if edifact charsets are not needed: remove them (are included in default bots installation).
             charsetdirs = plugout_files_bydir(os.path.join(usersys, 'charsets'), 'usersys/charsets')
             for charset in charsetdirs:
-                try:
+                with mask_valueerror:
                     index = files2return.index(charset)
                     files2return.pop(index)
-                except ValueError:
-                    pass
     else:
         if cleaned_data['charset']:  # if edifact charsets are not needed: remove them (are included in default bots installation).
             files2return.extend(plugout_files_bydir(os.path.join(usersys, 'charsets'), 'usersys/charsets'))

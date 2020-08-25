@@ -17,6 +17,7 @@ try:
     import json as simplejson
 except ImportError:
     import simplejson
+from contextlib import suppress
 from django.utils.translation import ugettext as _t
 
 # bots-modules
@@ -329,6 +330,7 @@ class Inmessage(message.Message):
         countnrofoccurences = 0  # number of occurences of current record in structure
         structure_end = len(structure_level)
         get_next_lex_record = True  # indicate if the next record should be fetched, or if the current_lex_record is still being parsed.
+        mask_importerror = suppress(botslib.BotsImportError)
         # it might seem logical to test here 'current_lex_record is None', but this is already used to indicate 'no more records'.
         while True:
             if get_next_lex_record:
@@ -403,11 +405,9 @@ class Inmessage(message.Message):
                             messagetype=messagetype
                         )
                         if messagetype2:
-                            try:
+                            with mask_importerror:
                                 defmessage = grammar.grammarread(self.__class__.__name__, messagetype2)
                                 raisenovalidmapping_error = False
-                            except botslib.BotsImportError:
-                                pass
                     if raisenovalidmapping_error:
                         raise botslib.TranslationNotFoundError(
                             _t('No (valid) grammar for editype "%(editype)s" messagetype "%(messagetype)s".'),
@@ -1857,12 +1857,10 @@ class xml(Inmessage):
                 botsglobal.logger.error('Missing mailbag definitions for xml, should be there.')
                 raise
             parser = ET.XMLParser()
-            try:
+            with suppress(AttributeError):  # there is no extra_character_entity in the mailbag definitions, is OK.
                 extra_character_entity = getattr(module, 'extra_character_entity')
                 for key, value in extra_character_entity.items():
                     parser.entity[key] = value
-            except AttributeError:
-                pass  # there is no extra_character_entity in the mailbag definitions, is OK.
             etree = ET.ElementTree()  # ElementTree: lexes, parses, makes etree; etree is quite similar to bots-node trees but conversion is needed
             etreeroot = etree.parse(filename, parser)
             for item in mailbagsearch:

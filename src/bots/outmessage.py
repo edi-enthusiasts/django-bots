@@ -3,6 +3,7 @@
 import time
 import pickle
 import decimal
+from contextlib import suppress
 from django.utils.translation import ugettext as _t
 
 # bots-modules
@@ -77,19 +78,16 @@ class Outmessage(message.Message):
             (try to) read the topartner dependent grammar syntax.
         '''
         super(Outmessage, self).messagegrammarread(typeofgrammarfile)
+        mask_importerror = suppress(botslib.BotsImportError)
         # read partner-syntax. Use this to always overrule values in self.ta_info
         if self.ta_info.get('frompartner'):
-            try:
+            with mask_importerror:  # No partner specific syntax found (is not an error).
                 partnersyntax = grammar.grammarread(self.ta_info['editype'], self.ta_info['frompartner'], typeofgrammarfile='partners')
                 self.ta_info.update(partnersyntax.syntax)  # partner syntax overrules!
-            except botslib.BotsImportError:
-                pass  # No partner specific syntax found (is not an error).
         if self.ta_info.get('topartner'):
-            try:
+            with mask_importerror:  # No partner specific syntax found (is not an error).
                 partnersyntax = grammar.grammarread(self.ta_info['editype'], self.ta_info['topartner'], typeofgrammarfile='partners')
                 self.ta_info.update(partnersyntax.syntax)  # partner syntax overrules!
-            except botslib.BotsImportError:
-                pass  # No partner specific syntax found (is not an error).
 
     def writeall(self):
         ''' writeall is called for writing all 'real' outmessage objects; but not for envelopes.

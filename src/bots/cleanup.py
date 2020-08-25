@@ -6,6 +6,7 @@ import time
 import datetime
 import stat
 import shutil
+from contextlib import suppress
 from django.utils.translation import ugettext as _t
 
 # bots modules
@@ -75,10 +76,8 @@ def _cleanarchive():
         for entry in glob.iglob(botslib.join(row['archivepath'], '*')):
             if entry < vanafdir:
                 if entry.endswith('.zip'):
-                    try:
+                    with suppress(Exception):
                         os.remove(entry)
-                    except Exception:
-                        pass
                 else:
                     shutil.rmtree(entry, ignore_errors=True)
 

@@ -9,6 +9,7 @@ import time
 import datetime
 import subprocess
 import threading
+from contextlib import suppress
 
 # bots-modules
 from . import botsinit
@@ -171,10 +172,8 @@ def start():
     logger.info('Jobqueue server started.')
     server = SimpleXMLRPCServer(('localhost', port), logRequests=False)
     server.register_instance(Jobqueue(logger))
-    try:
+    with suppress(KeyboardInterrupt):
         server.serve_forever()
-    except KeyboardInterrupt:
-        pass
 
     sys.exit(0)
 

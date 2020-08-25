@@ -19,6 +19,7 @@ import ftplib
 import pickle
 import socket
 import ssl
+from contextlib import suppress
 from django.utils.translation import ugettext as _t
 
 # Bots modules
@@ -854,11 +855,9 @@ class file(_comsession):
                 txt = botslib.txtexc()
                 botslib.ErrorProcess(functionname='file-incommunicate', errortext=txt, channeldict=self.channeldict)
                 if remove_ta:
-                    try:
+                    with suppress(Exception):
                         ta_from.delete()
                         ta_to.delete()
-                    except Exception:
-                        pass
             else:
                 ta_to.update(filename=tofilename, statust=OK, filesize=filesize)
                 ta_from.update(statust=DONE)
@@ -988,11 +987,9 @@ class pop3(_comsession):
                 txt = botslib.txtexc()
                 botslib.ErrorProcess(functionname='pop3-incommunicate', errortext=txt, channeldict=self.channeldict)
                 if remove_ta:
-                    try:
+                    with suppress(Exception):
                         ta_from.delete()
                         ta_to.delete()
-                    except Exception:
-                        pass
                 # test connection. if connection is not OK stop fetching mails.
                 try:
                     self.session.noop()
@@ -1104,11 +1101,9 @@ class imap4(_comsession):
                 txt = botslib.txtexc()
                 botslib.ErrorProcess(functionname='imap4-incommunicate', errortext=txt, channeldict=self.channeldict)
                 if remove_ta:
-                    try:
+                    with suppress(Exception):
                         ta_from.delete()
                         ta_to.delete()
-                    except Exception:
-                        pass
             else:
                 ta_to.update(statust=OK, filename=filename, filesize=filesize)
                 ta_from.update(statust=DONE)
@@ -1332,20 +1327,16 @@ class ftp(_comsession):
                     raise botslib.BotsError('To be catched; directory (or empty file)')
             except botslib.BotsError:  # directory or empty file; handle exception but generate no error.
                 if remove_ta:
-                    try:
+                    with suppress(Exception):
                         ta_from.delete()
                         ta_to.delete()
-                    except Exception:
-                        pass
             except Exception:
                 txt = botslib.txtexc()
                 botslib.ErrorProcess(functionname='ftp-incommunicate', errortext=txt, channeldict=self.channeldict)
                 if remove_ta:
-                    try:
+                    with suppress(Exception):
                         ta_from.delete()
                         ta_to.delete()
-                    except Exception:
-                        pass
             else:
                 ta_to.update(filename=tofilename, statust=OK, filesize=filesize)
                 ta_from.update(statust=DONE)
@@ -1475,10 +1466,9 @@ if hasattr(ftplib, 'FTP_TLS'):
         def prot_p(self):
             # Inovis FTPIS gives errors on 'PBSZ 0' and 'PROT P', vsftp does not work without these commands.
             # These errors are just catched, nothing is done with them.
-            try:
+            with suppress(ftplib.error_perm):
                 self.voidcmd('PBSZ 0')
-            except ftplib.error_perm:
-                pass
+
             try:
                 resp = self.voidcmd('PROT P')
             except ftplib.error_perm:
@@ -1646,11 +1636,9 @@ class sftp(_comsession):
                 txt = botslib.txtexc()
                 botslib.ErrorProcess(functionname='sftp-incommunicate', errortext=txt, channeldict=self.channeldict)
                 if remove_ta:
-                    try:
+                    with suppress(Exception):
                         ta_from.delete()
                         ta_to.delete()
-                    except Exception:
-                        pass
             else:
                 ta_to.update(filename=tofilename, statust=OK, filesize=filesize)
                 ta_from.update(statust=DONE)
@@ -1749,11 +1737,9 @@ class xmlrpc(_comsession):
                 txt = botslib.txtexc()
                 botslib.ErrorProcess(functionname='xmlprc-incommunicate', errortext=txt, channeldict=self.channeldict)
                 if remove_ta:
-                    try:
+                    with suppress(Exception):
                         ta_from.delete()
                         ta_to.delete()
-                    except Exception:
-                        pass
                 break  # break out of while loop (else this would be endless)
             else:
                 ta_to.update(filename=tofilename, statust=OK, filesize=filesize)
@@ -1881,11 +1867,9 @@ class db(_comsession):
                 txt = botslib.txtexc()
                 botslib.ErrorProcess(functionname='db-incommunicate', errortext=txt, channeldict=self.channeldict)
                 if remove_ta:
-                    try:
+                    with suppress(Exception):
                         ta_from.delete()
                         ta_to.delete()
-                    except Exception:
-                        pass
             else:
                 ta_to.update(filename=tofilename, statust=OK, filesize=filesize)
                 ta_from.update(statust=DONE)
@@ -2002,11 +1986,9 @@ class communicationscript(_comsession):
                     txt = botslib.txtexc()
                     botslib.ErrorProcess(functionname='communicationscript-incommunicate', errortext=txt, channeldict=self.channeldict)
                     if remove_ta:
-                        try:
+                        with suppress(Exception):
                             ta_from.delete()
                             ta_to.delete()
-                        except Exception:
-                            pass
                 else:
                     ta_to.update(filename=tofilename, statust=OK, filesize=filesize)
                     ta_from.update(statust=DONE)
@@ -2042,11 +2024,9 @@ class communicationscript(_comsession):
                     txt = botslib.txtexc()
                     botslib.ErrorProcess(functionname='communicationscript-incommunicate', errortext=txt, channeldict=self.channeldict)
                     if remove_ta:
-                        try:
+                        with suppress(Exception):
                             ta_from.delete()
                             ta_to.delete()
-                        except Exception:
-                            pass
                 else:
                     ta_to.update(filename=tofilename, statust=OK, filesize=filesize)
                     ta_from.update(statust=DONE)
@@ -2117,12 +2097,11 @@ class communicationscript(_comsession):
         )
         if self.channeldict['remove'] and not hasattr(self.userscript, 'main'):  # if bots should remove the files, and all files are passed at once, delete these files.
             outputdir = botslib.join(self.channeldict['path'], self.channeldict['filename'])
+            mask_except = suppress(Exception)
             for filename in glob.iglob(outputdir):
                 if os.path.isfile(filename):
-                    try:
+                    with mask_except:
                         os.remove(filename)
-                    except Exception:
-                        pass
 
 
 class trash(_comsession):
@@ -2213,11 +2192,9 @@ class http(_comsession):
                 txt = botslib.txtexc()
                 botslib.ErrorProcess(functionname='http-incommunicate', errortext=txt, channeldict=self.channeldict)
                 if remove_ta:
-                    try:
+                    with suppress(Exception):
                         ta_from.delete()
                         ta_to.delete()
-                    except Exception:
-                        pass
                 break
             else:
                 ta_to.update(filename=tofilename, statust=OK, filesize=filesize)

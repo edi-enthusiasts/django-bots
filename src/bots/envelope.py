@@ -2,6 +2,7 @@
 
 import os
 import shutil
+from contextlib import suppress
 from django.utils.translation import ugettext as _t
 
 # bots-modules
@@ -141,13 +142,12 @@ def envelope(ta_info, ta_list):
     if not ta_info['envelope']:  # used when enveloping is just appending files.
         classtocall = noenvelope
     else:
-        try:
+        with suppress(botslib.BotsImportError):  # no user enveloping.
             # check for user scripted enveloping
             userscript, scriptname = botslib.botsimport('envelopescripts', ta_info['editype'], ta_info['envelope'])
             # check if there is a user scripted class with name ta_info['envelope'].
             classtocall = getattr(userscript, ta_info['envelope'], None)
-        except botslib.BotsImportError:  # no user enveloping.
-            pass
+
         if classtocall is None:
             try:
                 classtocall = globals()[ta_info['editype']]
