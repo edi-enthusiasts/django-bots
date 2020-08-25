@@ -71,6 +71,5 @@ Results of the first tests with pypy (beta-versions of pypy 2.0):
 * Problem might be that not all libraries/dependencies work with pypy.
     * SQLite3 database connector: OK
     * MySQL database connector: version 1.2.5 does. Note that bots 3.1.0 gave am error with this version, a patch was easy.
-    * paramiko (for SFTP/SSH): no, dependency pycrypto is not supported.
 
 This looks like a very interesting development.

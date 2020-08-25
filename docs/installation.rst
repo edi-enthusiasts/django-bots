@@ -144,7 +144,7 @@ Always:
 Optional:
 
     * Genshi (when using templates/mapping to HTML).
-    * SFTP needs paramiko and pycrypto. Newer versions of paramiko also need ecdsa.
+    * SFTP needs paramiko. Newer versions of paramiko also need ecdsa.
     * Cdecimals speeds up bots. See `website <http://www.bytereef.org/mpdecimal/index.html>`_
     * bots-dirmonitor needs:
     

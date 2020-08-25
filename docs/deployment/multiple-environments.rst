@@ -234,25 +234,12 @@ Using python virtualenv tool
             * Install cdecimal in the default python folder (eg. ``C:\python27\lib\site-packages``) using the windows msi installer, then copy the two files to your virtual environment.
             * Extract the files from the windows msi installer using a tool such as `universal extractor <http://www.lupopensuite.com/db/universalextractor.htm>`_.
         
-    * Install pycrypto and paramiko (optional, required for sftp channels)
+    * Install paramiko (optional, required for sftp channels)
     
         These will not install/compile correctly on Windows using pip. Instead, I used easy_install with a downloaded Windows installer exe.
     
         .. code:: console
     
-            (bots310) C:\PythonEnv>easy_install pycrypto-2.1.0.win32-py2.7.exe
-
-            Processing pycrypto-2.1.0.win32-py2.7.exe
-            creating 'c:\docume~1\adadmi~3\locals~1\temp\1\easy_install-wy9qt4\pycrypto-2.1.
-            0-py2.7-win32.egg' and adding 'c:\docume~1\adadmi~3\locals~1\temp\1\easy_install
-            -wy9qt4\pycrypto-2.1.0-py2.7-win32.egg.tmp' to it
-            Moving pycrypto-2.1.0-py2.7-win32.egg to c:\pythonenv\bots310\lib\site-packages
-            Adding pycrypto 2.1.0 to easy-install.pth file
-
-            Installed c:\pythonenv\bots310\lib\site-packages\pycrypto-2.1.0-py2.7-win32.egg
-            Processing dependencies for pycrypto==2.1.0
-            Finished processing dependencies for pycrypto==2.1.0
-
             (bots310) C:\PythonEnv>easy_install paramiko-1.7.6.win32.exe
 
             Processing paramiko-1.7.6.win32.exe

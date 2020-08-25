@@ -9,7 +9,6 @@ ecdsa
 Genshi
 paramiko
 pdfminer
-pycrypto
 xlrd
 
 # Optional packages for doc building.

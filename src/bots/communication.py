@@ -1378,12 +1378,18 @@ class ftp(_comsession):
                 ta_from = botslib.OldTransaction(row['idta'])
                 ta_to = ta_from.copyta(status=EXTERNOUT)
                 tofilename = self.filename_formatter(filename_mask, ta_from)
-                if self.channeldict['ftpbinary']:
-                    fromfile = botslib.opendata(row['filename'], 'rb')
-                    self.session.storbinary(mode + tofilename, fromfile)
-                else:
-                    fromfile = botslib.opendata(row['filename'], 'r')
-                    self.session.storlines(mode + tofilename, fromfile)
+                fromfile = botslib.opendata(row['filename'], 'rb')
+                try:
+                    if self.channeldict['ftpbinary']:
+                        self.session.storbinary(mode + tofilename, fromfile)
+                    else:
+                        self.session.storlines(mode + tofilename, fromfile)
+                except OSError as conn_err:
+                    # When the FTPS server closes SSL connection before we do,
+                    # ignore the OSError(0) raise by OpenSSL and .unwrap().
+                    # https://bugs.python.org/issue10808
+                    if conn_err.errno != 0:
+                        raise
                 fromfile.close()
                 # Rename filename after writing file.
                 # Function: safe file writing: do not want another process to read the file while it is being written.
@@ -1407,40 +1413,39 @@ class ftp(_comsession):
         botslib.settimeout(botsglobal.ini.getint('settings', 'globaltimeout', fallback=10))
 
 
-class ftps(ftp):
-    ''' explicit ftps as defined in RFC 2228 and RFC 4217.
-        standard port to connect to is as in normal FTP (port 21)
-        ftps is supported by python >= 2.7
-    '''
-    def connect(self):
-        if not hasattr(ftplib, 'FTP_TLS'):
-            raise botslib.CommunicationError(_t('ftps is not supported by your python version, use >=2.7'))
-        if self.userscript and hasattr(self.userscript, 'keyfile'):
-            keyfile, certfile = botslib.runscript(
-                self.userscript,
-                self.scriptname,
-                'keyfile',
-                channeldict=self.channeldict
-            )
-        elif self.channeldict['keyfile']:
-            keyfile = self.channeldict['keyfile']
-            certfile = self.channeldict['certfile']
-        else:
-            keyfile = certfile = None
-        botslib.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', fallback=10))
-        self.session = ftplib.FTP_TLS(keyfile=keyfile, certfile=certfile)
-        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'ftpdebug', fallback=0))  # set debug level (0=no, 1=medium, 2=full debug)
-        self.session.set_pasv(not self.channeldict['ftpactive'])  # active or passive ftp
-        self.session.connect(host=self.channeldict['host'], port=int(self.channeldict['port']))
-        self.session.auth()
-        self.session.login(user=self.channeldict['username'], passwd=self.channeldict['secret'], acct=self.channeldict['ftpaccount'])
-        self.session.prot_p()
-        self.set_cwd()
-
-
 # sub classing of ftplib for ftpis
 if hasattr(ftplib, 'FTP_TLS'):
-    class Ftp_tls_implicit(ftplib.FTP_TLS):
+    # Special FTP over SSL classes that work around the missing reuse of the
+    # same SSL socket sessions as required by some FTP servers.
+    #
+    # ssl - https://bugs.python.org/issue10808
+    # ftplib - https://bugs.python.org/issue31727
+    # Fix found from https://stackoverflow.com/questions/46633536/getting-a-oserror-when-trying-to-list-ftp-directories-in-python#answer-53456626
+    from ssl import SSLSocket
+
+    class ReusedSslSocket(SSLSocket):
+        def unwrap(self):
+            pass
+
+    if sys.version_info < (3, 6):
+        # SSL Sessions require Python 3.6 or later and is now recommended.
+        # FTPS is usable but unreliable in versions < 3.5.
+        SecureFTP = ftplib.FTP_TLS
+    else:
+        class SecureFTP(ftplib.FTP_TLS):
+            """Explicit FTPS, with shared TLS session"""
+            def ntransfercmd(self, cmd, rest=None):
+                conn, size = ftplib.FTP.ntransfercmd(self, cmd, rest)
+                if self._prot_p:
+                    conn = self.context.wrap_socket(
+                        conn,
+                        server_hostname=self.host,
+                        session=self.sock.session
+                    )  # reuses TLS session
+                    conn.__class__ = ReusedSslSocket  # we should not close reused ssl socket when file transfers finish
+                return conn, size
+
+    class Ftp_tls_implicit(SecureFTP):
         ''' FTPS implicit is not directly supported by python; python>=2.7 supports only ftps explicit.
             So class ftplib.FTP_TLS is sub-classed here, with the needed modifications.
             (code is nicked from ftplib.ftp v. 2.7; additions/changes are indicated)
@@ -1475,6 +1480,37 @@ if hasattr(ftplib, 'FTP_TLS'):
                 resp = None
             self._prot_p = True
             return resp
+
+
+class ftps(ftp):
+    ''' explicit ftps as defined in RFC 2228 and RFC 4217.
+        standard port to connect to is as in normal FTP (port 21)
+        ftps is supported by python >= 2.7
+    '''
+    def connect(self):
+        if not hasattr(ftplib, 'FTP_TLS'):
+            raise botslib.CommunicationError(_t('ftps is not supported by your python version, use >=2.7'))
+        if self.userscript and hasattr(self.userscript, 'keyfile'):
+            keyfile, certfile = botslib.runscript(
+                self.userscript,
+                self.scriptname,
+                'keyfile',
+                channeldict=self.channeldict
+            )
+        elif self.channeldict['keyfile']:
+            keyfile = self.channeldict['keyfile']
+            certfile = self.channeldict['certfile']
+        else:
+            keyfile = certfile = None
+        botslib.settimeout(botsglobal.ini.getint('settings', 'ftptimeout', fallback=10))
+        self.session = SecureFTP(keyfile=keyfile, certfile=certfile)
+        self.session.set_debuglevel(botsglobal.ini.getint('settings', 'ftpdebug', fallback=0))  # set debug level (0=no, 1=medium, 2=full debug)
+        self.session.set_pasv(not self.channeldict['ftpactive'])  # active or passive ftp
+        self.session.connect(host=self.channeldict['host'], port=int(self.channeldict['port']))
+        self.session.auth()
+        self.session.login(user=self.channeldict['username'], passwd=self.channeldict['secret'], acct=self.channeldict['ftpaccount'])
+        self.session.prot_p()
+        self.set_cwd()
 
 
 class ftpis(ftp):
@@ -1523,7 +1559,7 @@ class ftpis(ftp):
 class sftp(_comsession):
     ''' SFTP: SSH File Transfer Protocol (SFTP is not FTP run over SSH, SFTP is not Simple File Transfer Protocol)
         standard port to connect to is port 22.
-        requires paramiko and pycrypto to be installed
+        requires paramiko to be installed
         based on class ftp and ftps above with code from demo_sftp.py which is included with paramiko
         Mike Griffin 16/10/2010
         Henk-jan ebbers 20110802: when testing I found that the transport also needs to be closed. So changed transport ->self.transport, and close this in disconnect
@@ -1536,10 +1572,6 @@ class sftp(_comsession):
             import paramiko
         except Exception:
             raise ImportError(_t('Dependency failure: communicationtype "sftp" requires python library "paramiko".'))
-        try:
-            from Crypto import Cipher
-        except Exception:
-            raise ImportError(_t('Dependency failure: communicationtype "sftp" requires python library "pycrypto".'))
         # setup logging if required
         ftpdebug = botsglobal.ini.getint('settings', 'ftpdebug', fallback=0)
         if ftpdebug > 0:

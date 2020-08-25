@@ -77,7 +77,6 @@ extras_require = {
         'Genshi',    # for using templates/mapping to HTML)
         'paramiko',  # SFTP
         'pdfminer',  # parse pdf-files
-        'pycrypto',  # SFTP
         'xlrd',      # parse excel-files
     ]
 }
