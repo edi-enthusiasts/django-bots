@@ -616,10 +616,13 @@ def delete(request, *kw, **kwargs):
                 if form.cleaned_data['deltransactions']:
                     # while testing with very big loads, deleting gave error. Using raw SQL solved this.
                     cursor = connection.cursor()
-                    cursor.execute("DELETE FROM ta")
-                    cursor.execute("DELETE FROM filereport")
-                    cursor.execute("DELETE FROM report")
-                    transaction.commit_unless_managed()
+                    try:
+                        cursor.execute("DELETE FROM ta")
+                        cursor.execute("DELETE FROM filereport")
+                        cursor.execute("DELETE FROM report")
+                        transaction.commit()
+                    finally:
+                        cursor.close()
                     messages.add_message(request, messages.INFO, _t('Transactions are deleted.'))
                     botsglobal.logger.info(_t('Transactions are deleted.'))
                     # clean data files
@@ -664,16 +667,22 @@ def delete(request, *kw, **kwargs):
                 if form.cleaned_data['delcodelists']:
                     # while testing with very big loads, deleting gave error. Using raw SQL solved this.
                     cursor = connection.cursor()
-                    cursor.execute("DELETE FROM ccode")
-                    cursor.execute("DELETE FROM ccodetrigger")
-                    transaction.commit_unless_managed()
+                    try:
+                        cursor.execute("DELETE FROM ccode")
+                        cursor.execute("DELETE FROM ccodetrigger")
+                        transaction.commit()
+                    finally:
+                        cursor.close()
                     notification = _t('User code lists are deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 if form.cleaned_data['delpersist']:
                     cursor = connection.cursor()
-                    cursor.execute("DELETE FROM persist")
-                    transaction.commit_unless_managed()
+                    try:
+                        cursor.execute("DELETE FROM persist")
+                        transaction.commit()
+                    finally:
+                        cursor.close()
                     notification = _t('Persist data is deleted.')
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)

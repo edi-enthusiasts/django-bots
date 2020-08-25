@@ -86,7 +86,7 @@ def _cleanarchive():
 def _cleandatafile():
     ''' delete all data files older than xx days. '''
     vanaf = time.time() - (botsglobal.ini.getint('settings', 'maxdays', fallback=30) * 3600 * 24)
-    frompath = botslib.join(botsglobal.ini.get('directories', 'data', fallback=os.path.join('botssys','data')), '*')
+    frompath = botslib.join(botsglobal.ini.get('directories', 'data', fallback=os.path.join('botssys', 'data')), '*')
     for filename in glob.iglob(frompath):
         statinfo = os.stat(filename)
         if not stat.S_ISDIR(statinfo.st_mode):
