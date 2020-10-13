@@ -116,13 +116,13 @@ else:
     install_requires.append('pyinotify')
 
 kwargs = {
-    'name':                 'edi-bots-server',
+    'name':                 'django-bots',
     'version':              version,
     'author':               'hjebbers',
     'author_email':         'hjebbers@gmail.com',
     'maintainer':           'Lane Shaw',
     'maintainer_email':     'lshaw.tech@gmail.com',
-    'url':                  'https://github.com/edi-enthusiasts/edi-bots-server',
+    'url':                  'https://github.com/edi-enthusiasts/django-bots',
     'description':          'Bots open source edi translator',
     'long_description':     'Bots is complete software for edi (Electronic Data Interchange): translate and communicate. All major edi data formats are supported: edifact, x12, tradacoms, xml',
     'platforms':            'OS Independent (Written in an interpreted language)',

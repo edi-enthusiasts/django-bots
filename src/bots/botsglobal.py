@@ -3,7 +3,7 @@
 import pkg_resources
 
 # Globals used by Bots
-version = pkg_resources.get_distribution('edi-bots-server').version  # bots version
+version = pkg_resources.get_distribution('django-bots').version  # bots version
 db = None               # db-object
 ini = None              # ini-file-object that is read (bots.ini)
 logger = None           # logger or bots-engine
