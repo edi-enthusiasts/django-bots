@@ -72,13 +72,15 @@ extras_require = {
         'sphinx',
         'sphinx_rtd_theme',
     ],
+    'mysql': ['PyMySQL'],
+    'postgres': ['psycopg2'],
     'tools': [
         'ecdsa',     # dep of paramiko
         'Genshi',    # for using templates/mapping to HTML)
         'paramiko',  # SFTP
         'pdfminer',  # parse pdf-files
         'xlrd',      # parse excel-files
-    ]
+    ],
 }
 
 scripts = [

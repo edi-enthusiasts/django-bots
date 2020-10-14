@@ -84,7 +84,8 @@ def generalinit(configdir):
     botsglobal.ini.set('directories', 'usersysabs', os.path.abspath(os.path.dirname(importedusersys.__file__)))  # ???Find pathname usersys using imported usersys
     # botsglobal.usersysimportpath: used for imports from usersys
     botsglobal.usersysimportpath = importnameforusersys
-    botsglobal.ini.set('directories', 'templatehtml', botslib.join(botsglobal.ini.get('directories', 'usersysabs'), os.path.join('grammars','templatehtml','templates')))
+    botsglobal.ini.set('directories', 'templatehtml', botslib.join(botsglobal.ini.get('directories', 'usersysabs'), os.path.join('grammars', 'templatehtml', 'templates')))
+
     # ###########################################################################
     # Botssys####################################################################
     # 'directories','botssys': absolute path for config botssys
@@ -93,6 +94,7 @@ def generalinit(configdir):
     botsglobal.ini.set('directories', 'botssys', botslib.join(botssys))  # use absolute path
     botsglobal.ini.set('directories', 'data', botslib.join(botssys, 'data'))
     botsglobal.ini.set('directories', 'logging', botslib.join(botssys, 'logging'))
+
     # ###########################################################################
     # other inits##############################################################
     if botsglobal.ini.get('webserver', 'environment', fallback='development') != 'development':  # values in bots.ini are also used in setting up cherrypy
@@ -102,6 +104,7 @@ def generalinit(configdir):
     initbotscharsets()  # initialise bots charsets
     node.Node.checklevel = botsglobal.ini.getint('settings', 'get_checklevel', fallback=1)
     botslib.settimeout(botsglobal.ini.getint('settings', 'globaltimeout', fallback=10))
+
     # ###########################################################################
     # Init django#################################################################################
     os.environ['DJANGO_SETTINGS_MODULE'] = importnameforsettings
@@ -156,9 +159,9 @@ def connect():
         from . import botssqlite
         botsglobal.db = botssqlite.connect(database=botsglobal.settings.DATABASES['default']['NAME'])
     elif botsglobal.settings.DATABASES['default']['ENGINE'] == 'django.db.backends.mysql':
-        import MySQLdb
-        from MySQLdb import cursors
-        botsglobal.db = MySQLdb.connect(
+        import pymysql
+        from pymysql import cursors
+        botsglobal.db = pymysql.connect(
             host=botsglobal.settings.DATABASES['default']['HOST'],
             port=int(botsglobal.settings.DATABASES['default']['PORT']),
             db=botsglobal.settings.DATABASES['default']['NAME'],
@@ -168,7 +171,6 @@ def connect():
             **botsglobal.settings.DATABASES['default']['OPTIONS']
         )
     elif botsglobal.settings.DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
-        import psycopg2
         import psycopg2.extensions
         import psycopg2.extras
         psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)

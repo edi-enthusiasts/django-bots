@@ -722,7 +722,6 @@ def runengine(request, *kw, **kwargs):  # @UnusedVariable
         #  2. botsengine_path. Problem in apache. Use setting in bots.ini if there
         #  3. environment (config). OK
         #  4. commandstorun (eg --new) and routes. OK
-        python_executable_path = botsglobal.ini.get('settings', 'python_executable_path', fallback=sys.executable)
         botsengine_path = botsglobal.ini.get('settings', 'botsengine_path', fallback='bots-engine')
         environment = '-c' + botsglobal.ini.get('directories', 'config_org')
         lijst = [botsengine_path, environment]
