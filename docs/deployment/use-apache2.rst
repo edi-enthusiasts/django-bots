@@ -10,7 +10,7 @@ Use Apache2 as Webserver
 #. The ``mod_wsgi`` package is needed for this set up, so install it and add the line ``LoadModule wsgi_module modules/mod_wsgi.so`` to apache ``httpd.conf`` file.
 #. Restart the apache server, run the command ``httpd -M`` and you should see the ``wsgi_module`` at the end.
 #. Now we need to shuffle a few directories, create a base directory called **bots_app** in your home folder (do not run under root)
-#. Move the folders **botssys**, **usersys**, **media** and **config** from the bots installation directory to **bots_app** folder. 
+#. Move the folders **botssys**, **usersys**, **static** and **config** from the bots installation directory to **bots_app** folder. 
 #. Do not forget to create sym links for these folders in the installation dir to this new location.
 #. Now add the following files to the **bots_app** folder:
 
@@ -49,14 +49,14 @@ Use Apache2 as Webserver
            SSLCertificateFile /path/to/www.example.com.cert
            SSLCertificateKeyFile /path/to/www.example.com.key
 
-           Alias /media {PATH TO UR HOME}/bots_app/media
+           Alias /static {PATH TO UR HOME}/bots_app/static
 
            <Directory {PATH TO UR HOME}/bots_app/>
                 Order deny,allow
                 Allow from all
            </Directory>
 
-           <Directory {PATH TO UR HOME}/bots_app/media>
+           <Directory {PATH TO UR HOME}/bots_app/static>
                 Order deny,allow
                 Allow from all
            </Directory>
