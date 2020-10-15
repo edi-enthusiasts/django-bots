@@ -15,6 +15,8 @@ import os
 import setuptools
 import sys
 
+from src import bots  # @UnresolvedImport
+
 
 def read(*names, **kwargs):
     """Return the contents of a file.
@@ -43,8 +45,6 @@ def read(*names, **kwargs):
     with open(fn, encoding=kwargs.get('encoding', 'utf8')) as fd:
         return fd.read()
 
-
-version = '3.3.0-rc0'
 
 classifiers = [
     'Development Status :: 4 - Beta',
@@ -117,7 +117,7 @@ else:
 
 kwargs = {
     'name':                 'django-bots',
-    'version':              version,
+    'version':              bots.__version__,
     'author':               'hjebbers',
     'author_email':         'hjebbers@gmail.com',
     'maintainer':           'Lane Shaw',
@@ -139,4 +139,5 @@ kwargs = {
     'entry_points':         entry_points,
 }
 
-setuptools.setup(**kwargs)
+if __name__ == '__main__':
+    setuptools.setup(**kwargs)
