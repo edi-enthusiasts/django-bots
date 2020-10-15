@@ -22,7 +22,7 @@ application = django.core.handlers.wsgi.WSGIHandler()
 '''
 APACHE CONFIG FILE EXAMPLE:
 WSGIScriptAlias /    <wsgi script>
-Alias /media    <media directory>
+Alias /static    <static directory>
 
 Listen 8080
 NameVirtualHost *:8080

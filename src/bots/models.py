@@ -187,7 +187,7 @@ def script_link1(script, linktext):
     if os.path.exists(script):
         return '<a href="/srcfiler/?src=%s" target="_blank">%s</a>' % (urllib.parse.quote(script.encode("utf-8")), linktext)
     else:
-        return '<img src="/media/admin/img/icon-no.gif"></img> %s' % linktext
+        return '<img src="/static/bots/admin/img/icon-no.gif"></img> %s' % linktext
 
 
 def script_link2(script):
@@ -195,9 +195,9 @@ def script_link2(script):
         used in routes, channels (scripts are optional)
     '''
     if os.path.exists(script):
-        return '<a class="nowrap" href="/srcfiler/?src=%s" target="_blank"><img src="/media/admin/img/icon-yes.gif"></img> view</a>' % urllib.parse.quote(script.encode("utf-8"))
+        return '<a class="nowrap" href="/srcfiler/?src=%s" target="_blank"><img src="/static/bots/admin/img/icon-yes.gif"></img> view</a>' % urllib.parse.quote(script.encode("utf-8"))
     else:
-        return '<img src="/media/admin/img/icon-no.gif"></img>'
+        return '<img src="/static/bots/admin/img/icon-no.gif"></img>'
 
 
 class MultipleEmailField(models.CharField):
@@ -610,13 +610,13 @@ class routes(models.Model):
 
     def translt(self):
         if self.translateind == 0:
-            return '<img alt="%s" src="/media/admin/img/icon-no.gif"></img>' % (self.get_translateind_display())
+            return '<img alt="%s" src="/static/bots/admin/img/icon-no.gif"></img>' % (self.get_translateind_display())
         elif self.translateind == 1:
-            return '<img alt="%s" src="/media/admin/img/icon-yes.gif"></img>' % (self.get_translateind_display())
+            return '<img alt="%s" src="/static/bots/admin/img/icon-yes.gif"></img>' % (self.get_translateind_display())
         elif self.translateind == 2:
-            return '<img alt="%s" src="/media/images/icon-pass.gif"></img>' % (self.get_translateind_display())
+            return '<img alt="%s" src="/static/bots/images/icon-pass.gif"></img>' % (self.get_translateind_display())
         elif self.translateind == 3:
-            return '<img alt="%s" src="/media/images/icon-pass_parse.gif"></img>' % (self.get_translateind_display())
+            return '<img alt="%s" src="/static/bots/images/icon-pass_parse.gif"></img>' % (self.get_translateind_display())
 
     translt.allow_tags = True
     translt.admin_order_field = 'translateind'

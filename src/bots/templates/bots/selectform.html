@@ -1,15 +1,15 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 
 <!-- 20/01/2012 MJG - add datetimepicker widget to the from/until dates
      http://trentrichardson.com/examples/timepicker/  -->
 {% block extrahead %}
-<link rel="stylesheet" type="text/css" href="/media/css/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" href="/media/css/jquery-ui-timepicker-addon.css" />
-<script src="/media/admin/js/jquery.min.js"></script>
-<script src="/media/js/jquery-ui.min.js"></script>
-<script src="/media/js/jquery-ui-timepicker-addon.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'bots/css/jquery-ui.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'bots/css/jquery-ui-timepicker-addon.css' %}" />
+<script src="{% static 'bots/admin/js/jquery.min.js' %}"></script>
+<script src="{% static 'bots/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'bots/js/jquery-ui-timepicker-addon.js' %}"></script>
 <script type="text/javascript">
     $(function() {
         $("#id_datefrom").datetimepicker({

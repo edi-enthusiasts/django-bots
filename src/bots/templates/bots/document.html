@@ -1,6 +1,5 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
-{% load botsfilters %}
+{% load botsfilters i18n static %}
 
 {% block content %}
 <form action="{{ form.action }}" method="post">{% csrf_token %}
@@ -34,7 +33,7 @@
         {% for row in queryset.object_list %}
             <tr class="{% cycle 'row1' 'row2' %}">
                 <td>
-                    <div class="dropdown"><img class="action" src="/media/images/star.png" />
+                    <div class="dropdown"><img class="action" src="{% static 'bots/images/star.png' %}" />
                         <ul>
                             {% if row.incoming %} 
                                 <li><button class="botsheader" onclick="document.location.href='/detail/?inidta={{row.incoming}}'; return false;" >{% trans 'View detail' %}</button></li>

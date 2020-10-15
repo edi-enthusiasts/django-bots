@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import cherrypy
+import django.contrib.admin
+import inspect
 import sys
 import os
+from cherrypy import wsgiserver
 from django.core.handlers.wsgi import WSGIHandler
 from django.utils.translation import ugettext as _t
-import cherrypy
-from cherrypy import wsgiserver
 
 # bots-modules
 from . import botsglobal
@@ -51,17 +53,22 @@ def start():
     })
     # cherrypy handling of static files
     conf = {
-        '/': {
+        '/admin': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': 'media',
-            'tools.staticdir.root': botsglobal.ini.get('directories', 'botspath')
-        }
+            'tools.staticdir.dir': 'static/admin',
+            'tools.staticdir.root': os.path.abspath(os.path.dirname(inspect.getfile(django.contrib.admin))),
+        },
+        '/bots': {
+            'tools.staticdir.on': True,
+            'tools.staticdir.dir': 'static/bots',
+            'tools.staticdir.root': botsglobal.ini.get('directories', 'botspath'),
+        },
     }
-    servestaticfiles = cherrypy.tree.mount(None, '/media', conf)  # None: no cherrypy application (as this only serves static files)
+    servestaticfiles = cherrypy.tree.mount(None, '/static', conf)  # None: no cherrypy application (as this only serves static files)
     # cherrypy handling of django
     servedjango = WSGIHandler()  # was: servedjango = AdminMediaHandler(WSGIHandler()) but django does not need the AdminMediaHandler in this setup. is much faster.
     # cherrypy uses a dispatcher in order to handle the serving of static files and django.
-    dispatcher = wsgiserver.WSGIPathInfoDispatcher({'/': servedjango, '/media': servestaticfiles})
+    dispatcher = wsgiserver.WSGIPathInfoDispatcher({'/': servedjango, '/static': servestaticfiles})
     botswebserver = wsgiserver.CherryPyWSGIServer(
         bind_addr=('0.0.0.0', botsglobal.ini.getint('webserver', 'port', fallback=8080)),
         wsgi_app=dispatcher,

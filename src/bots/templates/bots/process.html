@@ -1,5 +1,5 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block content %}
 <form action="{{ form.action }}" method="post">{% csrf_token %}
@@ -30,7 +30,7 @@
             <tr class="{% cycle 'row1' 'row2' %}">
                 <td>
                     <div class="dropdown">
-                        <img class="action" src="/media/images/star.png" />
+                        <img class="action" src="{% static 'bots/images/star.png' %}" />
                     </div>
                 </td>
                 <td>{{row.get_statust_display}}</td>
