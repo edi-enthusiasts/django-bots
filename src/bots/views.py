@@ -497,7 +497,7 @@ def plugin(request, *kw, **kwargs):
                     request.FILES['file'].close()  # seems to be needed according to django docs.
             else:
                 messages.add_message(request, messages.INFO, _t('No plugin read.'))
-        return shortcuts.redirect('/home')
+        return shortcuts.redirect('home')
 
 
 def plugin_index(request, *kw, **kwargs):
@@ -518,7 +518,7 @@ def plugin_index(request, *kw, **kwargs):
                 notification = _t('Configuration index file is read successful.')
                 botsglobal.logger.info(notification)
                 messages.add_message(request, messages.INFO, notification)
-        return shortcuts.redirect('/home')
+        return shortcuts.redirect('home')
 
 
 def plugout_index(request, *kw, **kwargs):  # @UnusedVariable
@@ -540,13 +540,13 @@ def plugout_index(request, *kw, **kwargs):  # @UnusedVariable
             notification = _t('Configuration index file "%s" is written successful.') % filename
             botsglobal.logger.info(notification)
             messages.add_message(request, messages.INFO, notification)
-        return shortcuts.redirect('/home')
+        return shortcuts.redirect('home')
 
 
 def plugout_backup(request, *kw, **kwargs):
     if request.method == 'GET':
         plugout_backup_core(request, *kw, **kwargs)
-    return shortcuts.redirect('/home')
+    return shortcuts.redirect('home')
 
 
 def plugout_backup_core(request, *kw, **kwargs):  # @UnusedVariable
@@ -597,7 +597,7 @@ def plugout(request, *kw, **kwargs):  # @UnusedVariable
                     # response['Content-Length'] = os.path.getsize(filename)
                     response['Content-Disposition'] = 'attachment; filename=' + 'plugin' + time.strftime('_%Y%m%d') + '.zip'
                     return response
-    return shortcuts.redirect('/home')
+    return shortcuts.redirect('home')
 
 
 def delete(request, *kw, **kwargs):
@@ -712,7 +712,7 @@ def delete(request, *kw, **kwargs):
                     messages.add_message(request, messages.INFO, notification)
                     botsglobal.logger.info(notification)
                 botsglobal.logger.info(_t('Finished deleting in configuration.'))
-    return shortcuts.redirect('/home')
+    return shortcuts.redirect('home')
 
 
 def runengine(request, *kw, **kwargs):  # @UnusedVariable
@@ -744,7 +744,7 @@ def runengine(request, *kw, **kwargs):  # @UnusedVariable
                 notification = _t('Trying to run "bots-engine", but another instance of "bots-engine" is running. Please try again later.')
                 messages.add_message(request, messages.INFO, notification)
                 botsglobal.logger.info(notification)
-                return shortcuts.redirect('/home')
+                return shortcuts.redirect('home')
             else:
                 engine_socket.close()  # and close the socket
             # run engine
@@ -756,7 +756,7 @@ def runengine(request, *kw, **kwargs):  # @UnusedVariable
                 botsglobal.logger.info(notification)
             else:
                 messages.add_message(request, messages.INFO, _t('Bots-engine is started.'))
-    return shortcuts.redirect('/home')
+    return shortcuts.redirect('home')
 
 
 def sendtestmailmanagers(request, *kw, **kwargs):  # @UnusedVariable
@@ -768,7 +768,7 @@ def sendtestmailmanagers(request, *kw, **kwargs):  # @UnusedVariable
         notification = _t('Trying to send test mail, but in bots.ini, section [settings], "sendreportiferror" is not "True".')
         botsglobal.logger.info(notification)
         messages.add_message(request, messages.INFO, notification)
-        return shortcuts.redirect('/home')
+        return shortcuts.redirect('home')
 
     from django.core.mail import mail_managers
     try:
@@ -777,8 +777,8 @@ def sendtestmailmanagers(request, *kw, **kwargs):  # @UnusedVariable
         txt = botslib.txtexc()
         messages.add_message(request, messages.INFO, _t('Sending test mail failed.'))
         botsglobal.logger.info(_t('Sending test mail failed, error:\n%(txt)s'), {'txt': txt})
-        return shortcuts.redirect('/home')
+        return shortcuts.redirect('home')
     notification = _t('Sending test mail succeeded.')
     messages.add_message(request, messages.INFO, notification)
     botsglobal.logger.info(notification)
-    return shortcuts.redirect('/home')
+    return shortcuts.redirect('home')

@@ -1,8 +1,8 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block content %}
-<form action="{{ form.action }}" method="post">{% csrf_token %}
+<form action="{% url 'index' %}{{ form.action }}" method="post">{% csrf_token %}
     <input onClick="history.back()" type="button" value="{% trans 'Back' %}" />
     <input type="submit" name="2select" value="{% trans 'Change selection' %}" />
     <input type="submit" name="2incoming" value="{% trans 'Incoming (same selection)' %}" />
@@ -30,7 +30,7 @@
             <tr class="{% cycle 'row1' 'row2' %}">
                 <td>
                     <div class="dropdown">
-                        <img class="action" src="/media/images/star.png" />
+                        <img class="action" src="{% static 'bots/images/star.png' %}" />
                     </div>
                 </td>
                 <td>{{row.get_statust_display}}</td>

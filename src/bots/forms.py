@@ -19,6 +19,7 @@ class Select(Form):
     page = IntegerField(required=False, initial=1, widget=HIDDENINPUT())
     sortedby = CharField(initial='ts', widget=HIDDENINPUT())
     sortedasc = BooleanField(initial=False, required=False, widget=HIDDENINPUT())
+    select_desc = 'data'
 
 
 class View(Form):
@@ -31,7 +32,8 @@ class View(Form):
 
 class SelectReports(Select):
     template = 'bots/selectform.html'
-    action = '/reports/'
+    action = 'reports/'
+    select_desc = 'reports'
     status = ChoiceField(
         [
             models.DEFAULT_ENTRY,
@@ -45,13 +47,14 @@ class SelectReports(Select):
 
 class ViewReports(View):
     template = 'bots/reports.html'
-    action = '/reports/'
+    action = 'reports/'
     status = IntegerField(required=False, initial='', widget=HIDDENINPUT())
 
 
 class SelectIncoming(Select):
     template = 'bots/selectform.html'
-    action = '/incoming/'
+    action = 'incoming/'
+    select_desc = 'incoming files'
     statust = ChoiceField(
         [
             models.DEFAULT_ENTRY,
@@ -84,7 +87,7 @@ class SelectIncoming(Select):
 
 class ViewIncoming(View):
     template = 'bots/incoming.html'
-    action = '/incoming/'
+    action = 'incoming/'
     statust = IntegerField(required=False, initial='', widget=HIDDENINPUT())
     idroute = CharField(required=False, widget=HIDDENINPUT())
     fromchannel = CharField(required=False, widget=HIDDENINPUT())
@@ -100,7 +103,8 @@ class ViewIncoming(View):
 
 class SelectDocument(Select):
     template = 'bots/selectform.html'
-    action = '/document/'
+    action = 'document/'
+    select_desc = 'documents'
     status = TypedChoiceField(
         [
             (0, "---------"),
@@ -129,7 +133,7 @@ class SelectDocument(Select):
 
 class ViewDocument(View):
     template = 'bots/document.html'
-    action = '/document/'
+    action = 'document/'
     status = IntegerField(required=False, initial=0, widget=HIDDENINPUT())
     idroute = CharField(required=False, widget=HIDDENINPUT())
     frompartner = CharField(required=False, widget=HIDDENINPUT())
@@ -142,7 +146,8 @@ class ViewDocument(View):
 
 class SelectOutgoing(Select):
     template = 'bots/selectform.html'
-    action = '/outgoing/'
+    action = 'outgoing/'
+    select_desc = 'outgoing files'
     statust = ChoiceField(
         [
             models.DEFAULT_ENTRY,
@@ -173,7 +178,7 @@ class SelectOutgoing(Select):
 
 class ViewOutgoing(View):
     template = 'bots/outgoing.html'
-    action = '/outgoing/'
+    action = 'outgoing/'
     statust = IntegerField(required=False, initial='', widget=HIDDENINPUT())
     idroute = CharField(required=False, widget=HIDDENINPUT())
     tochannel = CharField(required=False, widget=HIDDENINPUT())
@@ -187,7 +192,8 @@ class ViewOutgoing(View):
 
 class SelectProcess(Select):
     template = 'bots/selectform.html'
-    action = '/process/'
+    action = 'process/'
+    select_desc = 'process errors'
     idroute = ChoiceField([], required=False, initial='')
     lastrun = BooleanField(required=False, initial=False)
 
@@ -198,14 +204,15 @@ class SelectProcess(Select):
 
 class ViewProcess(View):
     template = 'bots/process.html'
-    action = '/process/'
+    action = 'process/'
     idroute = CharField(required=False, widget=HIDDENINPUT())
     lastrun = BooleanField(required=False, initial=False, widget=HIDDENINPUT())
 
 
 class SelectConfirm(Select):
     template = 'bots/selectform.html'
-    action = '/confirm/'
+    action = 'confirm/'
+    select_desc = 'confirmations'
     confirmtype = ChoiceField(models.CONFIRMTYPELIST, required=False, initial='0')
     confirmed = ChoiceField(
         [
@@ -236,7 +243,7 @@ class SelectConfirm(Select):
 
 class ViewConfirm(View):
     template = 'bots/confirm.html'
-    action = '/confirm/'
+    action = 'confirm/'
     confirmtype = CharField(required=False, widget=HIDDENINPUT())
     confirmed = CharField(required=False, widget=HIDDENINPUT())
     idroute = CharField(required=False, widget=HIDDENINPUT())

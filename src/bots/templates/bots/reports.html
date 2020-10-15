@@ -1,9 +1,9 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 
 {% block content %}
-<form action="{{ form.action }}" method="post">{% csrf_token %}
+<form action="{% url 'index' %}{{ form.action }}" method="post">{% csrf_token %}
     <input onClick="history.back()" type="button" value="{% trans 'Back' %}" />
     <input type="submit" name="2select" value="{% trans 'Change selection' %}" />
     {% include "bots/paginator.html" %}
@@ -30,7 +30,7 @@
         {% for row in queryset.object_list %}
             <tr  class="{% cycle 'row1' 'row2' %}">
                 <td>
-                    <div class="dropdown"><img class="action" src="/media/images/star.png" />
+                    <div class="dropdown"><img class="action" src="{% static 'bots/images/star.png' %}" />
                         <ul>
                             <li><button class="botsheader" type="submit" name="report2incoming" value="{{row.idta}}" >{% trans 'View incoming' %}</button></li>
                             <li><button class="botsheader" type="submit" name="report2outgoing" value="{{row.idta}}" >{% trans 'View outgoing' %}</button></li>
@@ -42,12 +42,12 @@
                 </td>
                 <td>{% if row.status %}
                         {% if row.lasterror or row.lastok or row.lastopen %}
-                            <img src="/media/admin/img/icon_error.gif" style="width: 1em;"/>
+                            <img src="{% static 'bots/admin/img/icon_error.gif' %}" style="width: 1em;" />
                         {% else %}
-                            <img src="/media/admin/img/icon_alert.gif" style="width: 1em;"/>
+                            <img src="{% static 'bots/admin/img/icon_alert.gif' %}" style="width: 1em;" />
                         {% endif %}
                     {% else %}
-                        <img src="/media/admin/img/icon_success.gif" style="width: 1em;"/>
+                        <img src="{% static 'bots/admin/img/icon_success.gif' %}" style="width: 1em;" />
                     {% endif %}
                 </td>
                 <td>{{row.type}}</td>

@@ -2,7 +2,7 @@
 # Read the Docs configuration file
 # See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
 
-# Sphinx build configuration for edi-bots-server
+# Sphinx build configuration for django-bots
 
 version: 2
 

@@ -1,11 +1,11 @@
+{% load i18n static %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>Bots File Viewer</title>
     <META Http-Equiv="Pragma" Content="no-cache" />
-    <link rel="stylesheet" type="text/css" href="/media/css/bots.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'bots/css/bots.css' %}" />
 </head>
-{% load i18n %}
 <body>
 	{% if error_content %} 
 		{{ error_content }} 
@@ -14,9 +14,9 @@
 			{% for ta in idtas %}
 				<table border="1" cellpadding="3" cellspacing="0" >
 				<tr>
-				<td width="90px" align="center">{% if ta.has_previous %}<a href="/filer/?action=previous&amp;idta={{ta.idta}}">{% trans 'Previous' %}</a>{% endif %}</td>
-				<td width="90px" align="center">{% if ta.has_next %}<a href="/filer/?action=next&amp;idta={{ta.idta}}">{% trans 'Next' %}</a>{% endif %}</td>
-				<td width="90px" align="center">{% if ta.has_file %}<a href="/filer/?action=downl&amp;idta={{ta.idta}}">{% trans 'Download' %}</a>{% endif %}</td>
+				<td width="90px" align="center">{% if ta.has_previous %}<a href="{% url 'filer' %}?action=previous&amp;idta={{ta.idta}}">{% trans 'Previous' %}</a>{% endif %}</td>
+				<td width="90px" align="center">{% if ta.has_next %}<a href="{% url 'filer' %}?action=next&amp;idta={{ta.idta}}">{% trans 'Next' %}</a>{% endif %}</td>
+				<td width="90px" align="center">{% if ta.has_file %}<a href="{% url 'filer' %}?action=downl&amp;idta={{ta.idta}}">{% trans 'Download' %}</a>{% endif %}</td>
 				<td width="90px" align="center">{{ ta.get_status_display }}</td>
 				<td width="90px">
 					<div class="info" align="center">info

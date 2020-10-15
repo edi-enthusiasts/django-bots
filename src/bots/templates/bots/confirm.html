@@ -1,10 +1,9 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
-{% load botsfilters %}
+{% load botsfilters i18n static %}
 
 
 {% block content %}
-<form action="{{ form.action }}" method="post">{% csrf_token %}
+<form action="{% url 'index' %}{{ form.action }}" method="post">{% csrf_token %}
     <input onClick="history.back()" type="button" value="{% trans 'Back' %}" />
     <input type="submit" name="2select" value="{% trans 'Change selection' %}" />
     <input type="submit" name="2incoming" value="{% trans 'Incoming (same selection)' %}" />
@@ -36,18 +35,18 @@
         {% for row in queryset.object_list %}
             <tr class="{% cycle 'row1' 'row2' %}">
                 <td>
-                    <div class="dropdown"><img class="action" src="/media/images/star.png" />
+                    <div class="dropdown"><img class="action" src="{% static 'bots/images/star.png' %}" />
                         <ul>
-                            <li><button class="botsheader" onclick="document.location.href='/detail/?outidta={{row.idta}}'; return false;">{% trans 'View detail' %}</button></li>
+                            <li><button class="botsheader" onclick="document.location.href='{% url 'detail' %}?outidta={{row.idta}}'; return false;">{% trans 'View detail' %}</button></li>
                             <li><button class="botsheader" type="submit" name="confirm" value="{{row.idta}}" >{% trans 'Confirm manual' %}</button></li>
                         </ul>
                     </div>
                 </td>
                 <td class="nowrap">{{row.ts|date:"Y-m-d H:i:s"}}</td>
-                <td><a href="/filer/?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink">{{row.filename|shortpath}}</a></td>
+                <td><a href="{% url 'filer' %}?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink">{{row.filename|shortpath}}</a></td>
                 <td>{{row.confirmtype}}</td>
                 <td>{% if row.confirmidta > 0 %}
-                        <a href="/filer/?action=this&amp;idta={{row.confirmidta}}" target="_blank" class="botslink">{{row.confirmidta}}</a>
+                        <a href="{% url 'filer' %}?action=this&amp;idta={{row.confirmidta}}" target="_blank" class="botslink">{{row.confirmidta}}</a>
                     {% else  %}
                         {% if row.confirmidta %}
                             {% trans 'Manual confirm' %}

@@ -1,18 +1,17 @@
-{% load admin_static %}{% load url from future %}<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %} xmlns="http://www.w3.org/1999/xhtml">
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}"{% if LANGUAGE_BIDI %} dir="rtl"{% endif %} xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>{{ bots_http_path }}</title>
-    <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
+    <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static 'bots/admin/css/base.css' %}{% endblock %}" />
     {% block extrastyle %}{% endblock %}
-    <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{{ STATIC_URL }}css/ie.css{% endblock %}" /><![endif]-->
+    <!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="{% block stylesheet_ie %}{% static 'bots/admin/css/ie.css' %}{% endblock %}" /><![endif]-->
     {% block extrahead %}{% endblock %}
-    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{{ STATIC_URL }}css/rtl.css{% endblock %}" />{% endif %}
-    <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{{ STATIC_URL }}{% endfilter %}";</script>
-    <link rel="icon" type="image/png" href="/media/images/favicon.ico"/>
-    <link rel="stylesheet" type="text/css" href="/media/css/bots.css" />
+    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static 'bots/admin/css/rtl.css' %}{% endblock %}" />{% endif %}
+    <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static '' %}bots/admin/{% endfilter %}";</script>
+    <link rel="icon" type="image/png" href="{% static 'bots/images/favicon.ico' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'bots/css/bots.css' %}" />
 </head>
-{% load i18n %}
-
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
 {% if not is_popup %}

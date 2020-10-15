@@ -15,6 +15,8 @@ import os
 import setuptools
 import sys
 
+from src import bots  # @UnresolvedImport
+
 
 def read(*names, **kwargs):
     """Return the contents of a file.
@@ -43,8 +45,6 @@ def read(*names, **kwargs):
     with open(fn, encoding=kwargs.get('encoding', 'utf8')) as fd:
         return fd.read()
 
-
-version = '3.3.0-rc0'
 
 classifiers = [
     'Development Status :: 4 - Beta',
@@ -116,13 +116,13 @@ else:
     install_requires.append('pyinotify')
 
 kwargs = {
-    'name':                 'edi-bots-server',
-    'version':              version,
+    'name':                 'django-bots',
+    'version':              bots.__version__,
     'author':               'hjebbers',
     'author_email':         'hjebbers@gmail.com',
     'maintainer':           'Lane Shaw',
     'maintainer_email':     'lshaw.tech@gmail.com',
-    'url':                  'https://github.com/edi-enthusiasts/edi-bots-server',
+    'url':                  'https://github.com/edi-enthusiasts/django-bots',
     'description':          'Bots open source edi translator',
     'long_description':     'Bots is complete software for edi (Electronic Data Interchange): translate and communicate. All major edi data formats are supported: edifact, x12, tradacoms, xml',
     'platforms':            'OS Independent (Written in an interpreted language)',
@@ -139,4 +139,5 @@ kwargs = {
     'entry_points':         entry_points,
 }
 
-setuptools.setup(**kwargs)
+if __name__ == '__main__':
+    setuptools.setup(**kwargs)

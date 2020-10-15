@@ -11,6 +11,6 @@ Migrate Django to version 1.3 or greater:
 * :doc:`Restart <../get-bots-running>` the bots webserver
 * Be sure to use the correct bots upgrade plugin to match the version of Django you have installed.
 * Bots includes copies of some Django files in it's directory structure. You may need to refresh these from your current Django version if you notice any admin interface "bugs". (eg. selection checkboxes not working correctly).
-    * Copy from: ``<python dir>\Lib\site-packages\django\contrib\admin\media``
-    * Copy to: ``<python dir>\Lib\site-packages\bots\media``
+    * Copy from: ``<python dir>\Lib\site-packages\django\contrib\admin\static\admin``
+    * Copy to: ``<python dir>\Lib\site-packages\bots\static\bots\admin``
     * Include sub-directories: css, img, js

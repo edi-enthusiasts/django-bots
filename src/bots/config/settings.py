@@ -3,6 +3,7 @@
 
 import os
 import bots
+import django
 PROJECT_PATH = os.path.abspath(os.path.dirname(bots.__file__))
 
 # ### settings for sending bots error reports via email ###
@@ -76,7 +77,7 @@ USE_I18N = True
 # *************************************************************************
 
 # ### path settings ###
-STATIC_URL = '/media/'
+STATIC_URL = '/static/'
 STATIC_ROOT = PROJECT_PATH + '/'
 ROOT_URLCONF = 'bots.urls'
 LOGIN_URL = '/login/'
@@ -130,19 +131,39 @@ MIDDLEWARE_CLASSES = (
     'bots.persistfilters.FilterPersistMiddleware',
 )
 INSTALLED_APPS = (
+    'bots',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.admin',
     'django.contrib.messages',
-    'bots',
+    'django.contrib.staticfiles',
 )
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.request',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.static',
-    'bots.bots_context.set_context',
-)
+
+if django.VERSION < (1, 8):
+    TEMPLATE_CONTEXT_PROCESSORS = (
+        'django.contrib.auth.context_processors.auth',
+        'django.core.context_processors.debug',
+        'django.core.context_processors.i18n',
+        'django.core.context_processors.request',
+        'django.contrib.messages.context_processors.messages',
+        'django.core.context_processors.static',
+        'bots.bots_context.set_context',
+    )
+else:
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                    'bots.bots_context.set_context',
+                ],
+            },
+        },
+    ]

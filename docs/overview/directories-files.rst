@@ -66,8 +66,8 @@ Directories and Files
     * ``bots/install``: contains an empty sqlite database and default configuration files.
     * ``bots/installwin``: (windows) python libraries used during installation.
     * ``bots/locale``: translation/internationalisation files for use of another language.
-    * ``bots/media``: static data for bots-webserver (CSS, html, images, JavaScript)
     * ``bots/sql``: sql files for initialising a new database.
+    * ``bots/static``: static data for bots-webserver (CSS, html, images, JavaScript)
     * ``bots/templates``: templates for bots-webserver
     * ``bots/templatetags``: custom template-tags for use in django.
     * ``bots/usersys``: user scripts.

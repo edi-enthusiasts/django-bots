@@ -7,7 +7,7 @@
 <p>&nbsp;The plugin that is made will be offered to you as a download.</p>
 <p>&nbsp;Select what you need in the plugin:</p>
 <br/>
-<form action="/plugout" method="POST" enctype="multipart/form-data">{% csrf_token %}
+<form action="{% url 'plugout' %}" method="POST" enctype="multipart/form-data">{% csrf_token %}
     <table>
         {{ form }}
     </table>
