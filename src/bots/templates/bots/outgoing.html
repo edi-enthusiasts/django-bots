@@ -2,7 +2,7 @@
 {% load botsfilters i18n static %}
 
 {% block content %}
-<form action="{{ form.action }}" method="post">{% csrf_token %}
+<form action="{% url 'index' %}{{ form.action }}" method="post">{% csrf_token %}
     <input onClick="history.back()" type="button" value="{% trans 'Back' %}" />
     <input type="submit" name="2select" value="{% trans 'Change selection' %}" />
     <input type="submit" name="2incoming" value="{% trans 'Incoming (same selection)' %}" />
@@ -41,7 +41,7 @@
                 <td>
                     <div class="dropdown"><img class="action" src="{% static 'bots/images/star.png' %}" />
                         <ul>
-                            <li><button class="botsheader" onclick="document.location.href='/detail/?outidta={{row.idta}}'; return false;" >{% trans 'View detail' %}</button></li>
+                            <li><button class="botsheader" onclick="document.location.href='{% url 'detail' %}?outidta={{row.idta}}'; return false;" >{% trans 'View detail' %}</button></li>
                             <li><button class="botsheader" type="submit" name="retransmit" value="{{row.idta}}" >{% trans 'Resend' %}</button></li>
                             {% if row.statust == 1 %}
                             <li><button class="botsheader" type="submit" name="noautomaticretry" value="{{row.idta}}" >{% trans 'No automatic retry' %}</button></li>
@@ -53,7 +53,7 @@
                 <td><input disabled="True" type="checkbox" {% if row.retransmit %}checked{% endif %}/></td>
                 <td class="nowrap">{{row.numberofresends}}</td>
                 <td class="nowrap">{{row.ts|date:"Y-m-d H:i:s"}}</td>
-                <td><a href="/filer/?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink" title="{{row.filename}}" >{{row.filename|shortpath}}</a></td>
+                <td><a href="{% url 'filer' %}?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink" title="{{row.filename}}" >{{row.filename|shortpath}}</a></td>
                 <td>{{row.nrmessages}}</td>
                 <td class="nowrap">{{row.editype}}</td>
                 <td class="nowrap">{{row.messagetype}}</td>

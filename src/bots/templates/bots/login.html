@@ -1,0 +1,12 @@
+{% extends "admin/login.html" %}
+
+{% block content %}
+    {% if request.GET.next %}
+        {% with next=request.GET.next %}
+            {{ block.super }}
+        {% endwith %}
+    {% else %}
+	    {% url 'home' as next %}
+        {{ block.super }}
+    {% endif %}
+{% endblock %}

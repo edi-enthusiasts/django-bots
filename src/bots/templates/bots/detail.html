@@ -37,7 +37,7 @@
                 <td class="nowrap">{{row.ind}}</td>
                 <td>{{row.get_status_display}}</td>
                 <td>{{row.get_statust_display}}</td>
-                <td><a href="/filer/?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink" title="{{row.filename}}">{{row.filename|shortpath}}</a></td>
+                <td><a href="{% url 'filer' %}?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink" title="{{row.filename}}">{{row.filename|shortpath}}</a></td>
                 <td>{{row.nrmessages}}</td>
                 <td class="nowrap">{{row.editype}}</td>
                 <td class="nowrap">{{row.messagetype}}</td>

@@ -2,7 +2,7 @@
 {% load botsfilters i18n static %}
 
 {% block content %}
-<form action="{{ form.action }}" method="post">{% csrf_token %}
+<form action="{% url 'index' %}{{ form.action }}" method="post">{% csrf_token %}
     <input onClick="history.back()" type="button" value="{% trans 'Back' %}" />
     <input type="submit" name="2select" value="{% trans 'Change selection' %}" />
     {% include "bots/paginator.html" %}
@@ -36,20 +36,20 @@
                     <div class="dropdown"><img class="action" src="{% static 'bots/images/star.png' %}" />
                         <ul>
                             {% if row.incoming %} 
-                                <li><button class="botsheader" onclick="document.location.href='/detail/?inidta={{row.incoming}}'; return false;" >{% trans 'View detail' %}</button></li>
-                                <li><button class="botsheader" onclick="window.open('/filer/?action=this&amp;idta={{row.incoming}}'); return false;" >{% trans 'View incoming file' %}</button></li>
+                                <li><button class="botsheader" onclick="document.location.href='{% url 'detail' %}?inidta={{row.incoming}}'; return false;" >{% trans 'View detail' %}</button></li>
+                                <li><button class="botsheader" onclick="window.open('{% url 'filer' %}?action=this&amp;idta={{row.incoming}}'); return false;" >{% trans 'View incoming file' %}</button></li>
                                 <li><button class="botsheader" type="submit" name="retransmit" value="{{row.incoming}}" >{% trans 'Rereceive' %}</button></li>
                             {% else %}
-                                <li><button class="botsheader" onclick="window.open('/filer/?action=this&amp;idta={{row.outgoing}}'); return false;" >{% trans 'View outgoing file' %}</button></li>
+                                <li><button class="botsheader" onclick="window.open('{% url 'filer' %}?action=this&amp;idta={{row.outgoing}}'); return false;" >{% trans 'View outgoing file' %}</button></li>
                             {% endif %}
                         </ul>
                     </div>
                 </td>
                 <td>{{row.get_status_display}}</td>
-                <td><a href="/filer/?action=this&amp;idta={{row.idta}}" class="botslink" target="_blank" >{{row.botskey}}</a></td>
+                <td><a href="{% url 'filer' %}?action=this&amp;idta={{row.idta}}" class="botslink" target="_blank" >{{row.botskey}}</a></td>
                 <td>{{row.reference}}</td>
                 <td class="nowrap">{{row.ts|date:"Y-m-d H:i:s"}}</td>
-                <td class="nowrap"><a href="/filer/?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink" title="{{row.infilename}}" >{{row.filename|shortpath}}</a></td>
+                <td class="nowrap"><a href="{% url 'filer' %}?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink" title="{{row.infilename}}" >{{row.filename|shortpath}}</a></td>
                 <td class="nowrap">
                     {% if row.confirmtype %}
                         {{row.confirmtype}}
@@ -59,7 +59,7 @@
                 </td>
                 <td class="nowrap">
                     {% if row.confirmidta > 0 %}
-                        <a href="/filer/?action=this&amp;idta={{row.confirmidta}}" target="_blank" class="botslink">{{row.confirmidta}}</a>
+                        <a href="{% url 'filer' %}?action=this&amp;idta={{row.confirmidta}}" target="_blank" class="botslink">{{row.confirmidta}}</a>
                     {% else %}
                         {% if row.confirmidta %}
                             {% trans 'Manual confirm' %}

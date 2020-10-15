@@ -2,7 +2,7 @@
 {% load botsfilters i18n static %}
 
 {% block content %}
-<form action="{{ form.action }}" method="post">{% csrf_token %}
+<form action="{% url 'index' %}{{ form.action }}" method="post">{% csrf_token %}
     <input onClick="history.back()" type="button" value="{% trans 'Back' %}" />
     <input type="submit" name="2select" value="{% trans 'Change selection' %}" />
     <input type="submit" name="2outgoing" value="{% trans 'Outgoing (same selection)' %}" />
@@ -44,7 +44,7 @@
                 <td>
                     <div class="dropdown"><img class="action" src="{% static 'bots/images/star.png' %}" />
                         <ul>
-                            <li><button class="botsheader" onclick="document.location.href='/detail/?inidta={{row.idta}}'; return false;" >{% trans 'View detail' %}</button></li>
+                            <li><button class="botsheader" onclick="document.location.href='{% url 'detail' %}?inidta={{row.idta}}'; return false;" >{% trans 'View detail' %}</button></li>
                             <li><button class="botsheader" type="submit" name="retransmit" value="{{row.idta}}" >{% trans 'Rereceive' %}</button></li>
                             <li><button class="botsheader" type="submit" name="delete" value="{{row.idta}}" >{% trans 'Delete file' %}</button></li>
                         </ul>
@@ -55,16 +55,16 @@
                 <td class="nowrap">{{row.ts|date:"Y-m-d H:i:s" }}</td>
                 <td class="nowrap">{{row.idroute}}</td>
                 <td class="nowrap">{{row.fromchannel}}</td>
-                <td><a href="/filer/?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink" title="{{row.infilename}}" >{{row.infilename|shortpath}}</a></td>
+                <td><a href="{% url 'filer' %}?action=this&amp;idta={{row.idta}}" target="_blank" class="botslink" title="{{row.infilename}}" >{{row.infilename|shortpath}}</a></td>
                 <td class="nowrap">{{row.ineditype}}</td>
                 <td class="nowrap">{{row.inmessagetype}}</td>
                 <td>{{row.nrmessages}}</td>
                 <td class="nowrap">{% if row.filesize %}{{row.filesize|filesizeformat}}{% endif %}</td>
                 <td class="nowrap">{{row.tochannel}}</td>
                 <td>{% if row.outfilename == '(several values)' %}
-                        <a href="/detail/?inidta={{row.idta}}" class="botslink">{{row.outfilename}}</a>
+                        <a href="{% url 'detail' %}?inidta={{row.idta}}" class="botslink">{{row.outfilename}}</a>
                     {% else %}
-                        <a href="/filer/?action=this&amp;idta={{row.outidta}}" target="_blank" class="botslink" title="{{row.outfilename}}">{{row.outfilename|shortpath}}</a>
+                        <a href="{% url 'filer' %}?action=this&amp;idta={{row.outidta}}" target="_blank" class="botslink" title="{{row.outfilename}}">{{row.outfilename|shortpath}}</a>
                     {% endif %}</td>
                 <td class="nowrap">{{row.outeditype}}</td>
                 <td class="nowrap">{{row.outmessagetype}}</td>

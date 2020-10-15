@@ -31,18 +31,10 @@
 
 {% block content %}
 <br/>
-{% if request.META.PATH_INFO == "/processes/" %}
-    <h1>Select process errors</h1>
-{% else %}
-    {% if request.META.PATH_INFO == "/confirm/" %}
-        <h1>Select confirmations</h1>
-    {% else %}
-        <h1>Select {{request.META.PATH_INFO|cut:'/'}}</h1>
-    {% endif %}
-{% endif %}
+<h1>{% blocktrans %}Select {{ form.select_desc|default:'data' }}{% endblocktrans %}</h1>
 <p>&nbsp;Make your required selections below:</p>
 <br/>
-<form action="{{ form.action }}" method="post">{% csrf_token %}
+<form action="{% url 'index' %}{{ form.action }}" method="post">{% csrf_token %}
     <table>
         {{ form.as_table }}
     </table>
