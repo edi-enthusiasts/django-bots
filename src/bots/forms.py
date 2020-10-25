@@ -267,19 +267,19 @@ class PlugoutForm(Form):
     fileconfiguration = \
         BooleanField(required=False, initial=True, label='Script files',            help_text='[bots/usersys] Grammars, mapping scrips, routes scripts, etc.')
     infiles = \
-        BooleanField(required=False, initial=True, label='Input files',             help_text='[bots/botssys/infile] Example/test edi files.')
+        BooleanField(required=False, initial=True, label='Input files',             help_text='[botssys/infile] Example/test edi files.')
     charset = \
         BooleanField(required=False, initial=False, label='Edifact character sets', help_text='[bots/usersys/charsets] Seldom needed, only if changed.')
     databasetransactions = \
         BooleanField(required=False, initial=False, label='Database transactions',  help_text='Transaction details of all bots runs from the database. Only for support purposes, on request. May generate a very large plugin!')
     data = \
-        BooleanField(required=False, initial=False, label='All transaction files',  help_text='[bots/botssys/data] Copies of all incoming, intermediate and outgoing files. Only for support purposes, on request. May generate a very large plugin!')
+        BooleanField(required=False, initial=False, label='All transaction files',  help_text='[botssys/data] Copies of all incoming, intermediate and outgoing files. Only for support purposes, on request. May generate a very large plugin!')
     logfiles = \
-        BooleanField(required=False, initial=False, label='Log files',              help_text='[bots/botssys/logging] Log files from engine, webserver etc. Only for support purposes, on request.')
+        BooleanField(required=False, initial=False, label='Log files',              help_text='[botssys/logging] Log files from engine, webserver etc. Only for support purposes, on request.')
     config = \
-        BooleanField(required=False, initial=False, label='Configuration files',    help_text='[bots/config] Your customised configuration files. Only for support purposes, on request.')
+        BooleanField(required=False, initial=False, label='Configuration files',    help_text='Your customised configuration files. Only for support purposes, on request.')
     database = \
-        BooleanField(required=False, initial=False, label='SQLite database',        help_text='[bots/botssys/sqlitedb] Entire database file. Only for support purposes, on request.')
+        BooleanField(required=False, initial=False, label='SQLite database', help_text='Entire database file. Only for support purposes, on request. (Only works on Django websites using the SQLite backend)')
 
 
 class DeleteForm(Form):

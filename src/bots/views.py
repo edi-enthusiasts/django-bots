@@ -5,6 +5,7 @@ import os
 import time
 import shutil
 import subprocess
+import tempfile
 import traceback
 import socket
 from django import http, shortcuts
@@ -550,8 +551,10 @@ def plugout_backup(request, *kw, **kwargs):
 
 
 def plugout_backup_core(request, *kw, **kwargs):  # @UnusedVariable
-    filename = botslib.join(botsglobal.ini.get('directories', 'botssys'), 'backup_plugin_%s.zip' % time.strftime('%Y%m%d%H%M%S'))
-    botsglobal.logger.info(_t('Start writing backup plugin "%(file)s".'), {'file': filename})
+    filename = os.path.join(botsglobal.ini.get('directories', 'botssys'), 'backup_plugin_%s.zip' % time.strftime('%Y%m%d%H%M%S'))
+    fd, tempname = tempfile.mkstemp(prefix='bots_plugin_', suffix='.zip')
+    os.close(fd)
+    botsglobal.logger.info(_t('Start writing backup plugin "%(file)s".'), {'file': tempname})
     try:
         dummy_for_cleaned_data = {
             'databaseconfiguration': True,
@@ -565,7 +568,8 @@ def plugout_backup_core(request, *kw, **kwargs):  # @UnusedVariable
             'config': False,
             'database': False,
         }
-        pluglib.make_plugin(dummy_for_cleaned_data, filename)
+        pluglib.make_plugin(dummy_for_cleaned_data, tempname)
+        shutil.move(tempname, filename)
     except Exception as msg:
         notification = 'Error writing backup plugin: "%s".' % msg
         botsglobal.logger.error(notification)
@@ -584,7 +588,8 @@ def plugout(request, *kw, **kwargs):  # @UnusedVariable
         if 'submit' in request.POST:
             form = forms.PlugoutForm(request.POST)
             if form.is_valid():
-                filename = botslib.join(botsglobal.ini.get('directories', 'botssys'), 'plugin_temp.zip')
+                fd, filename = tempfile.mkstemp(prefix='bots_plugin_', suffix='.zip')
+                os.close(fd)
                 botsglobal.logger.info(_t('Start writing plugin "%(file)s".'), {'file': filename})
                 try:
                     pluglib.make_plugin(form.cleaned_data, filename)
@@ -593,8 +598,8 @@ def plugout(request, *kw, **kwargs):  # @UnusedVariable
                     messages.add_message(request, messages.INFO, str(msg))
                 else:
                     botsglobal.logger.info(_t('Plugin "%(file)s" created successful.'), {'file': filename})
-                    response = http.HttpResponse(open(filename, 'rb').read(), content_type='application/zip')
-                    # response['Content-Length'] = os.path.getsize(filename)
+                    with open(filename, 'rb') as plugin_file:
+                        response = http.HttpResponse(plugin_file.read(), content_type='application/zip')
                     response['Content-Disposition'] = 'attachment; filename=' + 'plugin' + time.strftime('_%Y%m%d') + '.zip'
                     return response
     return shortcuts.redirect('home')

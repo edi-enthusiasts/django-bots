@@ -83,18 +83,22 @@ def read_plugin(pathzipfile):
     botsglobal.logger.info(_t('Start writing to files'))
     try:
         warnrenamed = False  # to report in GUI files have been overwritten.
-        myzip = zipfile.ZipFile(pathzipfile, mode="r")
         orgtargetpath = botsglobal.ini.get('directories', 'botspath')
         if (orgtargetpath[-1:] in (os.path.sep, os.path.altsep) and len(os.path.splitdrive(orgtargetpath)[1]) > 1):
             orgtargetpath = orgtargetpath[:-1]
-        for zipfileobject in myzip.infolist():
-            if zipfileobject.filename not in ('botsindex.py', 'README', 'botssys/sqlitedb/botsdb', 'config/bots.ini') and \
-               os.path.splitext(zipfileobject.filename)[1] not in ('.pyo', '.pyc'):
+
+        with zipfile.ZipFile(pathzipfile, mode="r") as myzip:
+            for zipfileobject in myzip.infolist():
+                if zipfileobject.filename in ('botsindex.py', 'README', 'config/bots.ini') or \
+                   os.path.splitext(zipfileobject.filename)[1] in ('.pyo', '.pyc'):
+                    continue
+
                 # botsglobal.logger.info('Filename in zip "%s".',zipfileobject.filename)
                 if zipfileobject.filename[0] == '/':
                     targetpath = zipfileobject.filename[1:]
                 else:
                     targetpath = zipfileobject.filename
+
                 # convert for correct environment: repacle botssys, config, usersys in filenames
                 if targetpath.startswith('usersys'):
                     targetpath = targetpath.replace('usersys', botsglobal.ini.get('directories', 'usersysabs'), 1)
@@ -103,6 +107,7 @@ def read_plugin(pathzipfile):
                 elif targetpath.startswith('config'):
                     targetpath = targetpath.replace('config', botsglobal.ini.get('directories', 'config'), 1)
                 targetpath = botslib.join(orgtargetpath, targetpath)
+
                 # targetpath is OK now.
                 botsglobal.logger.info(_t('    Start writing file: "%(targetpath)s".'), {'targetpath': targetpath})
 
@@ -113,16 +118,13 @@ def read_plugin(pathzipfile):
                 if os.path.isfile(targetpath):  # check if file already exists
                     warnrenamed = True
                 source = myzip.read(zipfileobject.filename)
-                target = open(targetpath, "wb")
-                target.write(source)
-                target.close()
+                with open(targetpath, "wb") as target:
+                    target.write(source)
                 botsglobal.logger.info(_t('        File written: "%(targetpath)s".'), {'targetpath': targetpath})
     except Exception:
         txt = botslib.txtexc()
-        myzip.close()
         raise botslib.PluginError(_t('Error writing files to system. Nothing is written to database. Error:\n%(txt)s'), {'txt': txt})
     else:
-        myzip.close()
         botsglobal.logger.info(_t('Writing files to filesystem is OK.'))
         return warnrenamed
 
@@ -394,6 +396,7 @@ def plugout_files(cleaned_data):
     files2return = []
     usersys = botsglobal.ini.get('directories', 'usersysabs')
     botssys = botsglobal.ini.get('directories', 'botssys')
+    database = botsglobal.settings.DATABASES['default']
     mask_valueerror = suppress(ValueError)
     if cleaned_data['fileconfiguration']:  # gather from usersys
         files2return.extend(plugout_files_bydir(usersys, 'usersys'))
@@ -408,12 +411,13 @@ def plugout_files(cleaned_data):
             files2return.extend(plugout_files_bydir(os.path.join(usersys, 'charsets'), 'usersys/charsets'))
     if cleaned_data['config']:
         config = botsglobal.ini.get('directories', 'config')
-        files2return.extend(plugout_files_bydir(config, 'config'))
+        files2return.extend(plugout_files_bydir(config, 'config', [botssys]))
     if cleaned_data['data']:
         data = botsglobal.ini.get('directories', 'data')
         files2return.extend(plugout_files_bydir(data, 'botssys/data'))
-    if cleaned_data['database']:
-        files2return.extend(plugout_files_bydir(os.path.join(botssys, 'sqlitedb'), 'botssys/sqlitedb.copy'))  # yeah...reading a plugin with a new database will cause a crash...do this manually...
+    # TODO: Possibly add support for exporting MySQL/Postgres databases. (Maybe as .sql files)
+    if cleaned_data['database'] and database['ENGINE'] == 'django.db.backends.sqlite3':
+        files2return.append((database['NAME'], os.path.basename(database['NAME']) + '.copy'))  # yeah...reading a plugin with a new database will cause a crash...do this manually...
     if cleaned_data['infiles']:
         files2return.extend(plugout_files_bydir(os.path.join(botssys, 'infile'), 'botssys/infile'))
     if cleaned_data['logfiles']:
@@ -422,15 +426,27 @@ def plugout_files(cleaned_data):
     return files2return
 
 
-def plugout_files_bydir(dirname, defaultdirname):
+def plugout_files_bydir(dirname, defaultdirname, ignorepaths=[]):
     ''' gather all files from directory dirname '''
     files2return = []
+    ignorepaths = list(map(os.path.abspath, ignorepaths))
+
     for root, _, files in os.walk(dirname):
+        folderpath = os.path.abspath(root)
+        if any(folderpath.startswith(path) for path in ignorepaths):
+            continue
+
         # convert for correct environment: replace dirname with the default directory name
         rootinplugin = root.replace(dirname, defaultdirname, 1)
         for bestand in files:
+            filepath = os.path.abspath(os.path.join(root, bestand))
+            if any(filepath.startswith(path) for path in ignorepaths):
+                continue
+
             ext = os.path.splitext(bestand)[1]
             if ext and (ext in ('.pyc', '.pyo') or bestand in ('__init__.py',)):
                 continue
+
             files2return.append([os.path.join(root, bestand), os.path.join(rootinplugin, bestand)])
+
     return files2return
