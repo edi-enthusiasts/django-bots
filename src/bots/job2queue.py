@@ -53,7 +53,7 @@ def start():
         %(name)s -p1 python /usr/local/bin/bots-engine.py -cconfig2 myroute
 
     ''' % {'name': os.path.basename(sys.argv[0]), 'version': botsglobal.version}
-    configdir = 'config'  # default value
+    configdir = None  # default value is to pull from DJANGO_SETTINGS_MODULE variable.
     priority = 5  # default value
     task_args = []
     for arg in sys.argv[1:]:

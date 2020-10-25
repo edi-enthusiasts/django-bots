@@ -29,16 +29,14 @@ class BotsConfig(RawConfigParser):
             return fallback
 
 
-def generalinit(configdir):
+def generalinit(configdir=None):
     # #########################################################################
     # Configdir: settings.py & bots.ini#########################################
     # Configdir MUST be importable. So configdir is relative to PYTHONPATH. Try several options for this import.
-    try:  # first check if is configdir outside bots-directory: import configdir.settings.py
-        importnameforsettings = os.path.normpath(os.path.join(configdir, 'settings')).replace(os.sep, '.')
-        settings = botslib.botsbaseimport(importnameforsettings)
-    except ImportError:  # normal: configdir is in bots directory: import bots.configdir.settings.py
+    # If configdir is not specified the settings.py and bots.ini is checked from DJANGO_SETTINGS_MODULE import directory.
+    if configdir:
         try:
-            importnameforsettings = os.path.normpath(os.path.join('bots', configdir, 'settings')).replace(os.sep, '.')
+            importnameforsettings = os.path.normpath(os.path.join(configdir, 'settings')).replace(os.sep, '.')
             settings = botslib.botsbaseimport(importnameforsettings)
         except ImportError:  # set pythonpath to config directory first
             if not os.path.exists(configdir):  # check if configdir exists.
@@ -48,18 +46,35 @@ def generalinit(configdir):
             sys.path.append(addtopythonpath)
             importnameforsettings = os.path.normpath(os.path.join(moduletoimport, 'settings')).replace(os.sep, '.')
             settings = botslib.botsbaseimport(importnameforsettings)
-    # settings is imported, so now we know where to find settings.py: importnameforsettings
-    # note: the imported settings.py itself is NOT used, this is doen via django.conf.settings
-    configdirectory = os.path.abspath(os.path.dirname(settings.__file__))
+        os.environ['DJANGO_SETTINGS_MODULE'] = importnameforsettings
+    else:
+        if not os.environ.get('DJANGO_SETTINGS_MODULE'):  # check if DJANGO_SETTINGS_MODULE is set.
+            raise botslib.PanicError('In initilisation: no fallback settings module specified in DJANGO_SETTINGS_MODULE.')
+        settings = botslib.botsbaseimport(os.environ['DJANGO_SETTINGS_MODULE'])
+        configdir = os.path.abspath(os.path.dirname(settings.__file__))
+
+    # settings is imported, so now we know where to find bots.ini.
+    # note: the imported settings.py itself is NOT used, this is done via django.conf.settings
+    config_directory = os.path.abspath(os.path.dirname(settings.__file__))
+    inipath = os.path.join(config_directory, 'bots.ini')
+
+    # Ensure the bots.ini exists in the config directory we're going to read it from.
+    if not os.path.exists(inipath):
+        import bots.templates
+        from shutil import copyfile
+        template_path = os.path.join(os.path.abspath(os.path.dirname(bots.templates.__file__)), 'bots.ini')
+        copyfile(template_path, inipath)
+
     # Read configuration-file bots.ini.
     botsglobal.ini = BotsConfig()
-    botsglobal.ini.read(os.path.join(configdirectory, 'bots.ini'))
+    botsglobal.ini.read(inipath)
+
     # 'directories','botspath': absolute path for bots directory
     botsglobal.ini.set('directories', 'botspath', os.path.abspath(os.path.dirname(__file__)))
     # 'directories','config': absolute path for config directory
-    botsglobal.ini.set('directories', 'config', configdirectory)
+    botsglobal.ini.set('directories', 'config', config_directory)
     # set config as originally received; used in starting engine via bots-monitor
-    botsglobal.ini.set('directories', 'config_org', configdir)
+    botsglobal.ini.set('directories', 'config_org', configdir or '')
 
     # ###########################################################################
     # Usersys####################################################################
@@ -89,11 +104,12 @@ def generalinit(configdir):
     # ###########################################################################
     # Botssys####################################################################
     # 'directories','botssys': absolute path for config botssys
+    # if specified as relative in INI, it will be relative to the project's config folder (settings.py).
     botssys = botsglobal.ini.get('directories', 'botssys', fallback='botssys')
     botsglobal.ini.set('directories', 'botssys_org', botssys)            # store original botssys setting
-    botsglobal.ini.set('directories', 'botssys', botslib.join(botssys))  # use absolute path
-    botsglobal.ini.set('directories', 'data', botslib.join(botssys, 'data'))
-    botsglobal.ini.set('directories', 'logging', botslib.join(botssys, 'logging'))
+    botsglobal.ini.set('directories', 'botssys', os.path.join(config_directory, botssys))  # use absolute path
+    botsglobal.ini.set('directories', 'data', os.path.join(config_directory, botssys, 'data'))
+    botsglobal.ini.set('directories', 'logging', os.path.join(config_directory, botssys, 'logging'))
 
     # ###########################################################################
     # other inits##############################################################
@@ -107,7 +123,6 @@ def generalinit(configdir):
 
     # ###########################################################################
     # Init django#################################################################################
-    os.environ['DJANGO_SETTINGS_MODULE'] = importnameforsettings
     import django
     if hasattr(django, 'setup'):
         django.setup()
@@ -152,39 +167,43 @@ def botsreplacechar_handler(info):
 
 def connect():
     ''' connect to database for non-django modules eg engine '''
-    if botsglobal.settings.DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
+    database = botsglobal.settings.DATABASES['default']
+    if database['ENGINE'] == 'django.db.backends.sqlite3':
         # sqlite has some more fiddling; in separate file. Mainly because of some other method of parameter passing.
-        if not os.path.isfile(botsglobal.settings.DATABASES['default']['NAME']):
+        if not os.path.isfile(database['NAME']):
             raise botslib.PanicError('Could not find database file for SQLite')
         from . import botssqlite
-        botsglobal.db = botssqlite.connect(database=botsglobal.settings.DATABASES['default']['NAME'])
-    elif botsglobal.settings.DATABASES['default']['ENGINE'] == 'django.db.backends.mysql':
+        botsglobal.db = botssqlite.connect(database=database['NAME'])
+
+    elif database['ENGINE'] == 'django.db.backends.mysql':
         import pymysql
         from pymysql import cursors
         botsglobal.db = pymysql.connect(
-            host=botsglobal.settings.DATABASES['default']['HOST'],
-            port=int(botsglobal.settings.DATABASES['default']['PORT']),
-            db=botsglobal.settings.DATABASES['default']['NAME'],
-            user=botsglobal.settings.DATABASES['default']['USER'],
-            passwd=botsglobal.settings.DATABASES['default']['PASSWORD'],
+            host=database['HOST'],
+            port=int(database['PORT']),
+            db=database['NAME'],
+            user=database['USER'],
+            passwd=database['PASSWORD'],
             cursorclass=cursors.DictCursor,
-            **botsglobal.settings.DATABASES['default']['OPTIONS']
+            **database['OPTIONS']
         )
-    elif botsglobal.settings.DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
+
+    elif database['ENGINE'] == 'django.db.backends.postgresql_psycopg2':
         import psycopg2.extensions
         import psycopg2.extras
         psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
         botsglobal.db = psycopg2.connect(
-            host=botsglobal.settings.DATABASES['default']['HOST'],
-            port=botsglobal.settings.DATABASES['default']['PORT'],
-            database=botsglobal.settings.DATABASES['default']['NAME'],
-            user=botsglobal.settings.DATABASES['default']['USER'],
-            password=botsglobal.settings.DATABASES['default']['PASSWORD'],
+            host=database['HOST'],
+            port=database['PORT'],
+            database=database['NAME'],
+            user=database['USER'],
+            password=database['PASSWORD'],
             connection_factory=psycopg2.extras.DictConnection
         )
         botsglobal.db.set_client_encoding('UNICODE')
+
     else:
-        raise botslib.PanicError('Unknown database engine "%(engine)s".', {'engine': botsglobal.settings.DATABASES['default']['ENGINE']})
+        raise botslib.PanicError('Unknown database engine "%(engine)s".', {'engine': database['ENGINE']})
 
 
 # *******************************************************************
@@ -206,7 +225,7 @@ def initenginelogging(logname):
     logger = logging.getLogger(logname)
     logger.setLevel(convertini2logger[botsglobal.ini.get('settings', 'log_file_level', fallback='INFO')])
     handler = logging.handlers.RotatingFileHandler(
-        botslib.join(botsglobal.ini.get('directories', 'logging'), logname+'.log'),
+        os.path.join(botsglobal.ini.get('directories', 'logging'), logname + '.log'),
         backupCount=botsglobal.ini.getint('settings', 'log_file_number', fallback=10)
     )
     fileformat = logging.Formatter("%(asctime)s %(levelname)-8s %(name)s : %(message)s", '%Y%m%d %H:%M:%S')

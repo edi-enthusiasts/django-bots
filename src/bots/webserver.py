@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import cherrypy
-import django.contrib.admin
 import inspect
 import sys
 import os
@@ -28,7 +27,7 @@ def start():
         -c<directory>   directory for configuration files (default: config).
 
     ''' % {'name': os.path.basename(sys.argv[0]), 'version': botsglobal.version}
-    configdir = 'config'
+    configdir = None
     for arg in sys.argv[1:]:
         if arg.startswith('-c'):
             configdir = arg[2:]
@@ -52,6 +51,7 @@ def start():
         }
     })
     # cherrypy handling of static files
+    import django.contrib.admin
     conf = {
         '/admin': {
             'tools.staticdir.on': True,

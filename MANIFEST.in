@@ -9,8 +9,5 @@ recursive-include tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
 
-# prune src/bots/botssys/logging
 # prune src/bots/botssys/infile
 # prune src/bots/botssys/outfile
-# prune src/bots/botssys/archive
-# prune src/bots/botssys/data

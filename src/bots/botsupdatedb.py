@@ -293,7 +293,7 @@ def start():
         -c<directory>        directory for configuration files (default: config).
 
     ''' % {'name': os.path.basename(sys.argv[0]), 'version': botsglobal.version}
-    configdir = 'config'
+    configdir = None
     for arg in sys.argv[1:]:
         if arg.startswith('-c'):
             configdir = arg[2:]
@@ -325,7 +325,7 @@ def start():
     try:
         botsinit.connect()
     except Exception as msg:
-        botsglobal.logger.exception(_t('Could not connect to database. Database settings are in bots/config/settings.py. Error: "%(msg)s".'), {'msg': msg})
+        botsglobal.logger.exception(_t('Could not connect to database. Database settings are in settings.py. Error: "%(msg)s".'), {'msg': msg})
         sys.exit(3)
     else:
         botsglobal.logger.info(_t('Connected to database.'))

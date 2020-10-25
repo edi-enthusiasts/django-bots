@@ -330,8 +330,8 @@ def checkunique(domein, receivednumber):
 # **********************************************************/**
 def sendbotserrorreport(subject, reporttext):
     ''' Send an email in case of errors or problems with bots-engine.
-        Email is send to MANAGERS in config/settings.py.
-        Email parameters are in config/settings.py (EMAIL_HOST, etc).
+        Email is send to MANAGERS in settings.py.
+        Email parameters are in settings.py (EMAIL_HOST, etc).
     '''
     if botsglobal.ini.getboolean('settings', 'sendreportiferror', fallback=False) \
        and not botsglobal.ini.getboolean('acceptance', 'runacceptancetest', fallback=False):
@@ -345,7 +345,7 @@ def sendbotserrorreport(subject, reporttext):
 def sendbotsemail(partner, subject, reporttext):
     ''' Send a simple email message to any bots partner.
         Mail is sent to all To: and cc: addresses for the partner (but send_mail does not support cc).
-        Email parameters are in config/settings.py (EMAIL_HOST, etc).
+        Email parameters are in settings.py (EMAIL_HOST, etc).
     '''
     from django.core.mail import send_mail
     for row in query('''SELECT mail,cc FROM partner WHERE idpartner=%(partner)s''', {'partner': partner}):
@@ -512,7 +512,7 @@ def abspathdata(filename):
         datasubdir = filename[:-3]
         if not datasubdir:
             datasubdir = '0'
-        return join(directory, datasubdir, filename)
+        return os.path.join(directory, datasubdir, filename)
 
 
 def deldata(filename):

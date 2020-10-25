@@ -18,8 +18,7 @@ def startmulti(grammardir, editype):
         grammardir: directory with gramars (eg bots/usersys/grammars/edifact)
         editype: eg edifact
     '''
-    configdir = 'config'
-    botsinit.generalinit(configdir)  # find locating of bots, configfiles, init paths etc.
+    botsinit.generalinit()  # find locating of bots, configfiles, init paths etc.
     process_name = 'grammarcheck'
     botsglobal.logger = botsinit.initenginelogging(process_name)
     atexit.register(logging.shutdown)
@@ -59,7 +58,7 @@ def start():
         %(name)s -cconfig  C:/python27/lib/site-packages/bots/usersys/grammars/edifact/ORDERSD96AUNEAN008.py
 
     ''' % {'name': os.path.basename(sys.argv[0]), 'version': botsglobal.version}
-    configdir = 'config'
+    configdir = None
     editype = ''
     messagetype = ''
     for arg in sys.argv[1:]:

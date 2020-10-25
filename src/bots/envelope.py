@@ -180,7 +180,7 @@ class Envelope(object):
 
     def filelist2absolutepaths(self):
         ''' utility function; some classes need absolute filenames eg for xml-including '''
-        return [botslib.abspathdata(filename) for filename in self.ta_list]
+        return list(map(botslib.abspathdata, self.ta_list))
 
 
 class noenvelope(Envelope):

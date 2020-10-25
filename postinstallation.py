@@ -28,25 +28,6 @@ def start():
     print('    Installed bots in "%s".' % botsdir)
 
 # ******************************************************************************
-# ***    install configuration files      **************************************
-# ******************************************************************************
-    if os.path.exists(join(botsdir, 'config', 'settings.py')):  # use this to see if this is an existing installation
-        print('    Found existing configuration files')
-        print('        Configuration files bots.ini and settings.py not overwritten.')
-        print('        Manual action is needed for these configuration files.')
-        print('        See bots wiki for more info: http://code.google.com/p/bots/wiki/Migrate.')
-
-# ******************************************************************************
-# ***    install database; upgrade existing db *********************************
-# ******************************************************************************
-    sqlitedir = join(botsdir, 'botssys', 'sqlitedb')
-    if os.path.exists(join(sqlitedir, 'botsdb')):  # use this to see if this is an existing installation
-        print('    Found existing database file botssys{0}sqlitedb{0}botsdb'.format(os.sep))
-        print('        Manual action is needed to convert the database to new bots 3.0 format.')
-        print('        There is a script to update the database.')
-        print('        See bots wiki for more info: http://code.google.com/p/bots/wiki/Migrate.')
-
-# ******************************************************************************
 # ***    install libraries, dependencies  ***************************************
 # ******************************************************************************
     list_of_setuppers = []

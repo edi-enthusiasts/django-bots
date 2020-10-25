@@ -230,7 +230,7 @@ def start():
         <xml_grammar_file> name of the grammar file to write
 
     ''' % {'name': os.path.basename(sys.argv[0]), 'version': botsglobal.version}
-    configdir = 'config'
+    configdir = None
     edifile = ''
     botsgrammarfilename = ''
     allrecords = False

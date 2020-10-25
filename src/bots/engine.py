@@ -46,7 +46,7 @@ def start():
     Routes: list of routes to run. Default: all active routes (in the database)
 
     ''' % {'name': os.path.basename(sys.argv[0]), 'version': botsglobal.version}
-    configdir = 'config'
+    configdir = None
     commandspossible = ['--automaticretrycommunication', '--resend', '--rereceive', '--new']
     commandstorun = []
     routestorun = []  # list with routes to run
@@ -94,7 +94,7 @@ def start():
     try:
         botsinit.connect()
     except Exception as msg:
-        botsglobal.logger.exception(_t('Could not connect to database. Database settings are in bots/config/settings.py. Error: "%(msg)s".'), {'msg': msg})
+        botsglobal.logger.exception(_t('Could not connect to database. Database settings are in settings.py. Error: "%(msg)s".'), {'msg': msg})
         sys.exit(1)
     else:
         botsglobal.logger.info(_t('Connected to database.'))
